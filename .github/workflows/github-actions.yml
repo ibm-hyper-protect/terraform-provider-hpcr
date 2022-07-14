@@ -26,3 +26,5 @@ jobs:
           CGO_ENABLED=0 GOOS=linux GOARCH=s390x go build -ldflags "-s -w" -trimpath -o ${PREFIX}/linux_s390x/${SUFFIX}
           CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -ldflags "-s -w" -trimpath -o ${PREFIX}/darwin_amd64/${SUFFIX}
           CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags "-s -w" -trimpath -o ${PREFIX}/windows_amd64/${SUFFIX}.exe
+          find ${TF_BASE}
+          
