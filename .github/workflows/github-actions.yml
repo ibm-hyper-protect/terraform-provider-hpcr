@@ -12,6 +12,7 @@ jobs:
           cache: true
       - run: |
           go version
+          go env -w GOFLAGS=-mod=mod
           go mod tidy
           go get
           go test .\... -v
