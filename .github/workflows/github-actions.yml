@@ -15,4 +15,4 @@ jobs:
           go env -w GOFLAGS=-mod=mod
           go mod tidy
           go get
-          go test .\... -v
+          go test ./... -v
