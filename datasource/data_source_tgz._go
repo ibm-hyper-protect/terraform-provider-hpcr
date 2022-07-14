@@ -1,0 +1,123 @@
+package datasource
+
+import (
+	"bytes"
+	"crypto/sha256"
+	"fmt"
+	"log"
+	"strings"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/terraform-provider-hpcr/common"
+)
+
+func dataSourceTgzEncrypted() *schema.Resource {
+	return &schema.Resource{
+		Read: dataSourceTgzEncryptedRead,
+		Schema: map[string]*schema.Schema{
+			common.KEY_FOLDER: {
+				Type:             schema.TypeString,
+				Required:         true,
+				Description:      "Path to the folder to encrypt",
+				ValidateDiagFunc: diagFolder,
+			},
+			common.KEY_PUBKEY: {
+				Type:             schema.TypeString,
+				Description:      "Public key used to encrypt the TGZ file in PEM format",
+				Optional:         true,
+				Default:          DEFAULT_PUB_KEY,
+				ValidateDiagFunc: diagPubKey,
+			},
+			common.KEY_RENDERED: {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			common.KEY_SHA256: {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+		},
+		Description: "Generates a encrypted token from the TGZed files in the folder.",
+	}
+}
+
+func dataSourceTgz() *schema.Resource {
+	return &schema.Resource{
+		Read: dataSourceTgzRead,
+		Schema: map[string]*schema.Schema{
+			KEY_FOLDER: {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Path to the folder to archive",
+			},
+			KEY_RENDERED: {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			KEY_SHA256: {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+		},
+		Description: "Generates a base64 encoded string from the TGZed files in the folder.",
+	}
+}
+
+func dataSourceTgzEncryptedRead(d *schema.ResourceData, m any) error {
+	// unique ID
+	setUniqueID(d)
+	// extract folder
+	dstFolder := d.Get(KEY_FOLDER).(string)
+	log.Printf("folder: %s", dstFolder)
+
+	// extract public key
+	pubkey := d.Get(KEY_PUBKEY).(string)
+
+	body := new(bytes.Buffer)
+
+	if err := tarFolder(dstFolder, body); err != nil {
+		return err
+	}
+
+	data := body.Bytes()
+
+	var buf strings.Builder
+	if err := encryptBasicDefault(data, pubkey, &buf); err != nil {
+		return err
+	}
+
+	if err := d.Set(KEY_RENDERED, buf.String()); err != nil {
+		return err
+	}
+
+	if err := d.Set(KEY_SHA256, fmt.Sprintf("%x", sha256.Sum256(data))); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func dataSourceTgzRead(d *schema.ResourceData, m any) error {
+	dstFolder := d.Get(KEY_FOLDER).(string)
+
+	log.Printf("folder: %s", dstFolder)
+	setUniqueID(d)
+
+	body := new(bytes.Buffer)
+
+	if err := tarFolder(dstFolder, body); err != nil {
+		return err
+	}
+
+	data := body.Bytes()
+
+	if err := d.Set(KEY_RENDERED, base64Encode(data)); err != nil {
+		return err
+	}
+
+	if err := d.Set(KEY_SHA256, fmt.Sprintf("%x", sha256.Sum256(data))); err != nil {
+		return err
+	}
+
+	return nil
+}
