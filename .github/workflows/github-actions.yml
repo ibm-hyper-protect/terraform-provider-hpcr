@@ -10,4 +10,6 @@ jobs:
           go-version: 'go.mod'
           check-latest: true
           cache: true
-      - run: go version
+      - run: |
+          go version
+          go test .\... -v
