@@ -12,4 +12,6 @@ jobs:
           cache: true
       - run: |
           go version
+          go mod tidy
+          go get
           go test .\... -v
