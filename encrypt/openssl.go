@@ -123,7 +123,7 @@ func handle[A, R any](cb func(string) func(A) E.Either[error, R]) func(data []by
 
 func asymmetricDecrypt(keyFile string) func(string) E.Either[error, []byte] {
 	return F.Flow3(
-		common.Base64Decode,
+		common.Base64DecodeE,
 		E.Chain(OpenSSL("rsautl", "-decrypt", "-inkey", keyFile)),
 		mapStdout,
 	)
@@ -169,7 +169,7 @@ func SymmetricDecrypt(token string) func([]byte) E.Either[error, []byte] {
 	// decode the token and produce the decryption function
 	dec := F.Pipe2(
 		token,
-		common.Base64Decode,
+		common.Base64DecodeE,
 		E.Map[error](handle(symmetricDecrypt)),
 	)
 	// decrypt using the provided password

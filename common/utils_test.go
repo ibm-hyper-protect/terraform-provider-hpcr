@@ -10,11 +10,27 @@
 package common
 
 import (
-	"fmt"
+	"io/fs"
 	"testing"
+
+	"os"
+
+	"github.com/stretchr/testify/assert"
+	E "github.com/terraform-provider-hpcr/fp/either"
+	F "github.com/terraform-provider-hpcr/fp/function"
 )
 
+var statE = E.Eitherize1(os.Stat)
+
 func TestTempFile(t *testing.T) {
-	newFile := TempFile([]byte("Carsten"))
-	fmt.Println(newFile)
+	resE := F.Pipe3(
+		CreateTempE("", "*"),
+		E.Map[error](func(f *os.File) string {
+			return f.Name()
+		}),
+		E.Chain(statE),
+		E.Map[error](fs.FileInfo.IsDir),
+	)
+
+	assert.Equal(t, resE, E.Of[error](false))
 }

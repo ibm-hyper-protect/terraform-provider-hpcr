@@ -39,6 +39,7 @@ var (
 	setSha256       = fp.ResourceDataSet[string](common.KeySha256)
 	getJson         = fp.ResourceDataGet[any](common.KeyJson)
 	getText         = fp.ResourceDataGet[string](common.KeyText)
+	getFolder       = fp.ResourceDataGet[string](common.KeyFolder)
 	getPubKey       = fp.ResourceDataGet[string](common.KeyCert)
 
 	// encode as sha256
@@ -73,8 +74,9 @@ var (
 	}
 
 	schemaSha256Out = schema.Schema{
-		Type:     schema.TypeString,
-		Computed: true,
+		Type:        schema.TypeString,
+		Computed:    true,
+		Description: "SHA256 of the input",
 	}
 
 	schemaJsonIn = schema.Schema{
@@ -87,5 +89,12 @@ var (
 		Type:        schema.TypeString,
 		Required:    true,
 		Description: "Text to archive",
+	}
+
+	schemaFolderIn = schema.Schema{
+		Type:             schema.TypeString,
+		Required:         true,
+		Description:      "Path to the folder to encrypt",
+		ValidateDiagFunc: validation.DiagFolder,
 	}
 )

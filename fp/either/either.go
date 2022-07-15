@@ -96,7 +96,7 @@ func MonadMap[E, A, B any](fa Either[E, A], f func(a A) B) Either[E, B] {
 }
 
 func MonadMapTo[E, A, B any](fa Either[E, A], b B) Either[E, B] {
-	return F.Pipe1(b, Of[E, B])
+	return MonadMap(fa, F.Constant1[A](b))
 }
 
 func MapTo[E, A, B any](b B) func(Either[E, A]) Either[E, B] {
