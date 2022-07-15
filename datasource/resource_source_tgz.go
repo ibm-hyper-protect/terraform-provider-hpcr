@@ -10,32 +10,18 @@
 package datasource
 
 import (
-	"bytes"
-	"crypto/sha256"
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/terraform-provider-hpcr/archive"
 	"github.com/terraform-provider-hpcr/common"
 	"github.com/terraform-provider-hpcr/encrypt"
 	"github.com/terraform-provider-hpcr/fp"
 	E "github.com/terraform-provider-hpcr/fp/either"
 	F "github.com/terraform-provider-hpcr/fp/function"
-	I "github.com/terraform-provider-hpcr/fp/identity"
 	S "github.com/terraform-provider-hpcr/fp/string"
 )
 
-var (
-	// marshal input folder
-	tarFolder = F.Flow4(
-		getFolder,
-		E.Map[error](archive.TarFolder[*bytes.Buffer]),
-		E.Chain(I.Ap[*bytes.Buffer, E.Either[error, *bytes.Buffer]](new(bytes.Buffer))),
-		E.Map[error]((*bytes.Buffer).Bytes),
-	)
-)
-
-func DataSourceTgzEncrypted() *schema.Resource {
+func ResourceTgzEncrypted() *schema.Resource {
 	return &schema.Resource{
 		Read: dataSourceTgzEncryptedRead,
 		Schema: map[string]*schema.Schema{
@@ -48,9 +34,11 @@ func DataSourceTgzEncrypted() *schema.Resource {
 	}
 }
 
-func DataSourceTgz() *schema.Resource {
+func ResourceTgz() *schema.Resource {
 	return &schema.Resource{
-		Read: dataSourceTgzRead,
+		Read:   resourceTgzRead,
+		Create: resourceTgzCreate,
+		Delete: resourceDeleteNoOp,
 		Schema: map[string]*schema.Schema{
 			common.KeyFolder:   &schemaFolderIn,
 			common.KeyRendered: &schemaRenderedOut,
@@ -60,7 +48,7 @@ func DataSourceTgz() *schema.Resource {
 	}
 }
 
-func dataSourceTgzEncryptedRead(d *schema.ResourceData, m any) error {
+func resourceTgzEncryptedRead(d *schema.ResourceData, m any) error {
 	// marshal input folder
 	tarE := F.Pipe1(
 		d,
@@ -97,7 +85,7 @@ func dataSourceTgzEncryptedRead(d *schema.ResourceData, m any) error {
 	)
 }
 
-func dataSourceTgzRead(d *schema.ResourceData, m any) error {
+func resourceTgz(d *schema.ResourceData) E.Either[error, *schema.ResourceData] {
 
 	// marshal input folder
 	tarE := F.Pipe1(
@@ -105,35 +93,59 @@ func dataSourceTgzRead(d *schema.ResourceData, m any) error {
 		tarFolder,
 	)
 
-	F.Pipe3(
+	// compute the checksum
+	hashE := F.Pipe1(
 		tarE,
-		E.Map[error](sha256.Sum256),
-		E.Map[error](func(hash [sha256.Size]byte) string { return fmt.Sprintf("%x", hash) }),
-		E.Map[error](func(id string) string {
-			d.SetId(id)
-			return id
-		}),
+		E.Map[error](createHash),
 	)
-
-	// render the content to base64
-	renderedE := F.Pipe3(
-		tarE,
-		E.Map[error](common.Base64Encode),
-		E.Map[error](setRendered),
-		fp.ResourceDataAp[*schema.ResourceData](d),
-	)
-
-	// encode as sha256
-	sha256E := F.Pipe2(
-		tarE,
-		computeSha256,
-		fp.ResourceDataAp[*schema.ResourceData](d),
-	)
-
-	fmt.Println(d.HasChange(common.KeySha256))
 
 	return F.Pipe1(
-		seqResourceData([]E.Either[error, *schema.ResourceData]{renderedE, sha256E}),
-		E.ToError[[]*schema.ResourceData],
+		hashE,
+		E.Chain(func(checksum string) E.Either[error, *schema.ResourceData] {
+			// get the sha256
+			current := d.Get(common.KeySha256)
+			if current != checksum {
+				// requires update
+				fmt.Println("updating resource")
+				// render the content to base64
+				renderedE := F.Pipe3(
+					tarE,
+					E.Map[error](common.Base64Encode),
+					E.Map[error](setRendered),
+					fp.ResourceDataAp[*schema.ResourceData](d),
+				)
+
+				// encode as sha256
+				sha256E := F.Pipe2(
+					hashE,
+					E.Map[error](setSha256),
+					fp.ResourceDataAp[*schema.ResourceData](d),
+				)
+
+				return F.Pipe1(
+					seqResourceData([]E.Either[error, *schema.ResourceData]{renderedE, sha256E}),
+					E.MapTo[error, []*schema.ResourceData](d),
+				)
+			}
+			// nothing to do
+			return E.Of[error](d)
+		}),
+	)
+}
+
+func resourceTgzCreate(d *schema.ResourceData, m any) error {
+	return F.Pipe3(
+		d,
+		setUniqueID,
+		E.Chain(resourceTgz),
+		E.ToError[*schema.ResourceData],
+	)
+}
+
+func resourceTgzRead(d *schema.ResourceData, m any) error {
+	return F.Pipe2(
+		d,
+		resourceTgz,
+		E.ToError[*schema.ResourceData],
 	)
 }

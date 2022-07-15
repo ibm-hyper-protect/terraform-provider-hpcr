@@ -22,7 +22,7 @@ import (
 var (
 	getTextBytes = F.Flow3(
 		setUniqueID,
-		getText,
+		E.Chain(getText),
 		E.Map[error](S.ToBytes),
 	)
 )

@@ -10,12 +10,10 @@
 package datasource
 
 import (
-	"strconv"
-	"time"
-
 	"crypto/sha256"
 	"fmt"
 
+	"github.com/hashicorp/go-uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/terraform-provider-hpcr/common"
 	"github.com/terraform-provider-hpcr/data"
@@ -27,9 +25,21 @@ import (
 	F "github.com/terraform-provider-hpcr/fp/function"
 )
 
-func setUniqueID(d *schema.ResourceData) *schema.ResourceData {
-	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
-	return d
+var uuidE = E.Eitherize0(uuid.GenerateUUID)
+
+// assigns a new uuid to a resource
+func setUniqueID(d *schema.ResourceData) E.Either[error, *schema.ResourceData] {
+	return F.Pipe1(
+		uuidE(),
+		E.Map[error](func(id string) *schema.ResourceData {
+			d.SetId(id)
+			return d
+		}),
+	)
+}
+
+func createHash(data []byte) string {
+	return fmt.Sprintf("%x", sha256.Sum256(data))
 }
 
 var (
@@ -94,7 +104,12 @@ var (
 	schemaFolderIn = schema.Schema{
 		Type:             schema.TypeString,
 		Required:         true,
+		ForceNew:         true,
 		Description:      "Path to the folder to encrypt",
 		ValidateDiagFunc: validation.DiagFolder,
 	}
 )
+
+func resourceDeleteNoOp(d *schema.ResourceData, m any) error {
+	return nil
+}

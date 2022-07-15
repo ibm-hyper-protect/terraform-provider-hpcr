@@ -24,7 +24,7 @@ import (
 var (
 	getJsonBytes = F.Flow4(
 		setUniqueID,
-		getJson,
+		E.Chain(getJson),
 		E.Map[error](F.Ref[any]),
 		E.Chain(J.Stringify[any]),
 	)
@@ -35,6 +35,7 @@ func DataSourceJson() *schema.Resource {
 		Read: dataSourceJsonRead,
 		Schema: map[string]*schema.Schema{
 			common.KeyJson:     &schemaJsonIn,
+			common.KeyText:     &schemaTextOut,
 			common.KeyRendered: &schemaRenderedOut,
 			common.KeySha256:   &schemaSha256Out,
 		},

@@ -15,5 +15,8 @@ func Provider() *schema.Provider {
 			"hpcr_json":           datasource.DataSourceJson(),
 			"hpcr_json_encrypted": datasource.DataSourceJsonEncrypted(),
 		},
+		ResourcesMap: map[string]*schema.Resource{
+			"hpcr_tgz": datasource.ResourceTgz(),
+		},
 	}
 }
