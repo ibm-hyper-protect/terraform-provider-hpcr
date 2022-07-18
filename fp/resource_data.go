@@ -14,22 +14,46 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	E "github.com/terraform-provider-hpcr/fp/either"
+	F "github.com/terraform-provider-hpcr/fp/function"
 	I "github.com/terraform-provider-hpcr/fp/identity"
+	O "github.com/terraform-provider-hpcr/fp/option"
 )
 
-func ToType[A any](data any) E.Either[error, A] {
-	value, ok := data.(A)
-	if ok {
-		return E.Of[error](value)
-	}
-	return E.Left[error, A](fmt.Errorf("invalid type"))
+func typeError() error {
+	return fmt.Errorf("invalid type")
 }
 
-func ResourceDataGet[A any](key string) func(*schema.ResourceData) E.Either[error, A] {
+func ToTypeO[A any](data any) O.Option[A] {
+	value, ok := data.(A)
+	if ok {
+		return O.Some(value)
+	}
+	return O.None[A]()
+}
+
+func ToTypeE[A any](data any) E.Either[error, A] {
+	return F.Pipe2(
+		data,
+		ToTypeO[A],
+		E.FromOption[error, A](typeError),
+	)
+}
+
+func ResourceDataGetO[A any](key string) func(*schema.ResourceData) O.Option[A] {
+	return func(d *schema.ResourceData) O.Option[A] {
+		return F.Pipe2(
+			key,
+			O.FromValidation(d.GetOk),
+			O.Chain(ToTypeO[A]),
+		)
+	}
+}
+
+func ResourceDataGetE[A any](key string) func(*schema.ResourceData) E.Either[error, A] {
 	return func(d *schema.ResourceData) E.Either[error, A] {
 		data, ok := d.GetOk(key)
 		if ok {
-			return ToType[A](data)
+			return ToTypeE[A](data)
 		}
 		return E.Left[error, A](fmt.Errorf("key [%s] has not been declared", key))
 	}

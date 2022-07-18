@@ -28,7 +28,7 @@ import (
 var (
 	// marshal input folder
 	tarFolder = F.Flow4(
-		getFolder,
+		getFolderE,
 		E.Map[error](archive.TarFolder[*bytes.Buffer]),
 		E.Chain(I.Ap[*bytes.Buffer, E.Either[error, *bytes.Buffer]](new(bytes.Buffer))),
 		E.Map[error]((*bytes.Buffer).Bytes),
@@ -70,7 +70,7 @@ func dataSourceTgzEncryptedRead(d *schema.ResourceData, m any) error {
 	// get the encryption function
 	encryptedE := F.Pipe5(
 		d,
-		getPubKey,
+		getCertificateE,
 		E.Map[error](S.ToBytes),
 		E.Map[error](encrypt.OpenSSLEncryptBasic),
 		E.Ap[error, []byte, E.Either[error, string]](tarE),
@@ -92,7 +92,7 @@ func dataSourceTgzEncryptedRead(d *schema.ResourceData, m any) error {
 	)
 
 	return F.Pipe1(
-		seqResourceData([]E.Either[error, *schema.ResourceData]{renderedE, sha256E}),
+		seqResourceData([]ResourceDataE{renderedE, sha256E}),
 		E.ToError[[]*schema.ResourceData],
 	)
 }
@@ -133,7 +133,7 @@ func dataSourceTgzRead(d *schema.ResourceData, m any) error {
 	fmt.Println(d.HasChange(common.KeySha256))
 
 	return F.Pipe1(
-		seqResourceData([]E.Either[error, *schema.ResourceData]{renderedE, sha256E}),
+		seqResourceData([]ResourceDataE{renderedE, sha256E}),
 		E.ToError[[]*schema.ResourceData],
 	)
 }

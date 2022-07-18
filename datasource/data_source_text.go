@@ -22,7 +22,7 @@ import (
 var (
 	getTextBytes = F.Flow3(
 		setUniqueID,
-		E.Chain(getText),
+		E.Chain(getTextE),
 		E.Map[error](S.ToBytes),
 	)
 )
@@ -76,7 +76,7 @@ func dataSourceTextRead(d *schema.ResourceData, m any) error {
 	)
 
 	return F.Pipe1(
-		seqResourceData([]E.Either[error, *schema.ResourceData]{renderedE, sha256E}),
+		seqResourceData([]ResourceDataE{renderedE, sha256E}),
 		E.ToError[[]*schema.ResourceData],
 	)
 }
@@ -91,7 +91,7 @@ func dataSourceTextEncryptedRead(d *schema.ResourceData, m any) error {
 	// get the encryption function
 	encryptE := F.Pipe3(
 		d,
-		getPubKey,
+		getCertificateE,
 		E.Map[error](S.ToBytes),
 		E.Map[error](encrypt.OpenSSLEncryptBasic),
 	)
@@ -113,7 +113,7 @@ func dataSourceTextEncryptedRead(d *schema.ResourceData, m any) error {
 	)
 
 	return F.Pipe1(
-		seqResourceData([]E.Either[error, *schema.ResourceData]{renderedE, sha256E}),
+		seqResourceData([]ResourceDataE{renderedE, sha256E}),
 		E.ToError[[]*schema.ResourceData],
 	)
 }
