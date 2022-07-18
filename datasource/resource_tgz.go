@@ -10,16 +10,31 @@
 package datasource
 
 import (
+	"bytes"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/terraform-provider-hpcr/archive"
 	"github.com/terraform-provider-hpcr/common"
+	"github.com/terraform-provider-hpcr/fp"
 	E "github.com/terraform-provider-hpcr/fp/either"
 	F "github.com/terraform-provider-hpcr/fp/function"
+	I "github.com/terraform-provider-hpcr/fp/identity"
+)
+
+var (
+	// marshal input folder
+	tarFolder = F.Flow4(
+		getFolderE,
+		E.Map[error](archive.TarFolder[*bytes.Buffer]),
+		E.Chain(I.Ap[*bytes.Buffer, E.Either[error, *bytes.Buffer]](new(bytes.Buffer))),
+		E.Map[error]((*bytes.Buffer).Bytes),
+	)
 )
 
 func ResourceTgzEncrypted() *schema.Resource {
 	return &schema.Resource{
-		Read:   tgzEncrypted.F1,
-		Create: tgzEncrypted.F2,
+		Create: tgzEncrypted.F1,
+		Read:   tgzEncrypted.F2,
 		Delete: tgzEncrypted.F3,
 		Schema: map[string]*schema.Schema{
 			common.KeyFolder:   &schemaFolderIn,
@@ -33,8 +48,8 @@ func ResourceTgzEncrypted() *schema.Resource {
 
 func ResourceTgz() *schema.Resource {
 	return &schema.Resource{
-		Read:   tgzUnencrypted.F1,
-		Create: tgzUnencrypted.F2,
+		Create: tgzUnencrypted.F1,
+		Read:   tgzUnencrypted.F2,
 		Delete: tgzUnencrypted.F3,
 		Schema: map[string]*schema.Schema{
 			common.KeyFolder:   &schemaFolderIn,
@@ -45,14 +60,14 @@ func ResourceTgz() *schema.Resource {
 	}
 }
 
-func resourceEncTgz(d *schema.ResourceData) ResourceDataE {
+func resourceEncTgz(d fp.ResourceData) ResourceDataE {
 
 	// marshal input folder
 	tarE := tarFolder(d)
 
 	return F.Pipe2(
 		tarE,
-		E.Map[error](createHash),
+		E.Chain(createHashWithCert(d)),
 		E.Chain(F.Flow3(
 			checksumMatchO(d),
 			updateEncryptedResource(d)(tarE),
@@ -62,14 +77,14 @@ func resourceEncTgz(d *schema.ResourceData) ResourceDataE {
 	)
 }
 
-func resourceTgz(d *schema.ResourceData) ResourceDataE {
+func resourceTgz(d fp.ResourceData) ResourceDataE {
 
 	// marshal input folder
 	tarE := tarFolder(d)
 
 	return F.Pipe2(
 		tarE,
-		E.Map[error](createHash),
+		createHashE,
 		E.Chain(F.Flow3(
 			checksumMatchO(d),
 			updateBase64Resource(d)(tarE),

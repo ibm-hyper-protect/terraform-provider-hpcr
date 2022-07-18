@@ -1,11 +1,11 @@
 variable "FOLDER" {
-  type        = string
+  type = string
 }
 
-data "hpcr_tgz" "sample" {
+resource "hpcr_tgz" "sample" {
   folder = var.FOLDER
 }
 
 output "result" {
-  value = data.hpcr_tgz.sample.rendered
+  value = resource.hpcr_tgz.sample.rendered
 }

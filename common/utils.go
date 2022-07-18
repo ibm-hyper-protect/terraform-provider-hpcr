@@ -15,6 +15,7 @@ import (
 
 	E "github.com/terraform-provider-hpcr/fp/either"
 	F "github.com/terraform-provider-hpcr/fp/function"
+	O "github.com/terraform-provider-hpcr/fp/option"
 )
 
 var (
@@ -28,3 +29,11 @@ var (
 
 	CreateTempE = E.Eitherize2(os.CreateTemp)
 )
+
+func ToTypeO[A any](data any) O.Option[A] {
+	value, ok := data.(A)
+	if ok {
+		return O.Some(value)
+	}
+	return O.None[A]()
+}

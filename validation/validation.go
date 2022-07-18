@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
+	"regexp"
 
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -23,7 +24,11 @@ import (
 	S "github.com/terraform-provider-hpcr/fp/string"
 )
 
-var statE = E.Eitherize1(os.Stat)
+var (
+	statE    = E.Eitherize1(os.Stat)
+	Base64Re = regexp.MustCompile(`^((?:[A-Za-z\d+/]{4})*(?:[A-Za-z\d+/]{3}=|[A-Za-z\d+/]{2}==)?)$`)
+	TokenRe  = regexp.MustCompile(`^hyper-protect-basic\.((?:[A-Za-z\d+/]{4})*(?:[A-Za-z\d+/]{3}=|[A-Za-z\d+/]{2}==)?)\.((?:[A-Za-z\d+/]{4})*(?:[A-Za-z\d+/]{3}=|[A-Za-z\d+/]{2}==)?)$`)
+)
 
 func toDiagnostics[A any](value E.Either[error, A]) diag.Diagnostics {
 	return F.Pipe1(

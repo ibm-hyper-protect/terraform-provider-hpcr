@@ -201,3 +201,9 @@ var CertSerial = F.Flow2(
 	OpenSSL("x509", "-serial", "-noout"),
 	mapStdout,
 )
+
+// gets the fingerprint of a certificate
+var CertFingerprint = F.Flow2(
+	OpenSSL("x509", "-noout", "-fingerprint", "-sha256"),
+	mapStdout,
+)

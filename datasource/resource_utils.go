@@ -19,7 +19,6 @@ import (
 	"github.com/terraform-provider-hpcr/data"
 	"github.com/terraform-provider-hpcr/encrypt"
 	"github.com/terraform-provider-hpcr/fp"
-	B "github.com/terraform-provider-hpcr/fp/bytes"
 	E "github.com/terraform-provider-hpcr/fp/either"
 	F "github.com/terraform-provider-hpcr/fp/function"
 	I "github.com/terraform-provider-hpcr/fp/identity"
@@ -31,16 +30,16 @@ import (
 )
 
 // shortcuts
-type ResourceDataE = E.Either[error, *schema.ResourceData]
-type ResourceLifeCycle = T.Tuple3[func(d *schema.ResourceData, m any) error, func(d *schema.ResourceData, m any) error, func(d *schema.ResourceData, m any) error]
+type ResourceDataE = E.Either[error, fp.ResourceData]
+type ResourceLifeCycle = T.Tuple3[func(*schema.ResourceData, any) error, func(*schema.ResourceData, any) error, func(*schema.ResourceData, any) error]
 
 var uuidE = E.Eitherize0(uuid.GenerateUUID)
 
 // assigns a new uuid to a resource
-func setUniqueID(d *schema.ResourceData) ResourceDataE {
+func setUniqueID(d fp.ResourceData) ResourceDataE {
 	return F.Pipe1(
 		uuidE(),
-		E.Map[error](func(id string) *schema.ResourceData {
+		E.Map[error](func(id string) fp.ResourceData {
 			d.SetId(id)
 			return d
 		}),
@@ -52,9 +51,8 @@ func createHash(data []byte) string {
 }
 
 var (
-	seqResourceData = E.SequenceArray[error, *schema.ResourceData]()
+	seqResourceData = E.SequenceArray[error, fp.ResourceData]()
 	setRendered     = fp.ResourceDataSet[string](common.KeyRendered)
-	setText         = fp.ResourceDataSet[string](common.KeyText)
 	setSha256       = fp.ResourceDataSet[string](common.KeySha256)
 	getJsonE        = fp.ResourceDataGetE[any](common.KeyJson)
 	getTextE        = fp.ResourceDataGetE[string](common.KeyText)
@@ -63,52 +61,19 @@ var (
 
 	getSha256O = fp.ResourceDataGetO[string](common.KeySha256)
 
-	// encode as sha256
-	computeSha256 = F.Flow3(
-		E.Map[error](sha256.Sum256),
-		E.Map[error](func(hash [sha256.Size]byte) string { return fmt.Sprintf("%x", hash) }),
-		E.Map[error](setSha256),
-	)
-
-	// encode as text
-	computeText = F.Flow2(
-		E.Map[error](B.ToString),
-		E.Map[error](setText),
-	)
-
-	schemaCertIn = schema.Schema{
-		Type:             schema.TypeString,
-		Description:      "Certificate used to encrypt the JSON document in PEM format",
-		Optional:         true,
-		Default:          data.DefaultCertificate,
-		ValidateDiagFunc: validation.DiagCertificate,
-	}
-
-	schemaTextOut = schema.Schema{
-		Type:     schema.TypeString,
-		Computed: true,
-	}
-
-	schemaRenderedOut = schema.Schema{
-		Type:     schema.TypeString,
-		Computed: true,
-	}
-
-	schemaSha256Out = schema.Schema{
-		Type:        schema.TypeString,
-		Computed:    true,
-		Description: "SHA256 of the input",
-	}
+	createHashE = E.Map[error](createHash)
 
 	schemaJsonIn = schema.Schema{
 		Type:        schema.TypeMap,
 		Required:    true,
+		ForceNew:    true,
 		Description: "JSON Document to archive",
 	}
 
 	schemaTextIn = schema.Schema{
 		Type:        schema.TypeString,
 		Required:    true,
+		ForceNew:    true,
 		Description: "Text to archive",
 	}
 
@@ -119,6 +84,27 @@ var (
 		Description:      "Path to the folder to encrypt",
 		ValidateDiagFunc: validation.DiagFolder,
 	}
+
+	schemaCertIn = schema.Schema{
+		Type:             schema.TypeString,
+		Description:      "Certificate used to encrypt the JSON document in PEM format",
+		Optional:         true,
+		ForceNew:         true,
+		Default:          data.DefaultCertificate,
+		ValidateDiagFunc: validation.DiagCertificate,
+	}
+
+	schemaRenderedOut = schema.Schema{
+		Type:        schema.TypeString,
+		Computed:    true,
+		Description: "Rendered output of the resource",
+	}
+
+	schemaSha256Out = schema.Schema{
+		Type:        schema.TypeString,
+		Computed:    true,
+		Description: "SHA256 of the input",
+	}
 )
 
 func resourceDeleteNoOp(d *schema.ResourceData, m any) error {
@@ -126,7 +112,7 @@ func resourceDeleteNoOp(d *schema.ResourceData, m any) error {
 }
 
 // returns a predicate that checks if the sha256 value in resource data matches the given value
-func checksumMatch(d *schema.ResourceData) func(string) bool {
+func checksumMatch(d fp.ResourceData) func(string) bool {
 	// get the sha
 	sha256O := F.Pipe1(
 		d,
@@ -141,12 +127,12 @@ func checksumMatch(d *schema.ResourceData) func(string) bool {
 	}
 }
 
-func updateResource(d *schema.ResourceData) func(func([]byte) E.Either[error, string]) func(E.Either[error, []byte]) func(O.Option[string]) O.Option[ResourceDataE] {
+func updateResource(d fp.ResourceData) func(func([]byte) E.Either[error, string]) func(E.Either[error, []byte]) func(O.Option[string]) O.Option[ResourceDataE] {
 	// compute the applicatives
-	apE := fp.ResourceDataAp[*schema.ResourceData](d)
-	apI := I.Ap[*schema.ResourceData, ResourceDataE](d)
+	apE := fp.ResourceDataAp[fp.ResourceData](d)
+	apI := I.Ap[fp.ResourceData, ResourceDataE](d)
 	// final result
-	resE := E.MapTo[error, []*schema.ResourceData](d)
+	resE := E.MapTo[error, []fp.ResourceData](d)
 
 	return func(serialize func([]byte) E.Either[error, string]) func(E.Either[error, []byte]) func(O.Option[string]) O.Option[ResourceDataE] {
 		// construct the serialization callback
@@ -191,7 +177,7 @@ var (
 
 	// common fallback
 	getResourceData = F.Flow3(
-		E.Of[error, *schema.ResourceData],
+		E.Of[error, fp.ResourceData],
 		F.Constant[ResourceDataE],
 		O.GetOrElse[ResourceDataE],
 	)
@@ -204,7 +190,7 @@ var (
 )
 
 // callback to update a resource using encryption base64 encoding
-func updateEncryptedResource(d *schema.ResourceData) func(E.Either[error, []byte]) func(O.Option[string]) O.Option[ResourceDataE] {
+func updateEncryptedResource(d fp.ResourceData) func(E.Either[error, []byte]) func(O.Option[string]) O.Option[ResourceDataE] {
 	return updateResource(d)(func(data []byte) E.Either[error, string] {
 		return F.Pipe4(
 			d,
@@ -216,25 +202,50 @@ func updateEncryptedResource(d *schema.ResourceData) func(E.Either[error, []byte
 	})
 }
 
-func resourceLifeCycle(f func(*schema.ResourceData) ResourceDataE) ResourceLifeCycle {
+func resourceLifeCycle(f func(fp.ResourceData) ResourceDataE) ResourceLifeCycle {
 
 	create := func(d *schema.ResourceData, m any) error {
-		return F.Pipe3(
+
+		return F.Pipe4(
 			d,
+			fp.CreateResourceDataProxy,
 			setUniqueID,
 			E.Chain(f),
-			E.ToError[*schema.ResourceData],
+			E.ToError[fp.ResourceData],
 		)
 	}
 
 	read := func(d *schema.ResourceData, m any) error {
-		return F.Pipe2(
+
+		return F.Pipe3(
 			d,
+			fp.CreateResourceDataProxy,
 			f,
-			E.ToError[*schema.ResourceData],
+			E.ToError[fp.ResourceData],
 		)
 	}
 	delete := resourceDeleteNoOp
 
 	return T.MakeTuple3(create, read, delete)
+}
+
+// computes a hash for the given bytes and includes the fingerprint of the certificate as part of the hash
+func createHashWithCert(d fp.ResourceData) func([]byte) E.Either[error, string] {
+	// get the fingerprint
+	fpE := F.Pipe3(
+		d,
+		getCertificateE,
+		E.Map[error](S.ToBytes),
+		E.Chain(encrypt.CertFingerprint),
+	)
+	// combine the fingerprint with the actual data
+	return func(data []byte) E.Either[error, string] {
+		return F.Pipe2(
+			fpE,
+			E.Map[error](func(fp []byte) []byte {
+				return append(fp[:], data[:]...)
+			}),
+			createHashE,
+		)
+	}
 }
