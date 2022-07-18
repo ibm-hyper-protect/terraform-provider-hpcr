@@ -3,7 +3,6 @@ package example
 import (
 	_ "embed"
 	"path/filepath"
-	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -25,7 +24,9 @@ func TestAccHelloWorld(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: ConfigHelloWorld,
-				Check:  resource.TestMatchOutput("user_data", regexp.MustCompile(`^.*$`)), // TestCheckOutput("user_data", validateUserData),
+				Check: resource.ComposeTestCheckFunc(
+					TestCheckOutput("user_data", validateUserData),
+				),
 			},
 		},
 	})

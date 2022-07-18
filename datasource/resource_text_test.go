@@ -35,7 +35,7 @@ func TestUnencryptedText(t *testing.T) {
 	)
 
 	assert.NoError(t, res)
-	assert.Regexp(t, validation.Base64Re, data[common.KeyRendered])
+	assert.Equal(t, data[common.KeyText], data[common.KeyRendered])
 }
 
 func TestEncryptedText(t *testing.T) {

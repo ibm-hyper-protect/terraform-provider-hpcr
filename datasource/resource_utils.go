@@ -187,6 +187,12 @@ var (
 		updateResource,
 		I.Ap[func([]byte) E.Either[error, string], func(E.Either[error, []byte]) func(O.Option[string]) O.Option[ResourceDataE]](common.Base64EncodeE),
 	)
+
+	// callback to update a resource using plain text encoding
+	updatePlainTextResource = F.Flow2(
+		updateResource,
+		I.Ap[func([]byte) E.Either[error, string], func(E.Either[error, []byte]) func(O.Option[string]) O.Option[ResourceDataE]](common.PlainTextEncodeE),
+	)
 )
 
 // callback to update a resource using encryption base64 encoding

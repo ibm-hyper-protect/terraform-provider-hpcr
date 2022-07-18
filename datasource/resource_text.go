@@ -81,7 +81,7 @@ func resourceText(d fp.ResourceData) ResourceDataE {
 		createHashE,
 		E.Chain(F.Flow3(
 			checksumMatchO(d),
-			updateBase64Resource(d)(textE),
+			updatePlainTextResource(d)(textE),
 			getResourceData(d),
 		),
 		),

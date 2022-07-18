@@ -18,7 +18,6 @@ import (
 	"github.com/terraform-provider-hpcr/fp"
 	E "github.com/terraform-provider-hpcr/fp/either"
 	F "github.com/terraform-provider-hpcr/fp/function"
-	I "github.com/terraform-provider-hpcr/fp/identity"
 )
 
 var (
@@ -26,7 +25,9 @@ var (
 	tarFolder = F.Flow4(
 		getFolderE,
 		E.Map[error](archive.TarFolder[*bytes.Buffer]),
-		E.Chain(I.Ap[*bytes.Buffer, E.Either[error, *bytes.Buffer]](new(bytes.Buffer))),
+		E.Chain(func(tar func(*bytes.Buffer) E.Either[error, *bytes.Buffer]) E.Either[error, *bytes.Buffer] {
+			return tar(new(bytes.Buffer))
+		}),
 		E.Map[error]((*bytes.Buffer).Bytes),
 	)
 )

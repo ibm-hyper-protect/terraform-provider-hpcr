@@ -13,6 +13,7 @@ import (
 	"encoding/base64"
 	"os"
 
+	B "github.com/terraform-provider-hpcr/fp/bytes"
 	E "github.com/terraform-provider-hpcr/fp/either"
 	F "github.com/terraform-provider-hpcr/fp/function"
 	O "github.com/terraform-provider-hpcr/fp/option"
@@ -24,6 +25,11 @@ var (
 
 	Base64EncodeE = F.Flow2(
 		Base64Encode,
+		E.Of[error, string],
+	)
+
+	PlainTextEncodeE = F.Flow2(
+		B.ToString,
 		E.Of[error, string],
 	)
 
