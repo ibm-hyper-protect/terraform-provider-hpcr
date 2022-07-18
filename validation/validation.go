@@ -37,7 +37,7 @@ func DiagCertificate(data any, _ cty.Path) diag.Diagnostics {
 	// convert the key
 	return F.Pipe4(
 		data,
-		fp.ToType[string],
+		fp.ToTypeE[string],
 		E.Map[error](S.ToBytes),
 		E.Chain(encrypt.CertSerial),
 		toDiagnostics[[]byte],
@@ -48,7 +48,7 @@ func DiagCertificate(data any, _ cty.Path) diag.Diagnostics {
 func DiagFolder(data any, _ cty.Path) diag.Diagnostics {
 	return F.Pipe4(
 		data,
-		fp.ToType[string],
+		fp.ToTypeE[string],
 		E.Chain(statE),
 		E.Chain(E.FromPredicate(fs.FileInfo.IsDir, func(info fs.FileInfo) error {
 			return fmt.Errorf("path %s is not a folder", info.Name())

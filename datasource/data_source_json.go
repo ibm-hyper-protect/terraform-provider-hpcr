@@ -24,7 +24,7 @@ import (
 var (
 	getJsonBytes = F.Flow4(
 		setUniqueID,
-		E.Chain(getJson),
+		E.Chain(getJsonE),
 		E.Map[error](F.Ref[any]),
 		E.Chain(J.Stringify[any]),
 	)
@@ -88,7 +88,7 @@ func dataSourceJsonRead(d *schema.ResourceData, m any) error {
 	)
 
 	return F.Pipe1(
-		seqResourceData([]E.Either[error, *schema.ResourceData]{renderedE, textE, sha256E}),
+		seqResourceData([]ResourceDataE{renderedE, textE, sha256E}),
 		E.ToError[[]*schema.ResourceData],
 	)
 }
@@ -104,7 +104,7 @@ func dataSourceJsonEncryptedRead(d *schema.ResourceData, m any) error {
 	// get the encryption function
 	encryptE := F.Pipe3(
 		d,
-		getPubKey,
+		getCertificateE,
 		E.Map[error](S.ToBytes),
 		E.Map[error](encrypt.OpenSSLEncryptBasic),
 	)
@@ -134,7 +134,7 @@ func dataSourceJsonEncryptedRead(d *schema.ResourceData, m any) error {
 	)
 
 	return F.Pipe1(
-		seqResourceData([]E.Either[error, *schema.ResourceData]{renderedE, textE, sha256E}),
+		seqResourceData([]ResourceDataE{renderedE, textE, sha256E}),
 		E.ToError[[]*schema.ResourceData],
 	)
 }

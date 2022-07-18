@@ -14,14 +14,17 @@ import (
 	"os"
 
 	E "github.com/terraform-provider-hpcr/fp/either"
+	F "github.com/terraform-provider-hpcr/fp/function"
 )
 
-func Base64Encode(buffer []byte) string {
-	return base64.StdEncoding.EncodeToString(buffer)
-}
-
 var (
+	Base64Encode  = base64.StdEncoding.EncodeToString
 	Base64DecodeE = E.Eitherize1(base64.StdEncoding.DecodeString)
+
+	Base64EncodeE = F.Flow2(
+		Base64Encode,
+		E.Of[error, string],
+	)
 
 	CreateTempE = E.Eitherize2(os.CreateTemp)
 )

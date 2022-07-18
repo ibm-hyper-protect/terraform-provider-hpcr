@@ -12,3 +12,7 @@ package string
 func ToBytes(a string) []byte {
 	return []byte(a)
 }
+
+func Equals(a string, b string) bool {
+	return a == b
+}
