@@ -56,6 +56,7 @@ var (
 	setSha256       = fp.ResourceDataSet[string](common.KeySha256)
 	getJsonE        = fp.ResourceDataGetE[any](common.KeyJson)
 	getTextE        = fp.ResourceDataGetE[string](common.KeyText)
+	getContractE    = fp.ResourceDataGetE[string](common.KeyContract)
 	getFolderE      = fp.ResourceDataGetE[string](common.KeyFolder)
 	getCertificateE = fp.ResourceDataGetE[string](common.KeyCert)
 
@@ -77,6 +78,14 @@ var (
 		Description: "Text to archive",
 	}
 
+	schemaContractIn = schema.Schema{
+		Type:             schema.TypeString,
+		Required:         true,
+		ForceNew:         true,
+		Description:      "YAML serialization of the contract",
+		ValidateDiagFunc: validation.DiagContract,
+	}
+
 	schemaFolderIn = schema.Schema{
 		Type:             schema.TypeString,
 		Required:         true,
@@ -91,6 +100,14 @@ var (
 		Optional:         true,
 		ForceNew:         true,
 		Default:          data.DefaultCertificate,
+		ValidateDiagFunc: validation.DiagCertificate,
+	}
+
+	schemaPrivKeyIn = schema.Schema{
+		Type:             schema.TypeString,
+		Description:      "Private key used to sign the contract",
+		Optional:         true,
+		ForceNew:         true,
 		ValidateDiagFunc: validation.DiagCertificate,
 	}
 

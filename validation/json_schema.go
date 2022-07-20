@@ -13,8 +13,12 @@ import (
 	"context"
 	"log"
 
+	"github.com/hashicorp/go-cty/cty"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/qri-io/jsonschema"
 	D "github.com/terraform-provider-hpcr/data"
+	"github.com/terraform-provider-hpcr/fp"
+	A "github.com/terraform-provider-hpcr/fp/array"
 	E "github.com/terraform-provider-hpcr/fp/either"
 	F "github.com/terraform-provider-hpcr/fp/function"
 	J "github.com/terraform-provider-hpcr/fp/json"
@@ -66,11 +70,56 @@ func ValidateYAML[A any](validator func(A) []jsonschema.KeyError) func(data stri
 	)
 }
 
+func schemaToDiagnostics(errs []jsonschema.KeyError) diag.Diagnostics {
+	return F.Pipe1(
+		errs,
+		A.Map(func(err jsonschema.KeyError) diag.Diagnostic {
+			return diag.Diagnostic{
+				Severity: diag.Error,
+				Summary:  err.Error(),
+			}
+		}),
+	)
+}
+
+func diagYAML[A any](validator func(A) []jsonschema.KeyError) func(data string) E.Either[error, diag.Diagnostics] {
+	return F.Flow4(
+		S.ToBytes,
+		Y.Parse[A],
+		E.Map[error](F.Deref[A]),
+		E.Map[error](F.Flow2(
+			validator,
+			schemaToDiagnostics,
+		),
+		),
+	)
+}
+
 // reads the json schema from a string representation into a schema representation
 func GetContractSchema() E.Either[error, *jsonschema.Schema] {
 	return F.Pipe2(
 		D.ContractSchema,
 		S.ToBytes,
 		J.Parse[jsonschema.Schema],
+	)
+}
+
+// validates that the given certificate is indeed a certificate
+func DiagContract(data any, _ cty.Path) diag.Diagnostics {
+	// convert the key
+	dataE := F.Pipe1(
+		data,
+		fp.ToTypeE[string],
+	)
+	// combine
+	return F.Pipe4(
+		GetContractSchema(),
+		E.Map[error](F.Flow2(
+			validate[RawMap],
+			diagYAML[RawMap],
+		)),
+		E.Ap[error, string, E.Either[error, diag.Diagnostics]](dataE),
+		E.Flatten[error, diag.Diagnostics],
+		E.GetOrElse(diag.FromErr),
 	)
 }

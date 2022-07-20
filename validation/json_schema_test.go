@@ -10,7 +10,6 @@
 package validation
 
 import (
-	"fmt"
 	"testing"
 
 	_ "embed"
@@ -23,6 +22,12 @@ import (
 
 //go:embed samples/simple.yml
 var TrivialContract string
+
+func TestDiagContract(t *testing.T) {
+	// construct the diagnostics
+	diags := DiagContract(TrivialContract, nil)
+	assert.Empty(t, diags)
+}
 
 func TestJsonSchema(t *testing.T) {
 	schemaE := GetContractSchema()
@@ -43,6 +48,6 @@ func TestValidate(t *testing.T) {
 		validatorE,
 		E.Chain(I.Ap[string, E.Either[error, RawMap]](TrivialContract)),
 	)
-
-	fmt.Println(resE)
+	// validate that we have some data
+	assert.True(t, resE.IsRight())
 }

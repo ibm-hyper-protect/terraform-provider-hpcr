@@ -8,12 +8,13 @@ import (
 func Provider() *schema.Provider {
 	return &schema.Provider{
 		ResourcesMap: map[string]*schema.Resource{
-			"hpcr_tgz":            datasource.ResourceTgz(),
-			"hpcr_tgz_encrypted":  datasource.ResourceTgzEncrypted(),
-			"hpcr_text":           datasource.ResourceText(),
-			"hpcr_text_encrypted": datasource.ResourceTextEncrypted(),
-			"hpcr_json":           datasource.ResourceJson(),
-			"hpcr_json_encrypted": datasource.ResourceJsonEncrypted(),
+			"hpcr_tgz":                datasource.ResourceTgz(),
+			"hpcr_tgz_encrypted":      datasource.ResourceTgzEncrypted(),
+			"hpcr_text":               datasource.ResourceText(),
+			"hpcr_text_encrypted":     datasource.ResourceTextEncrypted(),
+			"hpcr_json":               datasource.ResourceJson(),
+			"hpcr_json_encrypted":     datasource.ResourceJsonEncrypted(),
+			"hpcr_contract_encrypted": datasource.ResourceContractEncrypted(),
 		},
 	}
 }
