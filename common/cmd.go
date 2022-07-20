@@ -11,9 +11,11 @@ package common
 
 import (
 	"bytes"
+	"fmt"
 	"os/exec"
 
 	E "github.com/terraform-provider-hpcr/fp/either"
+	F "github.com/terraform-provider-hpcr/fp/function"
 	T "github.com/terraform-provider-hpcr/fp/tuple"
 )
 
@@ -26,19 +28,27 @@ var (
 
 func ExecCommand(name string, arg ...string) func([]byte) E.Either[error, CommandOutput] {
 	return func(dataIn []byte) E.Either[error, CommandOutput] {
-		return E.TryCatchError(func() (CommandOutput, error) {
-			// command input
-			cmd := exec.Command(name, arg...)
-			cmd.Stdin = bytes.NewReader(dataIn)
-			// command result
-			var stdOut bytes.Buffer
-			var stdErr bytes.Buffer
+		// command result
+		var stdOut bytes.Buffer
+		var stdErr bytes.Buffer
+		// execute the command
+		return F.Pipe1(
+			// run the command
+			E.TryCatchError(func() (CommandOutput, error) {
+				// command input
+				cmd := exec.Command(name, arg...)
+				cmd.Stdin = bytes.NewReader(dataIn)
 
-			cmd.Stdout = &stdOut
-			cmd.Stderr = &stdErr
+				cmd.Stdout = &stdOut
+				cmd.Stderr = &stdErr
 
-			err := cmd.Run()
-			return T.MakeTuple2(stdOut.Bytes(), stdErr.Bytes()), err
-		})
+				err := cmd.Run()
+				return T.MakeTuple2(stdOut.Bytes(), stdErr.Bytes()), err
+			}),
+			// enrich the error
+			E.MapLeft[error, CommandOutput](func(cause error) error {
+				return fmt.Errorf("command execution of [%s][%s] failed, stdout [%s], stderr [%s], cause [%w]", name, arg, stdOut.String(), stdErr.String(), cause)
+			}),
+		)
 	}
 }

@@ -1,0 +1,13 @@
+{
+    "json.schemas": [
+        {            
+            "fileMatch": [
+                "samples/contract/*.json"
+            ],
+            "url": "/data/hpha-se-contract-schema-1.1.79.json"
+        }
+    ],
+    "yaml.schemas": {
+        "data/hpha-se-contract-schema-1.1.79.json": "samples/contract/*.yml"
+    }
+}
