@@ -17,16 +17,28 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	B "github.com/terraform-provider-hpcr/fp/bytes"
 	E "github.com/terraform-provider-hpcr/fp/either"
 	F "github.com/terraform-provider-hpcr/fp/function"
 )
 
+func TestOpenSSLBinaryFromEnv(t *testing.T) {
+	somepath := "/somepath/openssl.exe"
+	t.Setenv(KeyEnvOpenSSL, somepath)
+
+	assert.Equal(t, somepath, openSSLBinary())
+}
+
+func TestOpenSSLBinary(t *testing.T) {
+	assert.NotEmpty(t, openSSLBinary())
+}
+
 func TestVersion(t *testing.T) {
 
-	res := openSSLVersion
+	res := openSSLVersion()
 
-	fmt.Println(res)
+	assert.NotEmpty(t, E.IsRight(res))
 }
 
 func TestRandomPassword(t *testing.T) {

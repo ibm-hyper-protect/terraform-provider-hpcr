@@ -26,43 +26,100 @@ import (
 	FL "github.com/terraform-provider-hpcr/fp/file"
 	F "github.com/terraform-provider-hpcr/fp/function"
 	I "github.com/terraform-provider-hpcr/fp/identity"
+	O "github.com/terraform-provider-hpcr/fp/option"
 	S "github.com/terraform-provider-hpcr/fp/string"
+	T "github.com/terraform-provider-hpcr/fp/tuple"
 )
 
+// openSSL version, including the path to the binary
+type OpenSSLVersion = T.Tuple2[string, string]
+
 var (
+	// name of the environment variable carrying the openSSL binary
+	KeyEnvOpenSSL = "OPENSSL_BIN"
+
+	// default name of the openSSL binary
+	defaultOpenSSL = "openssl"
+
 	// the empty byte array
 	emptyBytes = RA.Empty[byte]()
 
 	// operator to extract stdout
 	mapStdout = E.Map[error](common.GetStdOut)
 
-	// version string of the openSSL binary
-	openSSLVersion = F.Pipe4(
-		emptyBytes,
-		common.ExecCommand("openssl", "version"),
-		mapStdout,
-		E.Map[error](B.ToString),
-		E.Map[error](strings.TrimSpace),
-	)
-
-	// command name of the valid openSSL binary
-	validOpenSSL = F.Pipe1(
-		openSSLVersion,
-		E.Chain(func(version string) E.Either[error, string] {
-			if strings.Contains(version, "OpenSSL") {
-				return E.Of[error]("openssl")
-			}
-			return E.Left[error, string](fmt.Errorf("openSSL Version [%s] is unsupported", version))
-
-		}),
-	)
+	getPath    = T.FirstOf2[string, string]
+	getVersion = T.SecondOf2[string, string]
 
 	// operator to convert stdout to base64
 	base64StdOut = F.Flow2(
 		mapStdout,
 		E.Map[error](common.Base64Encode),
 	)
+
+	AsymmetricEncryptPub = handle(asymmetricEncryptPub)
+
+	AsymmetricEncryptCert = handle(asymmetricEncryptCert)
+
+	AsymmerticDecrypt = handle(asymmetricDecrypt)
+
+	SymmetricEncrypt = handle(symmetricEncrypt)
+
+	// gets the public key from a private key
+	PublicKey = F.Flow2(
+		OpenSSL("rsa", "-pubout"),
+		mapStdout,
+	)
+
+	// gets the serial number from a certificate
+	CertSerial = F.Flow2(
+		OpenSSL("x509", "-serial", "-noout"),
+		mapStdout,
+	)
+
+	// gets the fingerprint of a certificate
+	CertFingerprint = F.Flow2(
+		OpenSSL("x509", "-noout", "-fingerprint", "-sha256"),
+		mapStdout,
+	)
 )
+
+// version string of the openSSL binary together with the binary
+func openSSLVersion() E.Either[error, OpenSSLVersion] {
+	// binary
+	bin := openSSLBinary()
+	// check the version
+	return F.Pipe5(
+		emptyBytes,
+		common.ExecCommand(bin, "version"),
+		mapStdout,
+		E.Map[error](B.ToString),
+		E.Map[error](strings.TrimSpace),
+		E.Map[error](F.Bind1st(T.MakeTuple2[string, string], bin)),
+	)
+}
+
+// name of the open SSL binary either from the environment or a fallback
+func openSSLBinary() string {
+	return F.Pipe2(
+		KeyEnvOpenSSL,
+		O.FromValidation(os.LookupEnv),
+		O.GetOrElse(F.Constant(defaultOpenSSL)),
+	)
+}
+
+// command name of the valid openSSL binary
+func validOpenSSL() E.Either[error, string] {
+	return F.Pipe1(
+		openSSLVersion(),
+		E.Chain(func(version OpenSSLVersion) E.Either[error, string] {
+			v := getVersion(version)
+			if strings.Contains(v, "OpenSSL") {
+				return E.Of[error](getPath(version))
+			}
+			return E.Left[error, string](fmt.Errorf("openSSL Version [%s] is unsupported", v))
+		}),
+	)
+}
 
 // helper to safely write data into a file
 func writeData[W io.Writer](data []byte) func(w W) E.Either[error, int] {
@@ -76,7 +133,7 @@ func writeData[W io.Writer](data []byte) func(w W) E.Either[error, int] {
 func OpenSSL(args ...string) func([]byte) E.Either[error, common.CommandOutput] {
 	// validate the version of openssl and make sure to use the right one
 	cmdE := F.Pipe1(
-		validOpenSSL,
+		validOpenSSL(),
 		E.Map[error](func(cmd string) func([]byte) E.Either[error, common.CommandOutput] {
 			return common.ExecCommand(cmd, args...)
 		}),
@@ -140,8 +197,6 @@ func asymmetricEncryptPub(keyFile string) func([]byte) E.Either[error, string] {
 	)
 }
 
-var AsymmetricEncryptPub = handle(asymmetricEncryptPub)
-
 func asymmetricEncryptCert(certFile string) func([]byte) E.Either[error, string] {
 	return F.Flow2(
 		OpenSSL("rsautl", "-encrypt", "-certin", "-inkey", certFile),
@@ -149,18 +204,12 @@ func asymmetricEncryptCert(certFile string) func([]byte) E.Either[error, string]
 	)
 }
 
-var AsymmetricEncryptCert = handle(asymmetricEncryptCert)
-
-var AsymmerticDecrypt = handle(asymmetricDecrypt)
-
 func symmetricEncrypt(dataFile string) func([]byte) E.Either[error, string] {
 	return F.Flow2(
 		OpenSSL("enc", "-aes-256-cbc", "-pbkdf2", "-in", dataFile, "-pass", "stdin"),
 		base64StdOut,
 	)
 }
-
-var SymmetricEncrypt = handle(symmetricEncrypt)
 
 func symmetricDecrypt(dataFile string) func([]byte) E.Either[error, []byte] {
 	return F.Flow2(
@@ -193,21 +242,3 @@ func PrivateKey() E.Either[error, []byte] {
 		mapStdout,
 	)
 }
-
-// gets the public key from a private key
-var PublicKey = F.Flow2(
-	OpenSSL("rsa", "-pubout"),
-	mapStdout,
-)
-
-// gets the serial number from a certificate
-var CertSerial = F.Flow2(
-	OpenSSL("x509", "-serial", "-noout"),
-	mapStdout,
-)
-
-// gets the fingerprint of a certificate
-var CertFingerprint = F.Flow2(
-	OpenSSL("x509", "-noout", "-fingerprint", "-sha256"),
-	mapStdout,
-)

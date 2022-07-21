@@ -73,6 +73,7 @@ var (
 		Type:        schema.TypeMap,
 		Required:    true,
 		ForceNew:    true,
+		Sensitive:   true,
 		Description: "JSON Document to archive",
 	}
 
@@ -80,6 +81,7 @@ var (
 		Type:        schema.TypeString,
 		Required:    true,
 		ForceNew:    true,
+		Sensitive:   true,
 		Description: "Text to archive",
 	}
 
@@ -87,6 +89,7 @@ var (
 		Type:             schema.TypeString,
 		Required:         true,
 		ForceNew:         true,
+		Sensitive:        true,
 		Description:      "YAML serialization of the contract",
 		ValidateDiagFunc: validation.DiagContract,
 	}
@@ -113,6 +116,7 @@ var (
 		Description:      "Private key used to sign the contract",
 		Optional:         true,
 		ForceNew:         true,
+		Sensitive:        true,
 		ValidateDiagFunc: validation.DiagCertificate,
 	}
 
