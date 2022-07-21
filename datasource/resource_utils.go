@@ -38,6 +38,7 @@ import (
 type ResourceDataE = E.Either[error, fp.ResourceData]
 type ResourceLifeCycle = T.Tuple3[func(*schema.ResourceData, any) error, func(*schema.ResourceData, any) error, func(*schema.ResourceData, any) error]
 
+// produces a new UUID
 var uuidE = E.Eitherize0(uuid.GenerateUUID)
 
 // assigns a new uuid to a resource
