@@ -2,6 +2,11 @@
 
 Implementation of a [terraform provider](https://www.terraform.io/language/providers) to support working with [IBM Cloud Hyper Protect Virtual Server for IBM Cloud VPC](https://cloud.ibm.com/docs/vpc?topic=vpc-about-se).
 
+## Prerequisite
+
+- Installation of [terraform](https://www.terraform.io/downloads) for your platform
+- [OpenSSL](https://www.openssl.org/) binary (not LibreSSL), the path to the binary can be configured via the `OPENSSL_BIN` environment variable
+
 ## Usage
 
 The [terraform provider](https://www.terraform.io/language/providers) exposes a set of [resources](https://www.terraform.io/language/resources) that help assemble the user_data section for a contract:
