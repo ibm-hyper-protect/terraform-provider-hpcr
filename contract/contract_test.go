@@ -15,9 +15,85 @@
 package contract
 
 import (
+	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/terraform-provider-hpcr/common"
+	"github.com/terraform-provider-hpcr/encrypt"
+	B "github.com/terraform-provider-hpcr/fp/bytes"
+	E "github.com/terraform-provider-hpcr/fp/either"
+	F "github.com/terraform-provider-hpcr/fp/function"
+	I "github.com/terraform-provider-hpcr/fp/identity"
+)
+
+var (
+	// keypair for testing
+	privKey = encrypt.PrivateKey()
+	pubKey  = F.Pipe1(
+		privKey,
+		E.Chain(encrypt.PublicKey),
+	)
+
+	// the encryption function based on the keys
+	openSSLEncryptBasicE = F.Pipe1(
+		pubKey,
+		E.Map[error](func(pubKey []byte) func([]byte) E.Either[error, string] {
+			return encrypt.EncryptBasic(encrypt.RandomPassword(32), encrypt.AsymmetricEncryptPub(pubKey), encrypt.SymmetricEncrypt)
+		}),
+	)
 )
 
 func TestAddSigningKey(t *testing.T) {
+	privKeyE := encrypt.PrivateKey()
+	// add to key
+	addKey := F.Pipe1(
+		privKeyE,
+		E.Map[error](addSigningKey),
+	)
+	// the target map
+	var env RawMap
 
+	augE := F.Pipe3(
+		addKey,
+		E.Chain(I.Ap[RawMap, E.Either[error, RawMap]](env)),
+		E.ChainOptionK[error, RawMap, any](func() error {
+			return fmt.Errorf("No key [%s]", KeySigningKey)
+		})(getSigningKey),
+		E.Chain(common.ToTypeE[string]),
+	)
+
+	pubE := F.Pipe2(
+		privKeyE,
+		E.Chain(encrypt.PublicKey),
+		E.Map[error](B.ToString),
+	)
+
+	assert.Equal(t, pubE, augE)
+}
+
+func TestUpsetEncrypted(t *testing.T) {
+	// the encryption function
+	upsertE := F.Pipe1(
+		openSSLEncryptBasicE,
+		E.Map[error](upsertEncrypted),
+	)
+	// encrypt env
+	encEnv := F.Pipe1(
+		upsertE,
+		E.Map[error](I.Ap[string, func(RawMap) E.Either[error, RawMap]](KeyEnv)),
+	)
+	// prepare some data
+	data := RawMap{
+		KeyEnv: RawMap{
+			"type": "env",
+		},
+	}
+	// encrypt the data
+	resE := F.Pipe1(
+		encEnv,
+		E.Chain(I.Ap[RawMap, E.Either[error, RawMap]](data)),
+	)
+
+	fmt.Println(resE)
 }

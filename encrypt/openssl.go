@@ -81,6 +81,12 @@ var (
 		OpenSSL("x509", "-noout", "-fingerprint", "-sha256"),
 		mapStdout,
 	)
+
+	// gets the fingerprint of a certificate
+	KeyFingerprint = F.Flow2(
+		OpenSSL("x509", "-noout", "-fingerprint", "-sha256"),
+		mapStdout,
+	)
 )
 
 // version string of the openSSL binary together with the binary
