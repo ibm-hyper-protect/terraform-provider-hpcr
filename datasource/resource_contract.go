@@ -24,69 +24,38 @@ import (
 )
 
 var (
-	textBytes = F.Flow2(
-		getTextE,
+	contractBytes = F.Flow2(
+		getContractE,
 		E.Map[error](S.ToBytes),
 	)
 )
 
-func ResourceText() *schema.Resource {
+func ResourceContractEncrypted() *schema.Resource {
 	return &schema.Resource{
-		Create: textUnencrypted.F1,
-		Read:   textUnencrypted.F2,
-		Delete: textUnencrypted.F3,
+		Create: contractEncrypted.F1,
+		Read:   contractEncrypted.F2,
+		Delete: contractEncrypted.F3,
 		Schema: map[string]*schema.Schema{
-			common.KeyText:     &schemaTextIn,
-			common.KeyRendered: &schemaRenderedOut,
-			common.KeySha256:   &schemaSha256Out,
-		},
-		Description: "Generates an base64 encoded token from text input",
-	}
-}
-
-func ResourceTextEncrypted() *schema.Resource {
-	return &schema.Resource{
-		Create: textEncrypted.F1,
-		Read:   textEncrypted.F2,
-		Delete: textEncrypted.F3,
-		Schema: map[string]*schema.Schema{
-			common.KeyText:     &schemaTextIn,
+			common.KeyContract: &schemaContractIn,
 			common.KeyCert:     &schemaCertIn,
 			common.KeyRendered: &schemaRenderedOut,
 			common.KeySha256:   &schemaSha256Out,
 		},
-		Description: "Generates an encrypted token from text input",
+		Description: "Generates an encrypted and signed user data field",
 	}
 }
 
-func resourceEncText(d fp.ResourceData) ResourceDataE {
+func resourceEncContract(d fp.ResourceData) ResourceDataE {
 
 	// marshal input text
-	textE := textBytes(d)
+	contractE := contractBytes(d)
 
 	return F.Pipe2(
-		textE,
+		contractE,
 		E.Chain(createHashWithCert(d)),
 		E.Chain(F.Flow3(
 			checksumMatchO(d),
-			updateEncryptedResource(d)(textE),
-			getResourceData(d),
-		),
-		),
-	)
-}
-
-func resourceText(d fp.ResourceData) ResourceDataE {
-
-	// marshal input text
-	textE := textBytes(d)
-
-	return F.Pipe2(
-		textE,
-		createHashE,
-		E.Chain(F.Flow3(
-			checksumMatchO(d),
-			updatePlainTextResource(d)(textE),
+			updateEncryptedResource(d)(contractE),
 			getResourceData(d),
 		),
 		),
@@ -94,6 +63,5 @@ func resourceText(d fp.ResourceData) ResourceDataE {
 }
 
 var (
-	textUnencrypted = resourceLifeCycle(resourceText)
-	textEncrypted   = resourceLifeCycle(resourceEncText)
+	contractEncrypted = resourceLifeCycle(resourceEncContract)
 )

@@ -11,33 +11,27 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package archive
+package common
 
 import (
-	"bytes"
-	"encoding/base64"
 	"fmt"
-	"io"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	E "github.com/terraform-provider-hpcr/fp/either"
-	F "github.com/terraform-provider-hpcr/fp/function"
 )
 
-func TestTgz(t *testing.T) {
-	var body bytes.Buffer
+func TestCommandOk(t *testing.T) {
 
-	base64 := base64.NewEncoder(base64.StdEncoding, &body)
+	cmdE := ExecCommand("openssl", "help")(make([]byte, 0))
 
-	resE := F.Pipe3(
-		base64,
-		TarFolder[io.WriteCloser]("../samples/nginx-golang"),
-		E.Chain(onClose[io.WriteCloser]),
-		E.MapTo[error, any](true),
-	)
+	assert.True(t, cmdE.IsRight())
+}
 
-	assert.Equal(t, E.Of[error](true), resE)
+func TestCommandFail(t *testing.T) {
 
-	fmt.Println(body.String())
+	cmdE := ExecCommand("openssl", "help1")(make([]byte, 0))
+
+	fmt.Println(cmdE)
+
+	assert.True(t, cmdE.IsLeft())
 }

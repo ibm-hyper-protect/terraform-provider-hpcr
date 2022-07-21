@@ -1,12 +1,17 @@
+// Copyright 2022 IBM Corp.
 //
-// Licensed Materials - Property of IBM
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
-// 5737-I09
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
-// Copyright IBM Corp. 2022 All Rights Reserved.
-// US Government Users Restricted Rights - Use, duplication or
-// disclosure restricted by GSA ADP Schedule Contract with IBM Corp
-//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.package datasource
+
 package datasource
 
 import (
@@ -56,6 +61,7 @@ var (
 	setSha256       = fp.ResourceDataSet[string](common.KeySha256)
 	getJsonE        = fp.ResourceDataGetE[any](common.KeyJson)
 	getTextE        = fp.ResourceDataGetE[string](common.KeyText)
+	getContractE    = fp.ResourceDataGetE[string](common.KeyContract)
 	getFolderE      = fp.ResourceDataGetE[string](common.KeyFolder)
 	getCertificateE = fp.ResourceDataGetE[string](common.KeyCert)
 
@@ -77,6 +83,14 @@ var (
 		Description: "Text to archive",
 	}
 
+	schemaContractIn = schema.Schema{
+		Type:             schema.TypeString,
+		Required:         true,
+		ForceNew:         true,
+		Description:      "YAML serialization of the contract",
+		ValidateDiagFunc: validation.DiagContract,
+	}
+
 	schemaFolderIn = schema.Schema{
 		Type:             schema.TypeString,
 		Required:         true,
@@ -91,6 +105,14 @@ var (
 		Optional:         true,
 		ForceNew:         true,
 		Default:          data.DefaultCertificate,
+		ValidateDiagFunc: validation.DiagCertificate,
+	}
+
+	schemaPrivKeyIn = schema.Schema{
+		Type:             schema.TypeString,
+		Description:      "Private key used to sign the contract",
+		Optional:         true,
+		ForceNew:         true,
 		ValidateDiagFunc: validation.DiagCertificate,
 	}
 
