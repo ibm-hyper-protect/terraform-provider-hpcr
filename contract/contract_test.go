@@ -25,6 +25,7 @@ import (
 	E "github.com/terraform-provider-hpcr/fp/either"
 	F "github.com/terraform-provider-hpcr/fp/function"
 	I "github.com/terraform-provider-hpcr/fp/identity"
+	R "github.com/terraform-provider-hpcr/fp/record"
 )
 
 var (
@@ -72,6 +73,9 @@ func TestAddSigningKey(t *testing.T) {
 	assert.Equal(t, pubE, augE)
 }
 
+// regular expression used to split the token
+// var tokenRe = regexp.MustCompile(`^hyper-protect-basic\.((?:[A-Za-z\d+/]{4})*(?:[A-Za-z\d+/]{3}=|[A-Za-z\d+/]{2}==)?)\.((?:[A-Za-z\d+/]{4})*(?:[A-Za-z\d+/]{3}=|[A-Za-z\d+/]{2}==)?)$`)
+
 func TestUpsetEncrypted(t *testing.T) {
 	// the encryption function
 	upsertE := F.Pipe1(
@@ -94,6 +98,19 @@ func TestUpsetEncrypted(t *testing.T) {
 		encEnv,
 		E.Chain(I.Ap[RawMap, E.Either[error, RawMap]](data)),
 	)
+	// validate that the key exists and that it is a token
+	getKeyE := F.Flow2(
+		R.Lookup[string, any](KeyEnv),
+		E.FromOption[error, any](func() error {
+			return fmt.Errorf("Key not found")
+		}),
+	)
 
-	fmt.Println(resE)
+	r := F.Pipe2(
+		resE,
+		E.Chain(getKeyE),
+		E.Chain(common.ToTypeE[string]),
+	)
+
+	fmt.Println(r)
 }
