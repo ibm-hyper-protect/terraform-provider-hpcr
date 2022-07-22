@@ -282,3 +282,35 @@ func createHashWithCert(d fp.ResourceData) func([]byte) E.Either[error, string] 
 		)
 	}
 }
+
+// computes a hash for the given bytes and includes the fingerprint of the certificate as part of the hash
+func createHashWithCertAndPrivateKey(d fp.ResourceData) func([]byte) E.Either[error, string] {
+	// get the fingerprint for the certificate
+	certE := F.Pipe3(
+		d,
+		getCertificateE,
+		E.Map[error](S.ToBytes),
+		E.Chain(encrypt.CertFingerprint),
+	)
+	// get the fingerprint for the private key
+	privKeyE := F.Pipe4(
+		d,
+		getPrivKeyE,
+		E.Map[error](S.ToBytes),
+		E.Chain(encrypt.PrivKeyFingerprint),
+		E.Alt(F.Constant(E.Of[error](B.Monoid.Empty()))),
+	)
+	// combine into one
+	fp := E.Sequence2(func(left, right []byte) E.Either[error, []byte] {
+		return E.Of[error](B.Monoid.Concat(left, right))
+	})
+
+	// combine the fingerprint with the actual data
+	return func(data []byte) E.Either[error, string] {
+		return F.Pipe2(
+			fp(certE, privKeyE),
+			E.Map[error](F.Bind2nd(B.Monoid.Concat, data)),
+			createHashE,
+		)
+	}
+}

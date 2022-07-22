@@ -18,16 +18,19 @@ import (
 	"github.com/terraform-provider-hpcr/datasource"
 )
 
-func Provider() *schema.Provider {
-	return &schema.Provider{
-		ResourcesMap: map[string]*schema.Resource{
-			"hpcr_tgz":                datasource.ResourceTgz(),
-			"hpcr_tgz_encrypted":      datasource.ResourceTgzEncrypted(),
-			"hpcr_text":               datasource.ResourceText(),
-			"hpcr_text_encrypted":     datasource.ResourceTextEncrypted(),
-			"hpcr_json":               datasource.ResourceJSON(),
-			"hpcr_json_encrypted":     datasource.ResourceJSONEncrypted(),
-			"hpcr_contract_encrypted": datasource.ResourceContractEncrypted(),
-		},
+func Provider(version, commit string) func() *schema.Provider {
+	return func() *schema.Provider {
+		return &schema.Provider{
+			ResourcesMap: map[string]*schema.Resource{
+				"hpcr_tgz":                datasource.ResourceTgz(),
+				"hpcr_tgz_encrypted":      datasource.ResourceTgzEncrypted(),
+				"hpcr_text":               datasource.ResourceText(),
+				"hpcr_text_encrypted":     datasource.ResourceTextEncrypted(),
+				"hpcr_json":               datasource.ResourceJSON(),
+				"hpcr_json_encrypted":     datasource.ResourceJSONEncrypted(),
+				"hpcr_contract_encrypted": datasource.ResourceContractEncrypted(),
+			},
+			ConfigureContextFunc: datasource.ConfigureContext(version),
+		}
 	}
 }

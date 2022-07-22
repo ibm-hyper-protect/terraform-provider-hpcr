@@ -83,6 +83,14 @@ var (
 		OpenSSL("x509", "-noout", "-fingerprint", "-sha256"),
 		mapStdout,
 	)
+
+	// gets the fingerprint of the private key
+	PrivKeyFingerprint = F.Flow4(
+		OpenSSL("rsa", "-pubout", "-outform", "DER"),
+		mapStdout,
+		E.Chain(OpenSSL("sha256", "--binary")),
+		mapStdout,
+	)
 )
 
 // version string of the openSSL binary together with the binary

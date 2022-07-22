@@ -89,3 +89,15 @@ func TestSignDigest(t *testing.T) {
 
 	assert.True(t, E.IsRight(resE))
 }
+
+func TestPrivKeyFingerprint(t *testing.T) {
+	// some key
+	privKeyE := PrivateKey()
+
+	fpE := F.Pipe1(
+		privKeyE,
+		E.Chain(PrivKeyFingerprint),
+	)
+
+	assert.True(t, E.IsRight(fpE))
+}

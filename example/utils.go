@@ -32,7 +32,7 @@ import (
 var (
 	providerName      = "hpcr"
 	providerFactories = map[string]func() (*schema.Provider, error){
-		providerName: func() (*schema.Provider, error) { return provider.Provider(), nil },
+		providerName: func() (*schema.Provider, error) { return provider.Provider("0.0.0", "testing")(), nil },
 	}
 )
 

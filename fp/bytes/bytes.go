@@ -28,3 +28,9 @@ func Slice(start int, end int) func([]byte) []byte {
 		return a[start:end]
 	}
 }
+
+func Copy(b []byte) []byte {
+	buf := make([]byte, len(b))
+	copy(buf, b)
+	return buf
+}

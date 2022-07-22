@@ -95,7 +95,7 @@ func resourceEncContract(d fp.ResourceData) ResourceDataE {
 
 	return F.Pipe2(
 		contractE,
-		E.Chain(createHashWithCert(d)),
+		E.Chain(createHashWithCertAndPrivateKey(d)),
 		E.Chain(F.Flow3(
 			checksumMatchO(d),
 			updateContract(d)(contractE),
