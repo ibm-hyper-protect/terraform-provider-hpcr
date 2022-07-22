@@ -12,30 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.package datasource
 
-package datasource
+package monoid
 
 import (
-	"github.com/terraform-provider-hpcr/fp"
+	S "github.com/terraform-provider-hpcr/fp/semigroup"
 )
 
-type resourceDataMock struct {
-	data map[string]any
-}
-
-func (mock resourceDataMock) GetOk(key string) (any, bool) {
-	value, exists := mock.data[key]
-	return value, exists
-}
-
-func (mock resourceDataMock) SetID(value string) {
-	// noop
-}
-
-func (mock resourceDataMock) Set(key string, value any) error {
-	mock.data[key] = value
-	return nil
-}
-
-func CreateResourceDataMock(data map[string]any) fp.ResourceData {
-	return resourceDataMock{data: data}
+func ApplicativeMonoid[A, HKTA, HKTFA any](
+	_of func(A) HKTA,
+	_map func(HKTA, func(A) func(A) A) HKTFA,
+	_ap func(HKTFA, HKTA) HKTA,
+) func(Monoid[A]) Monoid[HKTA] {
+	f := S.ApplySemigroup(_map, _ap)
+	return func(m Monoid[A]) Monoid[HKTA] {
+		return MakeMonoid(
+			f(m).Concat,
+			_of(m.Empty()),
+		)
+	}
 }

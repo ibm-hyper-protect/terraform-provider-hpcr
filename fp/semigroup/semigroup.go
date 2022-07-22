@@ -12,30 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.package datasource
 
-package datasource
+package semigroup
 
 import (
-	"github.com/terraform-provider-hpcr/fp"
+	M "github.com/terraform-provider-hpcr/fp/magma"
 )
 
-type resourceDataMock struct {
-	data map[string]any
+type Semigroup[A any] interface {
+	M.Magma[A]
 }
 
-func (mock resourceDataMock) GetOk(key string) (any, bool) {
-	value, exists := mock.data[key]
-	return value, exists
+type semigroup[A any] struct {
+	c func(A, A) A
 }
 
-func (mock resourceDataMock) SetID(value string) {
-	// noop
+func (self semigroup[A]) Concat(x A, y A) A {
+	return self.c(x, y)
 }
 
-func (mock resourceDataMock) Set(key string, value any) error {
-	mock.data[key] = value
-	return nil
+func MakeSemigroup[A any](c func(A, A) A) Semigroup[A] {
+	return semigroup[A]{c: c}
 }
 
-func CreateResourceDataMock(data map[string]any) fp.ResourceData {
-	return resourceDataMock{data: data}
+func Reverse[A any](m Semigroup[A]) Semigroup[A] {
+	return MakeSemigroup(M.Reverse[A](m).Concat)
 }

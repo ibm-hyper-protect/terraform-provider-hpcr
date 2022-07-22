@@ -24,6 +24,7 @@ import (
 	"github.com/terraform-provider-hpcr/data"
 	"github.com/terraform-provider-hpcr/encrypt"
 	"github.com/terraform-provider-hpcr/fp"
+	B "github.com/terraform-provider-hpcr/fp/bytes"
 	E "github.com/terraform-provider-hpcr/fp/either"
 	F "github.com/terraform-provider-hpcr/fp/function"
 	I "github.com/terraform-provider-hpcr/fp/identity"
@@ -46,7 +47,7 @@ func setUniqueID(d fp.ResourceData) ResourceDataE {
 	return F.Pipe1(
 		uuidE(),
 		E.Map[error](func(id string) fp.ResourceData {
-			d.SetId(id)
+			d.SetID(id)
 			return d
 		}),
 	)
@@ -60,7 +61,7 @@ var (
 	seqResourceData = E.SequenceArray[error, fp.ResourceData]()
 	setRendered     = fp.ResourceDataSet[string](common.KeyRendered)
 	setSha256       = fp.ResourceDataSet[string](common.KeySha256)
-	getJsonE        = fp.ResourceDataGetE[any](common.KeyJson)
+	getJsonE        = fp.ResourceDataGetE[any](common.KeyJSON)
 	getTextE        = fp.ResourceDataGetE[string](common.KeyText)
 	getContractE    = fp.ResourceDataGetE[string](common.KeyContract)
 	getFolderE      = fp.ResourceDataGetE[string](common.KeyFolder)
@@ -275,9 +276,7 @@ func createHashWithCert(d fp.ResourceData) func([]byte) E.Either[error, string] 
 	return func(data []byte) E.Either[error, string] {
 		return F.Pipe2(
 			fpE,
-			E.Map[error](func(fp []byte) []byte {
-				return append(fp[:], data[:]...)
-			}),
+			E.Map[error](F.Bind2nd(B.Monoid.Concat, data)),
 			createHashE,
 		)
 	}

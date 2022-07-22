@@ -12,30 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.package datasource
 
-package datasource
+package semigroup
 
 import (
-	"github.com/terraform-provider-hpcr/fp"
+	F "github.com/terraform-provider-hpcr/fp/function"
 )
 
-type resourceDataMock struct {
-	data map[string]any
-}
-
-func (mock resourceDataMock) GetOk(key string) (any, bool) {
-	value, exists := mock.data[key]
-	return value, exists
-}
-
-func (mock resourceDataMock) SetID(value string) {
-	// noop
-}
-
-func (mock resourceDataMock) Set(key string, value any) error {
-	mock.data[key] = value
-	return nil
-}
-
-func CreateResourceDataMock(data map[string]any) fp.ResourceData {
-	return resourceDataMock{data: data}
+/**
+HKTA = HKT<A>
+HKTFA = HKT<func(A)A>
+*/
+func ApplySemigroup[A, HKTA, HKTFA any](
+	_map func(HKTA, func(A) func(A) A) HKTFA,
+	_ap func(HKTFA, HKTA) HKTA,
+) func(s Semigroup[A]) Semigroup[HKTA] {
+	return func(s Semigroup[A]) Semigroup[HKTA] {
+		cb := F.Curry2(s.Concat)
+		return MakeSemigroup(func(first HKTA, second HKTA) HKTA {
+			return _ap(_map(first, cb), second)
+		})
+	}
 }

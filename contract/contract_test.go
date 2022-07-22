@@ -16,7 +16,10 @@ package contract
 
 import (
 	"fmt"
+	"regexp"
 	"testing"
+
+	_ "embed"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/terraform-provider-hpcr/common"
@@ -26,7 +29,12 @@ import (
 	F "github.com/terraform-provider-hpcr/fp/function"
 	I "github.com/terraform-provider-hpcr/fp/identity"
 	R "github.com/terraform-provider-hpcr/fp/record"
+	S "github.com/terraform-provider-hpcr/fp/string"
+	Y "github.com/terraform-provider-hpcr/fp/yaml"
 )
+
+//go:embed samples/contract1.yaml
+var Contract1 string
 
 var (
 	// keypair for testing
@@ -74,9 +82,12 @@ func TestAddSigningKey(t *testing.T) {
 }
 
 // regular expression used to split the token
-// var tokenRe = regexp.MustCompile(`^hyper-protect-basic\.((?:[A-Za-z\d+/]{4})*(?:[A-Za-z\d+/]{3}=|[A-Za-z\d+/]{2}==)?)\.((?:[A-Za-z\d+/]{4})*(?:[A-Za-z\d+/]{3}=|[A-Za-z\d+/]{2}==)?)$`)
+var tokenRe = regexp.MustCompile(`^hyper-protect-basic\.((?:[A-Za-z\d+/]{4})*(?:[A-Za-z\d+/]{3}=|[A-Za-z\d+/]{2}==)?)\.((?:[A-Za-z\d+/]{4})*(?:[A-Za-z\d+/]{3}=|[A-Za-z\d+/]{2}==)?)$`)
 
-func TestUpsetEncrypted(t *testing.T) {
+// regular expression used to check for the existence of a public key
+var keyRe = regexp.MustCompile(`-----BEGIN PUBLIC KEY-----`)
+
+func TestUpsertEncrypted(t *testing.T) {
 	// the encryption function
 	upsertE := F.Pipe1(
 		openSSLEncryptBasicE,
@@ -106,11 +117,75 @@ func TestUpsetEncrypted(t *testing.T) {
 		}),
 	)
 
-	r := F.Pipe2(
+	r := F.Pipe3(
 		resE,
 		E.Chain(getKeyE),
 		E.Chain(common.ToTypeE[string]),
+		E.Chain(E.FromPredicate(tokenRe.MatchString, func(s string) error {
+			return fmt.Errorf("string [%s] is not a valid typer protect token", s)
+		})),
 	)
 
-	fmt.Println(r)
+	assert.True(t, E.IsRight(r))
+}
+
+func TestUpsertSigningKey(t *testing.T) {
+	privKeyE := encrypt.PrivateKey()
+	// add to key
+	upsertKeyE := F.Pipe1(
+		privKeyE,
+		E.Map[error](upsertSigningKey),
+	)
+	// prepare some contract without a key
+	contractE := F.Pipe3(
+		Contract1,
+		S.ToBytes,
+		Y.Parse[RawMap],
+		E.Map[error](F.Deref[RawMap]),
+	)
+	// actually upsert
+	resE := F.Pipe5(
+		upsertKeyE,
+		E.Ap[error, RawMap, E.Either[error, RawMap]](contractE),
+		E.Flatten[error, RawMap],
+		E.Map[error](F.Ref[RawMap]),
+		E.Chain(Y.Stringify[RawMap]),
+		E.Map[error](B.ToString),
+	)
+	// check that the serialized form contains the key
+	checkE := F.Pipe1(
+		resE,
+		E.Map[error](keyRe.MatchString),
+	)
+
+	assert.Equal(t, E.Of[error](true), checkE)
+}
+
+func TestEncryptAndSignContract(t *testing.T) {
+	// the private key
+	privKeyE := encrypt.PrivateKey()
+	// the encryption function
+	signerE := F.Pipe2(
+		openSSLEncryptBasicE,
+		E.Map[error](EncryptAndSignContract),
+		E.Ap[error, []byte, func(RawMap) E.Either[error, RawMap]](privKeyE),
+	)
+	// prepare some contract without a key
+	contractE := F.Pipe3(
+		Contract1,
+		S.ToBytes,
+		Y.Parse[RawMap],
+		E.Map[error](F.Deref[RawMap]),
+	)
+	// add signature and encrypt the fields
+	resE := F.Pipe5(
+		signerE,
+		E.Ap[error, RawMap, E.Either[error, RawMap]](contractE),
+		E.Flatten[error, RawMap],
+		E.Map[error](F.Ref[RawMap]),
+		E.Chain(Y.Stringify[RawMap]),
+		E.Map[error](B.ToString),
+	)
+
+	fmt.Println(resE)
 }

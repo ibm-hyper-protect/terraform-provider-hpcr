@@ -10,32 +10,18 @@
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
-// limitations under the License.package datasource
-
-package datasource
+// limitations under the License.
+package bytes
 
 import (
-	"github.com/terraform-provider-hpcr/fp"
+	M "github.com/terraform-provider-hpcr/fp/monoid"
 )
 
-type resourceDataMock struct {
-	data map[string]any
+func concat(left []byte, right []byte) []byte {
+	buf := make([]byte, len(left)+len(right))
+	copy(buf[copy(buf, left):], right)
+	return buf
 }
 
-func (mock resourceDataMock) GetOk(key string) (any, bool) {
-	value, exists := mock.data[key]
-	return value, exists
-}
-
-func (mock resourceDataMock) SetID(value string) {
-	// noop
-}
-
-func (mock resourceDataMock) Set(key string, value any) error {
-	mock.data[key] = value
-	return nil
-}
-
-func CreateResourceDataMock(data map[string]any) fp.ResourceData {
-	return resourceDataMock{data: data}
-}
+// monoid for byte arrays
+var Monoid = M.MakeMonoid(concat, make([]byte, 0))
