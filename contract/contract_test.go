@@ -189,3 +189,27 @@ func TestEncryptAndSignContract(t *testing.T) {
 
 	fmt.Println(resE)
 }
+
+func TestEnvWorkloadSignature(t *testing.T) {
+	// the private key
+	privKeyE := encrypt.PrivateKey()
+
+	signer := F.Pipe1(
+		privKeyE,
+		E.Map[error](createEnvWorkloadSignature),
+	)
+
+	// some sample data
+	data := RawMap{
+		KeyEnv:      "some env",
+		KeyWorkload: "some workload",
+	}
+
+	// compute the signature
+	signatureE := F.Pipe1(
+		signer,
+		E.Chain(I.Ap[RawMap, E.Either[error, string]](data)),
+	)
+
+	assert.True(t, E.IsRight(signatureE))
+}

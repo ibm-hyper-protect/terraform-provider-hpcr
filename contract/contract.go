@@ -15,7 +15,6 @@
 package contract
 
 import (
-	"crypto/sha256"
 	"fmt"
 
 	"github.com/terraform-provider-hpcr/common"
@@ -30,9 +29,10 @@ import (
 )
 
 var (
-	KeyEnv        = "env"
-	KeyWorkload   = "workload"
-	KeySigningKey = "signingKey"
+	KeyEnv                  = "env"
+	KeyWorkload             = "workload"
+	KeySigningKey           = "signingKey"
+	KeyEnvWorkloadSignature = "envWorkloadSignature"
 
 	getEnv        = R.Lookup[string, any](KeyEnv)
 	getWorkload   = R.Lookup[string, any](KeyWorkload)
@@ -45,18 +45,56 @@ func toAny[A any](a A) any {
 	return a
 }
 
-// computes a sha256 as hex
-func createHash(data []byte) string {
-	return fmt.Sprintf("%x", sha256.Sum256(data))
+func anyToBytes(a any) []byte {
+	return []byte(fmt.Sprintf("%s", a))
 }
 
 // computes the signature across workload and env
-func createEnvWorkloadSignature(privKey []byte) func(RawMap) E.Either[error, RawMap] {
+func createEnvWorkloadSignature(privKey []byte) func(RawMap) E.Either[error, string] {
+	// callback to construct the digest
+	sign := encrypt.SignDigest(privKey)
 
-	func(RawMap) E.Either[error, RawMap] {
-
+	// lookup workload and env
+	getEnvO := F.Flow2(
+		getEnv,
+		O.Map(anyToBytes),
+	)
+	getWorkloadO := F.Flow2(
+		getWorkload,
+		O.Map(anyToBytes),
+	)
+	seqE := O.Sequence2(func(left, right []byte) O.Option[[]byte] {
+		return O.Some(B.Monoid.Concat(left, right))
+	})
+	// combine into a digest
+	return func(contract RawMap) E.Either[error, string] {
+		// lookup the
+		return F.Pipe3(
+			seqE(getWorkloadO(contract), getEnvO(contract)),
+			E.FromOption[error, []byte](func() error {
+				return fmt.Errorf("the contract is missing [%s] or [%s] or both", KeyEnv, KeyWorkload)
+			}),
+			E.Chain(sign),
+			E.Map[error](common.Base64Encode),
+		)
 	}
+}
 
+// constructs a workload across workload and env and adds this to the map
+func upsertEnvWorkloadSignature(privKey []byte) func(RawMap) E.Either[error, RawMap] {
+	// callback to create the signature
+	create := createEnvWorkloadSignature(privKey)
+	setSignature := F.Bind1st(R.UpsertAt[string, any], KeyEnvWorkloadSignature)
+
+	return func(contract RawMap) E.Either[error, RawMap] {
+		return F.Pipe4(
+			contract,
+			create,
+			E.Map[error](toAny[string]),
+			E.Map[error](setSignature),
+			E.Map[error](I.Ap[RawMap, RawMap](contract)),
+		)
+	}
 }
 
 // returns a function that adds the public part of the key to the input mapping
@@ -134,12 +172,14 @@ func EncryptAndSignContract(enc func(data []byte) E.Either[error, string]) func(
 	// callback to handle signature
 	return func(privKey []byte) func(RawMap) E.Either[error, RawMap] {
 		// the signature callback
-		addKey := upsertSigningKey(privKey)
+		addPubKey := upsertSigningKey(privKey)
+		addSignature := upsertEnvWorkloadSignature(privKey)
 		// execute one step after the other
-		return F.Flow3(
-			addKey,
+		return F.Flow4(
+			addPubKey,
 			E.Chain(encEnv),
 			E.Chain(encWorkload),
+			E.Chain(addSignature),
 		)
 	}
 

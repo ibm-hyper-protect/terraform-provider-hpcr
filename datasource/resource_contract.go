@@ -17,10 +17,15 @@ package datasource
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/terraform-provider-hpcr/common"
+	"github.com/terraform-provider-hpcr/contract"
+	"github.com/terraform-provider-hpcr/encrypt"
 	"github.com/terraform-provider-hpcr/fp"
+	B "github.com/terraform-provider-hpcr/fp/bytes"
 	E "github.com/terraform-provider-hpcr/fp/either"
 	F "github.com/terraform-provider-hpcr/fp/function"
+	O "github.com/terraform-provider-hpcr/fp/option"
 	S "github.com/terraform-provider-hpcr/fp/string"
+	Y "github.com/terraform-provider-hpcr/fp/yaml"
 )
 
 var (
@@ -46,6 +51,43 @@ func ResourceContractEncrypted() *schema.Resource {
 	}
 }
 
+// callback to update a resource using encryption base64 encoding
+func updateContract(d fp.ResourceData) func(E.Either[error, []byte]) func(O.Option[string]) O.Option[ResourceDataE] {
+	return updateResource(d)(func(data []byte) E.Either[error, string] {
+
+		// marshal key or create the private key
+		privKeyE := F.Pipe2(
+			getPrivKeyE(d),
+			E.Map[error](S.ToBytes),
+			E.Alt(encrypt.PrivateKey),
+		)
+
+		// deserialize the contract into a map
+		contractE := F.Pipe2(
+			data,
+			Y.Parse[contract.RawMap],
+			E.Map[error](F.Deref[contract.RawMap]),
+		)
+
+		// create the function that can execute the signature
+		resE := F.Pipe10(
+			d,
+			getCertificateE,
+			E.Map[error](S.ToBytes),
+			E.Map[error](encrypt.OpenSSLEncryptBasic),
+			E.Map[error](contract.EncryptAndSignContract),
+			E.Ap[error, []byte, func(contract.RawMap) E.Either[error, contract.RawMap]](privKeyE),
+			E.Ap[error, contract.RawMap, E.Either[error, contract.RawMap]](contractE),
+			E.Flatten[error, contract.RawMap],
+			E.Map[error](F.Ref[contract.RawMap]),
+			E.Chain(Y.Stringify[contract.RawMap]),
+			E.Map[error](B.ToString),
+		)
+
+		return resE
+	})
+}
+
 func resourceEncContract(d fp.ResourceData) ResourceDataE {
 
 	// marshal input text
@@ -56,7 +98,7 @@ func resourceEncContract(d fp.ResourceData) ResourceDataE {
 		E.Chain(createHashWithCert(d)),
 		E.Chain(F.Flow3(
 			checksumMatchO(d),
-			updateEncryptedResource(d)(contractE),
+			updateContract(d)(contractE),
 			getResourceData(d),
 		),
 		),

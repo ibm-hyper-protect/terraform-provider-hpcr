@@ -17,7 +17,7 @@ import (
 	M "github.com/terraform-provider-hpcr/fp/monoid"
 )
 
-func concat(left []byte, right []byte) []byte {
+func concat(left, right []byte) []byte {
 	buf := make([]byte, len(left)+len(right))
 	copy(buf[copy(buf, left):], right)
 	return buf

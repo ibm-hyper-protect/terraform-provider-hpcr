@@ -64,6 +64,7 @@ var (
 	getJsonE        = fp.ResourceDataGetE[any](common.KeyJSON)
 	getTextE        = fp.ResourceDataGetE[string](common.KeyText)
 	getContractE    = fp.ResourceDataGetE[string](common.KeyContract)
+	getPrivKeyE     = fp.ResourceDataGetE[string](common.KeyPrivKey)
 	getFolderE      = fp.ResourceDataGetE[string](common.KeyFolder)
 	getCertificateE = fp.ResourceDataGetE[string](common.KeyCert)
 
