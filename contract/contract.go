@@ -28,6 +28,8 @@ import (
 	Y "github.com/terraform-provider-hpcr/fp/yaml"
 )
 
+type RawMap = map[string]any
+
 var (
 	KeyEnv                  = "env"
 	KeyWorkload             = "workload"
@@ -37,9 +39,12 @@ var (
 	getEnv        = R.Lookup[string, any](KeyEnv)
 	getWorkload   = R.Lookup[string, any](KeyWorkload)
 	getSigningKey = R.Lookup[string, any](KeySigningKey)
-)
 
-type RawMap = map[string]any
+	ParseRawMapE     = Y.Parse[RawMap]
+	StringifyRawMapE = Y.Stringify[RawMap]
+	MapDerefRawMapE  = E.Map[error](F.Deref[RawMap])
+	MapRefRawMapE    = E.Map[error](F.Ref[RawMap])
+)
 
 func toAny[A any](a A) any {
 	return a
@@ -103,7 +108,7 @@ func addSigningKey(key []byte) func(RawMap) E.Either[error, RawMap] {
 	pemE := F.Pipe4(
 		key,
 		encrypt.PublicKey,
-		E.Map[error](B.ToString),
+		common.MapBytesToStgE,
 		E.Map[error](toAny[string]),
 		E.Map[error](F.Bind1st(R.UpsertAt[string, any], KeySigningKey)),
 	)

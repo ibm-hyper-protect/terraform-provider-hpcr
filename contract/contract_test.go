@@ -24,7 +24,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/terraform-provider-hpcr/common"
 	"github.com/terraform-provider-hpcr/encrypt"
-	B "github.com/terraform-provider-hpcr/fp/bytes"
 	E "github.com/terraform-provider-hpcr/fp/either"
 	F "github.com/terraform-provider-hpcr/fp/function"
 	I "github.com/terraform-provider-hpcr/fp/identity"
@@ -75,7 +74,7 @@ func TestAddSigningKey(t *testing.T) {
 	pubE := F.Pipe2(
 		privKeyE,
 		E.Chain(encrypt.PublicKey),
-		E.Map[error](B.ToString),
+		common.MapBytesToStgE,
 	)
 
 	assert.Equal(t, pubE, augE)
@@ -150,7 +149,7 @@ func TestUpsertSigningKey(t *testing.T) {
 		E.Flatten[error, RawMap],
 		E.Map[error](F.Ref[RawMap]),
 		E.Chain(Y.Stringify[RawMap]),
-		E.Map[error](B.ToString),
+		common.MapBytesToStgE,
 	)
 	// check that the serialized form contains the key
 	checkE := F.Pipe1(
@@ -184,7 +183,7 @@ func TestEncryptAndSignContract(t *testing.T) {
 		E.Flatten[error, RawMap],
 		E.Map[error](F.Ref[RawMap]),
 		E.Chain(Y.Stringify[RawMap]),
-		E.Map[error](B.ToString),
+		common.MapBytesToStgE,
 	)
 
 	fmt.Println(resE)

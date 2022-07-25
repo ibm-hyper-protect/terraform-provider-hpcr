@@ -26,7 +26,7 @@ import (
 var (
 	jsonBytes = F.Flow3(
 		getJsonE,
-		E.Map[error](F.Ref[any]),
+		common.MapRefAnyE,
 		E.Chain(J.Stringify[any]),
 	)
 )

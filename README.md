@@ -41,3 +41,7 @@ The typical usecase is to encrypt the `workload` and the `env` section separatel
 ## License
 
 [Apache 2.0](LICENSE)
+
+## References
+
+- [How to Publish a Terraform Provider](https://learn.hashicorp.com/tutorials/terraform/provider-release-publish?in=terraform/providers)

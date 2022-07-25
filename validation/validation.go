@@ -21,11 +21,11 @@ import (
 
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/terraform-provider-hpcr/common"
 	"github.com/terraform-provider-hpcr/encrypt"
 	"github.com/terraform-provider-hpcr/fp"
 	E "github.com/terraform-provider-hpcr/fp/either"
 	F "github.com/terraform-provider-hpcr/fp/function"
-	S "github.com/terraform-provider-hpcr/fp/string"
 )
 
 var (
@@ -47,7 +47,7 @@ func DiagCertificate(data any, _ cty.Path) diag.Diagnostics {
 	return F.Pipe4(
 		data,
 		fp.ToTypeE[string],
-		E.Map[error](S.ToBytes),
+		common.MapStgToBytesE,
 		E.Chain(encrypt.CertSerial),
 		toDiagnostics[[]byte],
 	)

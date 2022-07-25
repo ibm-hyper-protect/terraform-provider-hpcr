@@ -19,7 +19,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/terraform-provider-hpcr/common"
-	B "github.com/terraform-provider-hpcr/fp/bytes"
 	E "github.com/terraform-provider-hpcr/fp/either"
 	F "github.com/terraform-provider-hpcr/fp/function"
 	I "github.com/terraform-provider-hpcr/fp/identity"
@@ -64,7 +63,7 @@ func TestPrivateKey(t *testing.T) {
 	pubKey := F.Pipe2(
 		privKey,
 		E.Chain(PublicKey),
-		E.Map[error](B.ToString),
+		common.MapBytesToStgE,
 	)
 
 	fmt.Println(pubKey)
