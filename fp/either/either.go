@@ -14,8 +14,6 @@
 package either
 
 import (
-	"fmt"
-
 	F "github.com/terraform-provider-hpcr/fp/function"
 	O "github.com/terraform-provider-hpcr/fp/option"
 )
@@ -39,14 +37,6 @@ func (left[E]) IsLeft() bool {
 
 func (left[E]) IsRight() bool {
 	return false
-}
-
-func (l left[E]) String() string {
-	return fmt.Sprintf("Left[%v]", l.e)
-}
-
-func (r right[A]) String() string {
-	return fmt.Sprintf("Right[%v]", r.a)
 }
 
 func (right[A]) IsLeft() bool {
@@ -75,10 +65,6 @@ func Right[E, A any](value A) Either[E, A] {
 
 func Of[E, A any](value A) Either[E, A] {
 	return F.Pipe1(value, Right[E, A])
-}
-
-func FromIO[E, A any](f func() A) Either[E, A] {
-	return F.Pipe1(f(), Right[E, A])
 }
 
 func MonadAp[E, A, B any](fab Either[E, func(a A) B], fa Either[E, A]) Either[E, B] {
@@ -123,37 +109,8 @@ func MonadChain[E, A, B any](fa Either[E, A], f func(a A) Either[E, B]) Either[E
 	return fold(fa, Left[E, B], f)
 }
 
-func MonadChainFirst[E, A, B any](ma Either[E, A], f func(a A) Either[E, B]) Either[E, A] {
-	return MonadChain(ma, func(a A) Either[E, A] {
-		return MonadMap(f(a), F.Constant1[B](a))
-	})
-}
-
-func MonadChainTo[E, A, B any](ma Either[E, A], mb Either[E, B]) Either[E, B] {
-	return mb
-}
-
-func MonadChainOptionK[E, A, B any](onNone func() E, ma Either[E, A], f func(A) O.Option[B]) Either[E, B] {
-	return MonadChain(ma, F.Flow2(f, FromOption[E, B](onNone)))
-}
-
-func ChainOptionK[E, A, B any](onNone func() E) func(func(A) O.Option[B]) func(Either[E, A]) Either[E, B] {
-	from := FromOption[E, B](onNone)
-	return func(f func(A) O.Option[B]) func(Either[E, A]) Either[E, B] {
-		return Chain(F.Flow2(f, from))
-	}
-}
-
-func ChainTo[E, A, B any](mb Either[E, B]) func(Either[E, A]) Either[E, B] {
-	return F.Bind2nd(MonadChainTo[E, A, B], mb)
-}
-
 func Chain[E, A, B any](f func(a A) Either[E, B]) func(Either[E, A]) Either[E, B] {
 	return F.Bind2nd(MonadChain[E, A, B], f)
-}
-
-func ChainFirst[E, A, B any](f func(a A) Either[E, B]) func(Either[E, A]) Either[E, A] {
-	return F.Bind2nd(MonadChainFirst[E, A, B], f)
 }
 
 func Flatten[E, A any](mma Either[E, Either[E, A]]) Either[E, A] {
@@ -182,45 +139,14 @@ func MonadSequence2[E, T1, T2, R any](e1 Either[E, T1], e2 Either[E, T2], f func
 	return f(e1.(right[T1]).a, e2.(right[T2]).a)
 }
 
-func MonadSequence3[E, T1, T2, T3, R any](e1 Either[E, T1], e2 Either[E, T2], e3 Either[E, T3], f func(T1, T2, T3) Either[E, R]) Either[E, R] {
-	if IsLeft(e1) {
-		return Left[E, R](e1.(left[E]).e)
-	}
-	if IsLeft(e2) {
-		return Left[E, R](e2.(left[E]).e)
-	}
-	if IsLeft(e3) {
-		return Left[E, R](e3.(left[E]).e)
-	}
-	return f(e1.(right[T1]).a, e2.(right[T2]).a, e3.(right[T3]).a)
-}
-
 func Sequence2[E, T1, T2, R any](f func(T1, T2) Either[E, R]) func(Either[E, T1], Either[E, T2]) Either[E, R] {
 	return func(e1 Either[E, T1], e2 Either[E, T2]) Either[E, R] {
 		return MonadSequence2(e1, e2, f)
 	}
 }
 
-func Sequence3[E, T1, T2, T3, R any](f func(T1, T2, T3) Either[E, R]) func(Either[E, T1], Either[E, T2], Either[E, T3]) Either[E, R] {
-	return func(e1 Either[E, T1], e2 Either[E, T2], e3 Either[E, T3]) Either[E, R] {
-		return MonadSequence3(e1, e2, e3, f)
-	}
-}
-
 func FromOption[E, A any](onNone func() E) func(O.Option[A]) Either[E, A] {
 	return O.Fold(func() Either[E, A] { return Left[E, A](onNone()) }, Right[E, A])
-}
-
-func ToOption[E, A any]() func(Either[E, A]) O.Option[A] {
-	return Fold(F.Ignore1[E](O.None[A]), O.Some[A])
-}
-
-func FromError[A any](f func(a A) error) func(A) Either[error, A] {
-	return func(a A) Either[error, A] {
-		return TryCatchError(func() (A, error) {
-			return a, f(a)
-		})
-	}
 }
 
 func Eitherize0[R any](f func() (R, error)) func() Either[error, R] {
@@ -258,19 +184,6 @@ func Fold[E, A, B any](onLeft func(e E) B, onRight func(a A) B) func(ma Either[E
 	}
 }
 
-func Unwrap[E, A any](e E, a A) func(Either[E, A]) (A, E) {
-	return func(ma Either[E, A]) (A, E) {
-		if IsLeft(ma) {
-			return a, ma.(left[E]).e
-		}
-		return ma.(right[A]).a, e
-	}
-}
-
-func UnwrapError[A any](a A) func(Either[error, A]) (A, error) {
-	return Unwrap[error](nil, a)
-}
-
 func FromPredicate[E, A any](pred func(a A) bool, onFalse func(a A) E) func(value A) Either[E, A] {
 	return func(a A) Either[E, A] {
 		if pred(a) {
@@ -280,19 +193,8 @@ func FromPredicate[E, A any](pred func(a A) bool, onFalse func(a A) E) func(valu
 	}
 }
 
-func FromNillable[E, A any](e E) func(value *A) Either[E, *A] {
-	return FromPredicate(F.IsNonNil[A], F.Constant1[*A](e))
-}
-
 func GetOrElse[E, A any](onLeft func(E) A) func(Either[E, A]) A {
 	return Fold(onLeft, F.Identity[A])
-}
-
-func Reduce[E, A, B any](f func(B, A) B, initial B) func(Either[E, A]) B {
-	return Fold(
-		F.Constant1[E](initial),
-		F.Bind1st(f, initial),
-	)
 }
 
 func AltW[E, E1, A any](that func() Either[E1, A]) func(Either[E, A]) Either[E1, A] {
@@ -305,4 +207,15 @@ func Alt[E, A any](that func() Either[E, A]) func(Either[E, A]) Either[E, A] {
 
 func ToError[A any](e Either[error, A]) error {
 	return fold(e, F.Identity[error], F.Constant1[A, error](nil))
+}
+
+func MonadChainOptionK[E, A, B any](onNone func() E, ma Either[E, A], f func(A) O.Option[B]) Either[E, B] {
+	return MonadChain(ma, F.Flow2(f, FromOption[E, B](onNone)))
+}
+
+func ChainOptionK[E, A, B any](onNone func() E) func(func(A) O.Option[B]) func(Either[E, A]) Either[E, B] {
+	from := FromOption[E, B](onNone)
+	return func(f func(A) O.Option[B]) func(Either[E, A]) Either[E, B] {
+		return Chain(F.Flow2(f, from))
+	}
 }

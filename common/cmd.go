@@ -28,7 +28,6 @@ type CommandOutput = T.Tuple2[[]byte, []byte]
 
 var (
 	GetStdOut = T.FirstOf2[[]byte, []byte]
-	GetStdErr = T.SecondOf2[[]byte, []byte]
 )
 
 func ExecCommand(name string, arg ...string) func([]byte) E.Either[error, CommandOutput] {

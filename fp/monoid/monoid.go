@@ -39,7 +39,3 @@ func (self monoid[A]) Empty() A {
 func MakeMonoid[A any](c func(A, A) A, e A) Monoid[A] {
 	return monoid[A]{c: c, e: e}
 }
-
-func Reverse[A any](m Monoid[A]) Monoid[A] {
-	return MakeMonoid(S.Reverse[A](m).Concat, m.Empty())
-}

@@ -21,19 +21,3 @@ import (
 type Semigroup[A any] interface {
 	M.Magma[A]
 }
-
-type semigroup[A any] struct {
-	c func(A, A) A
-}
-
-func (self semigroup[A]) Concat(x A, y A) A {
-	return self.c(x, y)
-}
-
-func MakeSemigroup[A any](c func(A, A) A) Semigroup[A] {
-	return semigroup[A]{c: c}
-}
-
-func Reverse[A any](m Semigroup[A]) Semigroup[A] {
-	return MakeSemigroup(M.Reverse[A](m).Concat)
-}

@@ -44,7 +44,6 @@ var (
 	MapBytesToStgE = E.Map[error](B.ToString)
 	MapStgToBytesE = E.Map[error](S.ToBytes)
 	MapRefAnyE     = E.Map[error](F.Ref[any])
-	MapDerefAnyE   = E.Map[error](F.Deref[any])
 )
 
 func ToTypeO[A any](data any) O.Option[A] {
