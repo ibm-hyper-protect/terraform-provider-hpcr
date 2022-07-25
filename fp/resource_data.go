@@ -26,7 +26,7 @@ import (
 
 type ResourceData interface {
 	GetOk(string) (any, bool)
-	SetId(string)
+	SetID(string)
 	Set(key string, value any) error
 }
 
@@ -38,7 +38,7 @@ func (proxy resourceDataProxy) GetOk(key string) (any, bool) {
 	return proxy.delegate.GetOk(key)
 }
 
-func (proxy resourceDataProxy) SetId(value string) {
+func (proxy resourceDataProxy) SetID(value string) {
 	proxy.delegate.SetId(value)
 }
 

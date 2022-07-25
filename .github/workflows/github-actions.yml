@@ -23,8 +23,10 @@ jobs:
           go test ./... -v
           echo ${PREFIX}
           CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -trimpath -o ${TF_BASE}/${PLUGIN}/${VERSION}/linux_amd64/${SUFFIX}_v${VERSION}
+          CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags "-s -w" -trimpath -o ${TF_BASE}/${PLUGIN}/${VERSION}/linux_arm64/${SUFFIX}_v${VERSION}
           CGO_ENABLED=0 GOOS=linux GOARCH=s390x go build -ldflags "-s -w" -trimpath -o ${TF_BASE}/${PLUGIN}/${VERSION}/linux_s390x/${SUFFIX}_v${VERSION}
           CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -ldflags "-s -w" -trimpath -o ${TF_BASE}/${PLUGIN}/${VERSION}/darwin_amd64/${SUFFIX}_v${VERSION}
+          CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -ldflags "-s -w" -trimpath -o ${TF_BASE}/${PLUGIN}/${VERSION}/darwin_arm64/${SUFFIX}_v${VERSION}
           CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags "-s -w" -trimpath -o ${TF_BASE}/${PLUGIN}/${VERSION}/windows_amd64/${SUFFIX}_v${VERSION}.exe
           
           find ${TF_BASE}

@@ -24,6 +24,7 @@ import (
 	"github.com/terraform-provider-hpcr/data"
 	"github.com/terraform-provider-hpcr/encrypt"
 	"github.com/terraform-provider-hpcr/fp"
+	B "github.com/terraform-provider-hpcr/fp/bytes"
 	E "github.com/terraform-provider-hpcr/fp/either"
 	F "github.com/terraform-provider-hpcr/fp/function"
 	I "github.com/terraform-provider-hpcr/fp/identity"
@@ -38,6 +39,7 @@ import (
 type ResourceDataE = E.Either[error, fp.ResourceData]
 type ResourceLifeCycle = T.Tuple3[func(*schema.ResourceData, any) error, func(*schema.ResourceData, any) error, func(*schema.ResourceData, any) error]
 
+// produces a new UUID
 var uuidE = E.Eitherize0(uuid.GenerateUUID)
 
 // assigns a new uuid to a resource
@@ -45,7 +47,7 @@ func setUniqueID(d fp.ResourceData) ResourceDataE {
 	return F.Pipe1(
 		uuidE(),
 		E.Map[error](func(id string) fp.ResourceData {
-			d.SetId(id)
+			d.SetID(id)
 			return d
 		}),
 	)
@@ -59,9 +61,10 @@ var (
 	seqResourceData = E.SequenceArray[error, fp.ResourceData]()
 	setRendered     = fp.ResourceDataSet[string](common.KeyRendered)
 	setSha256       = fp.ResourceDataSet[string](common.KeySha256)
-	getJsonE        = fp.ResourceDataGetE[any](common.KeyJson)
+	getJsonE        = fp.ResourceDataGetE[any](common.KeyJSON)
 	getTextE        = fp.ResourceDataGetE[string](common.KeyText)
 	getContractE    = fp.ResourceDataGetE[string](common.KeyContract)
+	getPrivKeyE     = fp.ResourceDataGetE[string](common.KeyPrivKey)
 	getFolderE      = fp.ResourceDataGetE[string](common.KeyFolder)
 	getCertificateE = fp.ResourceDataGetE[string](common.KeyCert)
 
@@ -274,9 +277,39 @@ func createHashWithCert(d fp.ResourceData) func([]byte) E.Either[error, string] 
 	return func(data []byte) E.Either[error, string] {
 		return F.Pipe2(
 			fpE,
-			E.Map[error](func(fp []byte) []byte {
-				return append(fp[:], data[:]...)
-			}),
+			E.Map[error](F.Bind2nd(B.Monoid.Concat, data)),
+			createHashE,
+		)
+	}
+}
+
+// computes a hash for the given bytes and includes the fingerprint of the certificate as part of the hash
+func createHashWithCertAndPrivateKey(d fp.ResourceData) func([]byte) E.Either[error, string] {
+	// get the fingerprint for the certificate
+	certE := F.Pipe3(
+		d,
+		getCertificateE,
+		E.Map[error](S.ToBytes),
+		E.Chain(encrypt.CertFingerprint),
+	)
+	// get the fingerprint for the private key
+	privKeyE := F.Pipe4(
+		d,
+		getPrivKeyE,
+		E.Map[error](S.ToBytes),
+		E.Chain(encrypt.PrivKeyFingerprint),
+		E.Alt(F.Constant(E.Of[error](B.Monoid.Empty()))),
+	)
+	// combine into one
+	fp := E.Sequence2(func(left, right []byte) E.Either[error, []byte] {
+		return E.Of[error](B.Monoid.Concat(left, right))
+	})
+
+	// combine the fingerprint with the actual data
+	return func(data []byte) E.Either[error, string] {
+		return F.Pipe2(
+			fp(certE, privKeyE),
+			E.Map[error](F.Bind2nd(B.Monoid.Concat, data)),
 			createHashE,
 		)
 	}

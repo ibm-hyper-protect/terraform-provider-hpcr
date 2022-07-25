@@ -10,27 +10,30 @@
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
-// limitations under the License.
-package bytes
+// limitations under the License.package datasource
 
-import "fmt"
+package semigroup
 
-func ToString(a []byte) string {
-	return string(a)
+import (
+	M "github.com/terraform-provider-hpcr/fp/magma"
+)
+
+type Semigroup[A any] interface {
+	M.Magma[A]
 }
 
-func ToHexString(a []byte) string {
-	return fmt.Sprintf("%x", a)
+type semigroup[A any] struct {
+	c func(A, A) A
 }
 
-func Slice(start int, end int) func([]byte) []byte {
-	return func(a []byte) []byte {
-		return a[start:end]
-	}
+func (self semigroup[A]) Concat(x A, y A) A {
+	return self.c(x, y)
 }
 
-func Copy(b []byte) []byte {
-	buf := make([]byte, len(b))
-	copy(buf, b)
-	return buf
+func MakeSemigroup[A any](c func(A, A) A) Semigroup[A] {
+	return semigroup[A]{c: c}
+}
+
+func Reverse[A any](m Semigroup[A]) Semigroup[A] {
+	return MakeSemigroup(M.Reverse[A](m).Concat)
 }

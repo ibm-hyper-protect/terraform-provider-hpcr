@@ -19,11 +19,70 @@ import (
 	"testing"
 
 	"github.com/terraform-provider-hpcr/common"
+	"github.com/terraform-provider-hpcr/contract"
 	D "github.com/terraform-provider-hpcr/data"
+	"github.com/terraform-provider-hpcr/encrypt"
 	E "github.com/terraform-provider-hpcr/fp/either"
 	F "github.com/terraform-provider-hpcr/fp/function"
 	I "github.com/terraform-provider-hpcr/fp/identity"
 )
+
+func TestHashWithCertAndKey(t *testing.T) {
+
+	privKeyE := encrypt.PrivateKey()
+
+	dataE := F.Pipe2(
+		privKeyE,
+		E.Map[error](func(key []byte) contract.RawMap {
+			data := make(map[string]any)
+
+			// prepare input data
+			data[common.KeyCert] = D.DefaultCertificate
+			data[common.KeyPrivKey] = string(key)
+
+			return data
+		}),
+		E.Map[error](CreateResourceDataMock),
+	)
+
+	test := []byte("Carsten")
+
+	hashE := F.Pipe2(
+		dataE,
+		E.Map[error](createHashWithCertAndPrivateKey),
+		E.Chain(I.Ap[[]byte, E.Either[error, string]](test)),
+	)
+
+	fmt.Println(hashE)
+}
+
+func TestHashWithCertAndNoKey(t *testing.T) {
+
+	privKeyE := encrypt.PrivateKey()
+
+	dataE := F.Pipe2(
+		privKeyE,
+		E.Map[error](func(key []byte) contract.RawMap {
+			data := make(map[string]any)
+
+			// prepare input data
+			data[common.KeyCert] = D.DefaultCertificate
+
+			return data
+		}),
+		E.Map[error](CreateResourceDataMock),
+	)
+
+	test := []byte("Carsten")
+
+	hashE := F.Pipe2(
+		dataE,
+		E.Map[error](createHashWithCertAndPrivateKey),
+		E.Chain(I.Ap[[]byte, E.Either[error, string]](test)),
+	)
+
+	fmt.Println(hashE)
+}
 
 func TestHashWithCert(t *testing.T) {
 

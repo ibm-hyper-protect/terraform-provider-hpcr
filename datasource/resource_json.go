@@ -31,13 +31,13 @@ var (
 	)
 )
 
-func ResourceJson() *schema.Resource {
+func ResourceJSON() *schema.Resource {
 	return &schema.Resource{
 		Create: jsonUnencrypted.F1,
 		Read:   jsonUnencrypted.F2,
 		Delete: jsonUnencrypted.F3,
 		Schema: map[string]*schema.Schema{
-			common.KeyJson:     &schemaJsonIn,
+			common.KeyJSON:     &schemaJsonIn,
 			common.KeyRendered: &schemaRenderedOut,
 			common.KeySha256:   &schemaSha256Out,
 		},
@@ -45,13 +45,13 @@ func ResourceJson() *schema.Resource {
 	}
 }
 
-func ResourceJsonEncrypted() *schema.Resource {
+func ResourceJSONEncrypted() *schema.Resource {
 	return &schema.Resource{
 		Create: jsonEncrypted.F1,
 		Read:   jsonEncrypted.F2,
 		Delete: jsonEncrypted.F3,
 		Schema: map[string]*schema.Schema{
-			common.KeyJson:     &schemaJsonIn,
+			common.KeyJSON:     &schemaJsonIn,
 			common.KeyCert:     &schemaCertIn,
 			common.KeyRendered: &schemaRenderedOut,
 			common.KeySha256:   &schemaSha256Out,

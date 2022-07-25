@@ -18,9 +18,11 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/terraform-provider-hpcr/common"
 	B "github.com/terraform-provider-hpcr/fp/bytes"
 	E "github.com/terraform-provider-hpcr/fp/either"
 	F "github.com/terraform-provider-hpcr/fp/function"
+	I "github.com/terraform-provider-hpcr/fp/identity"
 )
 
 func TestOpenSSLBinaryFromEnv(t *testing.T) {
@@ -66,4 +68,36 @@ func TestPrivateKey(t *testing.T) {
 	)
 
 	fmt.Println(pubKey)
+}
+
+func TestSignDigest(t *testing.T) {
+	// some key
+	privKeyE := PrivateKey()
+	// some input data
+	data := []byte("Carsten")
+
+	signE := F.Pipe1(
+		privKeyE,
+		E.Map[error](SignDigest),
+	)
+
+	resE := F.Pipe2(
+		signE,
+		E.Chain(I.Ap[[]byte, E.Either[error, []byte]](data)),
+		E.Map[error](common.Base64Encode),
+	)
+
+	assert.True(t, E.IsRight(resE))
+}
+
+func TestPrivKeyFingerprint(t *testing.T) {
+	// some key
+	privKeyE := PrivateKey()
+
+	fpE := F.Pipe1(
+		privKeyE,
+		E.Chain(PrivKeyFingerprint),
+	)
+
+	assert.True(t, E.IsRight(fpE))
 }

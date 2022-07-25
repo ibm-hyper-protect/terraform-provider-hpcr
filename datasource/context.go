@@ -11,27 +11,29 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package file
+package datasource
 
 import (
-	"os"
+	"context"
 
-	"github.com/terraform-provider-hpcr/common"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/terraform-provider-hpcr/encrypt"
 	E "github.com/terraform-provider-hpcr/fp/either"
 )
 
-var (
-	onCreate = func() E.Either[error, *os.File] {
-		return common.CreateTempE("", "*")
-	}
-	onDelete = func(f *os.File) E.Either[error, any] {
-		f.Close() // #nosec
-		return E.TryCatchError(func() (any, error) {
-			return nil, os.Remove(f.Name())
-		})
-	}
-)
+type Context struct {
+	// function used to encrypt a hyper protect token
+	BasicEncrypt func(pubKey []byte) func([]byte) E.Either[error, string]
+}
 
-func WithTempFile[A any]() func(func(*os.File) E.Either[error, A]) E.Either[error, A] {
-	return E.WithResource[error, *os.File, A](onCreate, onDelete)
+func ConfigureContext(version string) func(context.Context, *schema.ResourceData) (any, diag.Diagnostics) {
+	return func(context.Context, *schema.ResourceData) (any, diag.Diagnostics) {
+
+		ctx := Context{
+			BasicEncrypt: encrypt.OpenSSLEncryptBasic,
+		}
+
+		return &ctx, nil
+	}
 }

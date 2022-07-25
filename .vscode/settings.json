@@ -8,6 +8,6 @@
         }
     ],
     "yaml.schemas": {
-        "data/hpha-se-contract-schema-1.1.79.json": "samples/contract/*.yaml"
+        "data/hpha-se-contract-schema-1.1.79.json": "**/contract/**/*.yaml"
     }
 }

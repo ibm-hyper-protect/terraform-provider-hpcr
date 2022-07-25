@@ -51,6 +51,10 @@ func Pipe9[A, T1, T2, T3, T4, T5, T6, T7, T8, R any](a A, f1 func(a A) T1, f2 fu
 	return Pipe1(Pipe8(a, f1, f2, f3, f4, f5, f6, f7, f8), f9)
 }
 
+func Pipe10[A, T1, T2, T3, T4, T5, T6, T7, T8, T9, R any](a A, f1 func(a A) T1, f2 func(t1 T1) T2, f3 func(t2 T2) T3, f4 func(t3 T3) T4, f5 func(t4 T4) T5, f6 func(t5 T5) T6, f7 func(t6 T6) T7, f8 func(t7 T7) T8, f9 func(t8 T8) T9, f10 func(t9 T9) R) R {
+	return Pipe1(Pipe9(a, f1, f2, f3, f4, f5, f6, f7, f8, f9), f10)
+}
+
 func Flow1[A, R any](f1 func(a A) R) func(a A) R {
 	return f1
 }

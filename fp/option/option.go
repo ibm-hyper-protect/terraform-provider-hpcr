@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package Option
+package option
 
 import (
 	"fmt"
@@ -179,4 +179,20 @@ func Flatten[A any](mma Option[Option[A]]) Option[A] {
 
 func Alt[A any](that func() Option[A]) func(Option[A]) Option[A] {
 	return Fold(that, Of[A])
+}
+
+func MonadSequence2[T1, T2, R any](o1 Option[T1], o2 Option[T2], f func(T1, T2) Option[R]) Option[R] {
+	if IsNone(o1) {
+		return None[R]()
+	}
+	if IsNone(o2) {
+		return None[R]()
+	}
+	return f(o1.(some[T1]).value, o2.(some[T2]).value)
+}
+
+func Sequence2[T1, T2, R any](f func(T1, T2) Option[R]) func(Option[T1], Option[T2]) Option[R] {
+	return func(o1 Option[T1], o2 Option[T2]) Option[R] {
+		return MonadSequence2(o1, o2, f)
+	}
 }

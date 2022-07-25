@@ -15,27 +15,36 @@
 package datasource
 
 import (
+	_ "embed"
+	"fmt"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/terraform-provider-hpcr/common"
+	D "github.com/terraform-provider-hpcr/data"
 	"github.com/terraform-provider-hpcr/fp"
+	E "github.com/terraform-provider-hpcr/fp/either"
+	F "github.com/terraform-provider-hpcr/fp/function"
 )
 
-type resourceDataMock struct {
-	data map[string]any
-}
+//go:embed samples/contract1.yaml
+var Contract1 string
 
-func (mock resourceDataMock) GetOk(key string) (any, bool) {
-	value, exists := mock.data[key]
-	return value, exists
-}
+func TestContract(t *testing.T) {
+	data := make(map[string]any)
 
-func (mock resourceDataMock) SetID(value string) {
-	// noop
-}
+	// prepare input data
+	data[common.KeyContract] = Contract1
+	data[common.KeyCert] = D.DefaultCertificate
 
-func (mock resourceDataMock) Set(key string, value any) error {
-	mock.data[key] = value
-	return nil
-}
+	res := F.Pipe3(
+		data,
+		CreateResourceDataMock,
+		resourceEncContract,
+		E.ToError[fp.ResourceData],
+	)
 
-func CreateResourceDataMock(data map[string]any) fp.ResourceData {
-	return resourceDataMock{data: data}
+	assert.NoError(t, res)
+
+	fmt.Println(data[common.KeyRendered])
 }

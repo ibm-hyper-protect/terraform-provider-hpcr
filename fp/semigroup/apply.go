@@ -10,27 +10,26 @@
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
-// limitations under the License.
-package bytes
+// limitations under the License.package datasource
 
-import "fmt"
+package semigroup
 
-func ToString(a []byte) string {
-	return string(a)
-}
+import (
+	F "github.com/terraform-provider-hpcr/fp/function"
+)
 
-func ToHexString(a []byte) string {
-	return fmt.Sprintf("%x", a)
-}
-
-func Slice(start int, end int) func([]byte) []byte {
-	return func(a []byte) []byte {
-		return a[start:end]
+/**
+HKTA = HKT<A>
+HKTFA = HKT<func(A)A>
+*/
+func ApplySemigroup[A, HKTA, HKTFA any](
+	_map func(HKTA, func(A) func(A) A) HKTFA,
+	_ap func(HKTFA, HKTA) HKTA,
+) func(s Semigroup[A]) Semigroup[HKTA] {
+	return func(s Semigroup[A]) Semigroup[HKTA] {
+		cb := F.Curry2(s.Concat)
+		return MakeSemigroup(func(first HKTA, second HKTA) HKTA {
+			return _ap(_map(first, cb), second)
+		})
 	}
-}
-
-func Copy(b []byte) []byte {
-	buf := make([]byte, len(b))
-	copy(buf, b)
-	return buf
 }

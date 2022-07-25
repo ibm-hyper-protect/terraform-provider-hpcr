@@ -13,24 +13,15 @@
 // limitations under the License.
 package bytes
 
-import "fmt"
+import (
+	M "github.com/terraform-provider-hpcr/fp/monoid"
+)
 
-func ToString(a []byte) string {
-	return string(a)
-}
-
-func ToHexString(a []byte) string {
-	return fmt.Sprintf("%x", a)
-}
-
-func Slice(start int, end int) func([]byte) []byte {
-	return func(a []byte) []byte {
-		return a[start:end]
-	}
-}
-
-func Copy(b []byte) []byte {
-	buf := make([]byte, len(b))
-	copy(buf, b)
+func concat(left, right []byte) []byte {
+	buf := make([]byte, len(left)+len(right))
+	copy(buf[copy(buf, left):], right)
 	return buf
 }
+
+// monoid for byte arrays
+var Monoid = M.MakeMonoid(concat, make([]byte, 0))

@@ -56,6 +56,8 @@ var (
 		E.Map[error](common.Base64Encode),
 	)
 
+	SignDigest = handle(signDigest)
+
 	AsymmetricEncryptPub = handle(asymmetricEncryptPub)
 
 	AsymmetricEncryptCert = handle(asymmetricEncryptCert)
@@ -79,6 +81,14 @@ var (
 	// gets the fingerprint of a certificate
 	CertFingerprint = F.Flow2(
 		OpenSSL("x509", "-noout", "-fingerprint", "-sha256"),
+		mapStdout,
+	)
+
+	// gets the fingerprint of the private key
+	PrivKeyFingerprint = F.Flow4(
+		OpenSSL("rsa", "-pubout", "-outform", "DER"),
+		mapStdout,
+		E.Chain(OpenSSL("sha256", "--binary")),
 		mapStdout,
 	)
 )
@@ -180,6 +190,13 @@ func handle[A, R any](cb func(string) func(A) E.Either[error, R]) func(data []by
 			})
 		}
 	}
+}
+
+func signDigest(keyFile string) func([]byte) E.Either[error, []byte] {
+	return F.Flow2(
+		OpenSSL("dgst", "-sha256", "-sign", keyFile),
+		mapStdout,
+	)
 }
 
 func asymmetricDecrypt(keyFile string) func(string) E.Either[error, []byte] {

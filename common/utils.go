@@ -15,6 +15,7 @@ package common
 
 import (
 	"encoding/base64"
+	"fmt"
 	"os"
 
 	B "github.com/terraform-provider-hpcr/fp/bytes"
@@ -46,4 +47,14 @@ func ToTypeO[A any](data any) O.Option[A] {
 		return O.Some(value)
 	}
 	return O.None[A]()
+}
+
+func ToTypeE[A any](data any) E.Either[error, A] {
+	return F.Pipe2(
+		data,
+		ToTypeO[A],
+		E.FromOption[error, A](func() error {
+			return fmt.Errorf("invalid type of input [%T]", data)
+		}),
+	)
 }

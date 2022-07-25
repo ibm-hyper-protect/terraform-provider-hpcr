@@ -13,13 +13,26 @@
 // limitations under the License.
 package main
 
+// Run the docs generation tool, check its repository for more information on how it works and how docs
+// can be customized.
+//go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs
+
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
 	"github.com/terraform-provider-hpcr/provider"
 )
 
+var (
+	// these will be set by the goreleaser configuration
+	// to appropriate values for the compiled binary
+	version string = "dev"
+
+	// goreleaser can also pass the specific commit if you want
+	commit string = ""
+)
+
 func main() {
 	plugin.Serve(&plugin.ServeOpts{
-		ProviderFunc: provider.Provider,
+		ProviderFunc: provider.Provider(version, commit),
 	})
 }

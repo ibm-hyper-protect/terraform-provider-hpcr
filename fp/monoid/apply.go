@@ -10,27 +10,24 @@
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
-// limitations under the License.
-package bytes
+// limitations under the License.package datasource
 
-import "fmt"
+package monoid
 
-func ToString(a []byte) string {
-	return string(a)
-}
+import (
+	S "github.com/terraform-provider-hpcr/fp/semigroup"
+)
 
-func ToHexString(a []byte) string {
-	return fmt.Sprintf("%x", a)
-}
-
-func Slice(start int, end int) func([]byte) []byte {
-	return func(a []byte) []byte {
-		return a[start:end]
+func ApplicativeMonoid[A, HKTA, HKTFA any](
+	_of func(A) HKTA,
+	_map func(HKTA, func(A) func(A) A) HKTFA,
+	_ap func(HKTFA, HKTA) HKTA,
+) func(Monoid[A]) Monoid[HKTA] {
+	f := S.ApplySemigroup(_map, _ap)
+	return func(m Monoid[A]) Monoid[HKTA] {
+		return MakeMonoid(
+			f(m).Concat,
+			_of(m.Empty()),
+		)
 	}
-}
-
-func Copy(b []byte) []byte {
-	buf := make([]byte, len(b))
-	copy(buf, b)
-	return buf
 }

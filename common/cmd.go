@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"os/exec"
 
+	B "github.com/terraform-provider-hpcr/fp/bytes"
 	E "github.com/terraform-provider-hpcr/fp/either"
 	F "github.com/terraform-provider-hpcr/fp/function"
 	T "github.com/terraform-provider-hpcr/fp/tuple"
@@ -47,7 +48,7 @@ func ExecCommand(name string, arg ...string) func([]byte) E.Either[error, Comman
 				cmd.Stderr = &stdErr
 
 				err := cmd.Run()
-				return T.MakeTuple2(stdOut.Bytes(), stdErr.Bytes()), err
+				return T.MakeTuple2(B.Copy(stdOut.Bytes()), B.Copy(stdErr.Bytes())), err
 			}),
 			// enrich the error
 			E.MapLeft[error, CommandOutput](func(cause error) error {
