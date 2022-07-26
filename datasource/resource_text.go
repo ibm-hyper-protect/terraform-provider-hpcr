@@ -20,13 +20,12 @@ import (
 	"github.com/terraform-provider-hpcr/fp"
 	E "github.com/terraform-provider-hpcr/fp/either"
 	F "github.com/terraform-provider-hpcr/fp/function"
-	S "github.com/terraform-provider-hpcr/fp/string"
 )
 
 var (
 	textBytes = F.Flow2(
 		getTextE,
-		E.Map[error](S.ToBytes),
+		common.MapStgToBytesE,
 	)
 )
 

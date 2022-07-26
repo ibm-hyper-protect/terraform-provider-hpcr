@@ -27,7 +27,6 @@ import (
 	F "github.com/terraform-provider-hpcr/fp/function"
 	I "github.com/terraform-provider-hpcr/fp/identity"
 	O "github.com/terraform-provider-hpcr/fp/option"
-	S "github.com/terraform-provider-hpcr/fp/string"
 	T "github.com/terraform-provider-hpcr/fp/tuple"
 )
 
@@ -102,7 +101,7 @@ func openSSLVersion() E.Either[error, OpenSSLVersion] {
 		emptyBytes,
 		common.ExecCommand(bin, "version"),
 		mapStdout,
-		E.Map[error](B.ToString),
+		common.MapBytesToStgE,
 		E.Map[error](strings.TrimSpace),
 		E.Map[error](F.Bind1st(T.MakeTuple2[string, string], bin)),
 	)
@@ -165,7 +164,7 @@ func RandomPassword(count int) func() E.Either[error, []byte] {
 			emptyBytes,
 			cmdE,
 			base64StdOut,
-			E.Map[error](S.ToBytes),
+			common.MapStgToBytesE,
 			E.Map[error](slice),
 		)
 	}

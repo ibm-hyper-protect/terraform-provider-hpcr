@@ -22,6 +22,7 @@ import (
 	E "github.com/terraform-provider-hpcr/fp/either"
 	F "github.com/terraform-provider-hpcr/fp/function"
 	O "github.com/terraform-provider-hpcr/fp/option"
+	S "github.com/terraform-provider-hpcr/fp/string"
 )
 
 var (
@@ -39,6 +40,10 @@ var (
 	)
 
 	CreateTempE = E.Eitherize2(os.CreateTemp)
+
+	MapBytesToStgE = E.Map[error](B.ToString)
+	MapStgToBytesE = E.Map[error](S.ToBytes)
+	MapRefAnyE     = E.Map[error](F.Ref[any])
 )
 
 func ToTypeO[A any](data any) O.Option[A] {

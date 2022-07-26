@@ -116,7 +116,7 @@ var (
 
 	schemaPrivKeyIn = schema.Schema{
 		Type:             schema.TypeString,
-		Description:      "Private key used to sign the contract",
+		Description:      "Private key used to sign the contract. If omitted the create a temporary signing key.",
 		Optional:         true,
 		ForceNew:         true,
 		Sensitive:        true,
@@ -230,7 +230,7 @@ func updateEncryptedResource(d fp.ResourceData) func(E.Either[error, []byte]) fu
 		return F.Pipe4(
 			d,
 			getCertificateE,
-			E.Map[error](S.ToBytes),
+			common.MapStgToBytesE,
 			E.Map[error](encrypt.OpenSSLEncryptBasic),
 			E.Chain(I.Ap[[]byte, E.Either[error, string]](data)),
 		)
@@ -270,7 +270,7 @@ func createHashWithCert(d fp.ResourceData) func([]byte) E.Either[error, string] 
 	fpE := F.Pipe3(
 		d,
 		getCertificateE,
-		E.Map[error](S.ToBytes),
+		common.MapStgToBytesE,
 		E.Chain(encrypt.CertFingerprint),
 	)
 	// combine the fingerprint with the actual data
@@ -289,14 +289,14 @@ func createHashWithCertAndPrivateKey(d fp.ResourceData) func([]byte) E.Either[er
 	certE := F.Pipe3(
 		d,
 		getCertificateE,
-		E.Map[error](S.ToBytes),
+		common.MapStgToBytesE,
 		E.Chain(encrypt.CertFingerprint),
 	)
 	// get the fingerprint for the private key
 	privKeyE := F.Pipe4(
 		d,
 		getPrivKeyE,
-		E.Map[error](S.ToBytes),
+		common.MapStgToBytesE,
 		E.Chain(encrypt.PrivKeyFingerprint),
 		E.Alt(F.Constant(E.Of[error](B.Monoid.Empty()))),
 	)

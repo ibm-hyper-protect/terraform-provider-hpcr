@@ -55,10 +55,6 @@ func Pipe10[A, T1, T2, T3, T4, T5, T6, T7, T8, T9, R any](a A, f1 func(a A) T1, 
 	return Pipe1(Pipe9(a, f1, f2, f3, f4, f5, f6, f7, f8, f9), f10)
 }
 
-func Flow1[A, R any](f1 func(a A) R) func(a A) R {
-	return f1
-}
-
 func Flow2[A, T1, R any](f1 func(a A) T1, f2 func(t1 T1) R) func(a A) R {
 	return func(a A) R {
 		return Pipe2(a, f1, f2)
@@ -121,32 +117,4 @@ func Constant1[B, A any](a A) func(B) A {
 	return func(_ B) A {
 		return a
 	}
-}
-
-func Constant2[B, C, A any](a A) func(B, C) A {
-	return func(_ B, _ C) A {
-		return a
-	}
-}
-
-func IsNil[A any](a *A) bool {
-	return a == nil
-}
-
-func IsNonNil[A any](a *A) bool {
-	return a != nil
-}
-
-func Swap[T1, T2, R any](f func(T1, T2) R) func(T2, T1) R {
-	return func(t2 T2, t1 T1) R {
-		return f(t1, t2)
-	}
-}
-
-func First[T1, T2 any](t1 T1, _ T2) T1 {
-	return t1
-}
-
-func Second[T1, T2 any](_ T1, t2 T2) T2 {
-	return t2
 }
