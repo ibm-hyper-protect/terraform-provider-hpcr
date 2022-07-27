@@ -55,7 +55,7 @@ var (
 	)
 )
 
-// validates a YAML file against the validator function by deserializing it, then validate the result
+// ValidateYAML validates a YAML file against the validator function by deserializing it, then validate the result
 func ValidateYAML[A any](validator func(A) []jsonschema.KeyError) func(data string) E.Either[error, A] {
 	return F.Flow4(
 		S.ToBytes,
@@ -74,15 +74,15 @@ func ValidateYAML[A any](validator func(A) []jsonschema.KeyError) func(data stri
 	)
 }
 
+func fromKeyError(err jsonschema.KeyError) []diag.Diagnostic {
+	return diag.FromErr(err)
+}
+
 func schemaToDiagnostics(errs []jsonschema.KeyError) diag.Diagnostics {
-	return F.Pipe1(
+	return F.Pipe2(
 		errs,
-		A.Map(func(err jsonschema.KeyError) diag.Diagnostic {
-			return diag.Diagnostic{
-				Severity: diag.Error,
-				Summary:  err.Error(),
-			}
-		}),
+		A.Map(fromKeyError),
+		A.Flatten[diag.Diagnostic],
 	)
 }
 
@@ -99,7 +99,7 @@ func diagYAML[A any](validator func(A) []jsonschema.KeyError) func(data string) 
 	)
 }
 
-// reads the json schema from a string representation into a schema representation
+// GetContractSchema reads the json schema from a string representation into a schema representation
 func GetContractSchema() E.Either[error, *jsonschema.Schema] {
 	return F.Pipe2(
 		D.ContractSchema,
@@ -108,7 +108,7 @@ func GetContractSchema() E.Either[error, *jsonschema.Schema] {
 	)
 }
 
-// validates that the given certificate is indeed a certificate
+// DiagContract validates that the given certificate is indeed a certificate
 func DiagContract(data any, _ cty.Path) diag.Diagnostics {
 	// convert the key
 	dataE := F.Pipe1(

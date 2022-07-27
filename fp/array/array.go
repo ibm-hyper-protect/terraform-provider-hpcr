@@ -30,54 +30,6 @@ func Map[A, B any](f func(a A) B) func([]A) []B {
 	return F.Bind2nd(MonadMap[A, B], f)
 }
 
-func filter[A any](fa []A, pred func(a A) bool) []A {
-	var result []A
-	count := len(fa)
-	for i := 0; i < count; i++ {
-		a := fa[i]
-		if pred(a) {
-			result = append(result, a)
-		}
-	}
-	return result
-}
-
-func filterRef[A any](fa []A, pred func(a *A) bool) []A {
-	var result []A
-	count := len(fa)
-	for i := 0; i < count; i++ {
-		a := fa[i]
-		if pred(&a) {
-			result = append(result, a)
-		}
-	}
-	return result
-}
-
-func filterMap[A, B any](fa []A, pred func(a A) bool, f func(a A) B) []B {
-	var result []B
-	count := len(fa)
-	for i := 0; i < count; i++ {
-		a := fa[i]
-		if pred(a) {
-			result = append(result, f(a))
-		}
-	}
-	return result
-}
-
-func filterMapRef[A, B any](fa []A, pred func(a *A) bool, f func(a *A) B) []B {
-	var result []B
-	count := len(fa)
-	for i := 0; i < count; i++ {
-		a := fa[i]
-		if pred(&a) {
-			result = append(result, f(&a))
-		}
-	}
-	return result
-}
-
 func reduce[A, B any](fa []A, f func(B, A) B, initial B) B {
 	current := initial
 	count := len(fa)
@@ -93,4 +45,14 @@ func Append[A any](as []A, a A) []A {
 
 func Empty[A any]() []A {
 	return make([]A, 0)
+}
+
+func MonadChain[A, B any](fa []A, f func(a A) []B) []B {
+	return reduce(fa, func(bs []B, a A) []B {
+		return concat(bs, f(a))
+	}, Empty[B]())
+}
+
+func Flatten[A any](mma [][]A) []A {
+	return MonadChain(mma, F.Identity[[]A])
 }

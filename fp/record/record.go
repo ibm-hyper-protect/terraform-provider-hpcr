@@ -19,45 +19,10 @@ import (
 	O "github.com/terraform-provider-hpcr/fp/option"
 )
 
-func collect[K comparable, V, R any](r map[K]V, f func(K, V) R) []R {
-	count := len(r)
-	result := make([]R, count)
-	idx := 0
-	for k, v := range r {
-		result[idx] = f(k, v)
-		idx++
-	}
-	return result
-}
-
-func reduce[K comparable, V, R any](r map[K]V, f func(R, V) R, initial R) R {
-	current := initial
-	for _, v := range r {
-		current = f(current, v)
-	}
-	return current
-}
-
 func reduceWithIndex[K comparable, V, R any](r map[K]V, f func(K, R, V) R, initial R) R {
 	current := initial
 	for k, v := range r {
 		current = f(k, current, v)
-	}
-	return current
-}
-
-func reduceRef[K comparable, V, R any](r map[K]V, f func(R, *V) R, initial R) R {
-	current := initial
-	for _, v := range r {
-		current = f(current, &v) // #nosec G601
-	}
-	return current
-}
-
-func reduceRefWithIndex[K comparable, V, R any](r map[K]V, f func(K, R, *V) R, initial R) R {
-	current := initial
-	for k, v := range r {
-		current = f(k, current, &v) // #nosec G601
 	}
 	return current
 }

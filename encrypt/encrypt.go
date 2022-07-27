@@ -54,7 +54,7 @@ func EncryptBasic(
 	}
 }
 
-// implements basic encryption using openSSL given the public key
+// OpenSSLEncryptBasic implements basic encryption using openSSL given the public key
 func OpenSSLEncryptBasic(pubKey []byte) func([]byte) E.Either[error, string] {
 	return EncryptBasic(RandomPassword(32), AsymmetricEncryptCert(pubKey), SymmetricEncrypt)
 }
@@ -107,7 +107,7 @@ func DecryptBasic(
 	}
 }
 
-// implements basic decryption using openSSL given the private key
+// OpenSSLDecryptBasic implements basic decryption using openSSL given the private key
 func OpenSSLDecryptBasic(privKey []byte) func(string) E.Either[error, []byte] {
 	return DecryptBasic(AsymmerticDecrypt(privKey), SymmetricDecrypt)
 }

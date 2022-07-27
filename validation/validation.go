@@ -41,7 +41,7 @@ func toDiagnostics[A any](value E.Either[error, A]) diag.Diagnostics {
 	)
 }
 
-// validates that the given certificate is indeed a certificate
+// DiagCertificate validates that the given certificate is indeed a certificate
 func DiagCertificate(data any, _ cty.Path) diag.Diagnostics {
 	// convert the key
 	return F.Pipe4(
@@ -53,7 +53,7 @@ func DiagCertificate(data any, _ cty.Path) diag.Diagnostics {
 	)
 }
 
-// validates that the given path points to an existing folder
+// DiagFolder validates that the given path points to an existing folder
 func DiagFolder(data any, _ cty.Path) diag.Diagnostics {
 	return F.Pipe4(
 		data,
