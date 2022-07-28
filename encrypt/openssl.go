@@ -30,7 +30,7 @@ import (
 	T "github.com/terraform-provider-hpcr/fp/tuple"
 )
 
-// openSSL version, including the path to the binary
+// OpenSSLVersion represents the openSSL version, including the path to the binary
 type OpenSSLVersion = T.Tuple2[string, string]
 
 var (
@@ -250,7 +250,7 @@ func SymmetricDecrypt(token string) func([]byte) E.Either[error, []byte] {
 	}
 }
 
-// generates a private key
+// PrivateKey generates a private key
 func PrivateKey() E.Either[error, []byte] {
 	return F.Pipe2(
 		emptyBytes,

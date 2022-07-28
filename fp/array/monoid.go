@@ -11,28 +11,19 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package function
+package array
 
-func Bind1st[T1, T2, R any](f func(T1, T2) R, t1 T1) func(T2) R {
-	return func(t2 T2) R {
-		return f(t1, t2)
-	}
+import (
+	M "github.com/terraform-provider-hpcr/fp/monoid"
+)
+
+func concat[A any](left, right []A) []A {
+	buf := make([]A, len(left)+len(right))
+	copy(buf[copy(buf, left):], right)
+	return buf
 }
 
-func Bind2nd[T1, T2, R any](f func(T1, T2) R, t2 T2) func(T1) R {
-	return func(t1 T1) R {
-		return f(t1, t2)
-	}
-}
-
-func Ignore1[T, R any](f func() R) func(T) R {
-	return func(_ T) R {
-		return f()
-	}
-}
-
-func Ignore1st[T1, T2, R any](f func(T2) R) func(T1, T2) R {
-	return func(_ T1, t2 T2) R {
-		return f(t2)
-	}
+// Monoid for arrays
+func Monoid[A any]() M.Monoid[[]A] {
+	return M.MakeMonoid(concat[A], Empty[A]())
 }

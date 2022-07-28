@@ -22,7 +22,7 @@ Generates an encrypted and signed user data field
 ### Optional
 
 - `cert` (String) Certificate used to encrypt the JSON document in PEM format
-- `privkey` (String, Sensitive) Private key used to sign the contract
+- `privkey` (String, Sensitive) Private key used to sign the contract. If omitted the create a temporary signing key.
 
 ### Read-Only
 

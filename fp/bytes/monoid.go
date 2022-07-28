@@ -14,14 +14,8 @@
 package bytes
 
 import (
-	M "github.com/terraform-provider-hpcr/fp/monoid"
+	A "github.com/terraform-provider-hpcr/fp/array"
 )
 
-func concat(left, right []byte) []byte {
-	buf := make([]byte, len(left)+len(right))
-	copy(buf[copy(buf, left):], right)
-	return buf
-}
-
 // monoid for byte arrays
-var Monoid = M.MakeMonoid(concat, make([]byte, 0))
+var Monoid = A.Monoid[byte]()
