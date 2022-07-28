@@ -49,7 +49,7 @@ func Empty[A any]() []A {
 
 func MonadChain[A, B any](fa []A, f func(a A) []B) []B {
 	return reduce(fa, func(bs []B, a A) []B {
-		return concat(bs, f(a))
+		return append(bs, f(a)...)
 	}, Empty[B]())
 }
 

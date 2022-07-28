@@ -116,7 +116,7 @@ var (
 
 	schemaPrivKeyIn = schema.Schema{
 		Type:             schema.TypeString,
-		Description:      "Private key used to sign the contract. If omitted the create a temporary signing key.",
+		Description:      "Private key used to sign the contract. If omitted, a temporally signing key is created.",
 		Optional:         true,
 		ForceNew:         true,
 		Sensitive:        true,
