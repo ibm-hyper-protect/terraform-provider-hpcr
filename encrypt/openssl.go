@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//	http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -156,7 +156,8 @@ func OpenSSL(args ...string) func([]byte) E.Either[error, common.CommandOutput] 
 	}
 }
 
-func RandomPassword(count int) func() E.Either[error, []byte] {
+// OpenSSLRandomPassword creates a random password of given length using characters from the base64 alphabet only
+func OpenSSLRandomPassword(count int) func() E.Either[error, []byte] {
 	cmdE := OpenSSL("rand", fmt.Sprintf("%d", count))
 	slice := B.Slice(0, count)
 	return func() E.Either[error, []byte] {

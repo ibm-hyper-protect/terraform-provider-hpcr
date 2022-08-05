@@ -11,33 +11,25 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package archive
+package encrypt
 
 import (
-	"bytes"
-	"encoding/base64"
-	"fmt"
-	"io"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	B "github.com/terraform-provider-hpcr/fp/bytes"
 	E "github.com/terraform-provider-hpcr/fp/either"
 	F "github.com/terraform-provider-hpcr/fp/function"
 )
 
-func TestTgz(t *testing.T) {
-	var body bytes.Buffer
+func TestCryptRandomPassword(t *testing.T) {
+	n := keylen
+	pwd := CryptoRandomPassword(n)
 
-	base64 := base64.NewEncoder(base64.StdEncoding, &body)
-
-	resE := F.Pipe3(
-		base64,
-		TarFolder[io.WriteCloser]("../samples/nginx-golang"),
-		E.Chain(onClose[io.WriteCloser]),
-		E.MapTo[error, any](true),
+	lenE := F.Pipe1(
+		pwd(),
+		E.Map[error](B.Len),
 	)
 
-	assert.Equal(t, E.Of[error](true), resE)
-
-	fmt.Println(body.String())
+	assert.Equal(t, E.Of[error](n), lenE)
 }

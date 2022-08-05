@@ -47,7 +47,7 @@ var (
 	openSSLEncryptBasicE = F.Pipe1(
 		pubKey,
 		E.Map[error](func(pubKey []byte) func([]byte) E.Either[error, string] {
-			return encrypt.EncryptBasic(encrypt.RandomPassword(32), encrypt.AsymmetricEncryptPub(pubKey), encrypt.SymmetricEncrypt)
+			return encrypt.EncryptBasic(encrypt.OpenSSLRandomPassword(32), encrypt.AsymmetricEncryptPub(pubKey), encrypt.SymmetricEncrypt)
 		}),
 	)
 )

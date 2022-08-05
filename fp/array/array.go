@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//	http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,18 @@ package array
 import (
 	F "github.com/terraform-provider-hpcr/fp/function"
 )
+
+func MakeBy[A any](n int, f func(int) A) []A {
+	as := make([]A, n)
+	for i := n - 1; i >= 0; i-- {
+		as[i] = f(i)
+	}
+	return as
+}
+
+func Replicate[A any](n int, a A) []A {
+	return MakeBy(n, F.Constant1[int](a))
+}
 
 func MonadMap[A, B any](as []A, f func(a A) B) []B {
 	count := len(as)

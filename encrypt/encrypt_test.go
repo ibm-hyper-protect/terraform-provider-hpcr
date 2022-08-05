@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//	http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,6 +25,9 @@ import (
 	S "github.com/terraform-provider-hpcr/fp/string"
 )
 
+type Encrypter = func([]byte) E.Either[error, string]
+type Decrypter = func(string) E.Either[error, []byte]
+
 var (
 	// keypair for testing
 	privKey = PrivateKey()
@@ -34,48 +37,74 @@ var (
 	)
 
 	// the encryption function based on the keys
-	openSSLEncryptBasic = F.Pipe1(
-		pubKey,
-		E.Map[error](func(pubKey []byte) func([]byte) E.Either[error, string] {
-			return EncryptBasic(RandomPassword(32), AsymmetricEncryptPub(pubKey), SymmetricEncrypt)
-		}),
-	)
+	openSSLEncryptBasic = createEncryptBasic(func(pubKey []byte) Encrypter {
+		return EncryptBasic(OpenSSLRandomPassword(keylen), AsymmetricEncryptPub(pubKey), SymmetricEncrypt)
+	})
+
+	// the encryption function based on the keys
+	cryptoEncryptBasic = createEncryptBasic(func(pubKey []byte) Encrypter {
+		return EncryptBasic(CryptoRandomPassword(keylen), CryptoAsymmetricEncryptPub(pubKey), CryptoSymmetricEncrypt)
+	})
 
 	// the decryption function based on the keys
-	openSSLDecryptBasic = F.Pipe1(
-		privKey,
-		E.Map[error](OpenSSLDecryptBasic),
-	)
+	openSSLDecryptBasic = createDecryptBasic(OpenSSLDecryptBasic)
 )
 
-func TestEncryptBasic(t *testing.T) {
+func createEncryptBasic(f func([]byte) Encrypter) E.Either[error, Encrypter] {
+	return F.Pipe1(
+		pubKey,
+		E.Map[error](f),
+	)
+}
+
+func createDecryptBasic(f func([]byte) Decrypter) E.Either[error, Decrypter] {
+	return F.Pipe1(
+		privKey,
+		E.Map[error](f),
+	)
+}
+
+func encryptBasic(encE E.Either[error, Encrypter], decE E.Either[error, Decrypter]) func(t *testing.T) {
 	// some random test data
-	randomData := RandomPassword(1023)
+	randomData := OpenSSLRandomPassword(1023)
 
 	textE := randomData()
 	// encrypt the text
 	encTextE := F.Pipe2(
-		openSSLEncryptBasic,
+		encE,
 		E.Ap[error, []byte, E.Either[error, string]](textE),
 		E.Flatten[error, string],
 	)
 	// decrypt
 	decTextE := F.Pipe2(
-		openSSLDecryptBasic,
+		decE,
 		E.Ap[error, string, E.Either[error, []byte]](encTextE),
 		E.Flatten[error, []byte],
 	)
-	// compare
-	resE := F.Pipe2(
-		[]E.Either[error, []byte]{textE, decTextE},
-		E.SequenceArray[error, []byte](),
-		E.Map[error](func(data [][]byte) bool {
-			return assert.Equal(t, data[0], data[1])
-		}),
-	)
 
-	assert.Equal(t, E.Of[error](true), resE)
+	return func(t *testing.T) {
+		// compare
+		resE := F.Pipe2(
+			[]E.Either[error, []byte]{textE, decTextE},
+			E.SequenceArray[error, []byte](),
+			E.Map[error](func(data [][]byte) bool {
+				return assert.Equal(t, data[0], data[1])
+			}),
+		)
 
+		assert.Equal(t, E.Of[error](true), resE)
+	}
+
+}
+
+func TestOpenSSLEncryptBasic(t *testing.T) {
+	enc := encryptBasic(openSSLEncryptBasic, openSSLDecryptBasic)
+	enc(t)
+}
+
+func TestCryptoEncryptBasic(t *testing.T) {
+	enc := encryptBasic(cryptoEncryptBasic, openSSLDecryptBasic)
+	enc(t)
 }
 
 func TestSplitToken(t *testing.T) {

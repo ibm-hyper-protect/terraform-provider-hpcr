@@ -11,33 +11,18 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package archive
+package encrypt
 
 import (
-	"bytes"
-	"encoding/base64"
-	"fmt"
-	"io"
-	"testing"
-
-	"github.com/stretchr/testify/assert"
 	E "github.com/terraform-provider-hpcr/fp/either"
-	F "github.com/terraform-provider-hpcr/fp/function"
 )
 
-func TestTgz(t *testing.T) {
-	var body bytes.Buffer
+// OpenSSLEncryptBasic implements basic encryption using openSSL given the certificate
+func OpenSSLEncryptBasic(cert []byte) func([]byte) E.Either[error, string] {
+	return EncryptBasic(OpenSSLRandomPassword(keylen), AsymmetricEncryptCert(cert), SymmetricEncrypt)
+}
 
-	base64 := base64.NewEncoder(base64.StdEncoding, &body)
-
-	resE := F.Pipe3(
-		base64,
-		TarFolder[io.WriteCloser]("../samples/nginx-golang"),
-		E.Chain(onClose[io.WriteCloser]),
-		E.MapTo[error, any](true),
-	)
-
-	assert.Equal(t, E.Of[error](true), resE)
-
-	fmt.Println(body.String())
+// OpenSSLDecryptBasic implements basic decryption using openSSL given the private key
+func OpenSSLDecryptBasic(privKey []byte) func(string) E.Either[error, []byte] {
+	return DecryptBasic(AsymmerticDecrypt(privKey), SymmetricDecrypt)
 }

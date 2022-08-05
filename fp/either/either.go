@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//	http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -147,6 +147,10 @@ func Sequence2[E, T1, T2, R any](f func(T1, T2) Either[E, R]) func(Either[E, T1]
 
 func FromOption[E, A any](onNone func() E) func(O.Option[A]) Either[E, A] {
 	return O.Fold(func() Either[E, A] { return Left[E, A](onNone()) }, Right[E, A])
+}
+
+func FromNillable[E, A any](e E) func(*A) Either[E, *A] {
+	return FromPredicate(F.IsNonNil[A], F.Constant1[*A](e))
 }
 
 func Eitherize0[R any](f func() (R, error)) func() Either[error, R] {
