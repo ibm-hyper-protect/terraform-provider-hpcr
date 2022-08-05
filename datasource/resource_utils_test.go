@@ -96,7 +96,7 @@ func TestHashWithCert(t *testing.T) {
 	hashE := F.Pipe3(
 		data,
 		CreateResourceDataMock,
-		createHashWithCert,
+		createHashWithCert(&defaultContext),
 		I.Ap[[]byte, E.Either[error, string]](test),
 	)
 

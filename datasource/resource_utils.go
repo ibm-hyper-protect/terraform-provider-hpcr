@@ -286,21 +286,23 @@ func resourceLifeCycle(f func(ctx *Context) func(fp.ResourceData) ResourceDataE)
 }
 
 // computes a hash for the given bytes and includes the fingerprint of the certificate as part of the hash
-func createHashWithCert(d fp.ResourceData) func([]byte) E.Either[error, string] {
-	// get the fingerprint
-	fpE := F.Pipe3(
-		d,
-		getCertificateE,
-		common.MapStgToBytesE,
-		E.Chain(encrypt.CertFingerprint),
-	)
-	// combine the fingerprint with the actual data
-	return func(data []byte) E.Either[error, string] {
-		return F.Pipe2(
-			fpE,
-			E.Map[error](F.Bind2nd(B.Monoid.Concat, data)),
-			createHashE,
+func createHashWithCert(ctx *Context) func(d fp.ResourceData) func([]byte) E.Either[error, string] {
+	return func(d fp.ResourceData) func([]byte) E.Either[error, string] {
+		// get the fingerprint
+		fpE := F.Pipe3(
+			d,
+			getCertificateE,
+			common.MapStgToBytesE,
+			E.Chain(ctx.CertFingerprint),
 		)
+		// combine the fingerprint with the actual data
+		return func(data []byte) E.Either[error, string] {
+			return F.Pipe2(
+				fpE,
+				E.Map[error](F.Bind2nd(B.Monoid.Concat, data)),
+				createHashE,
+			)
+		}
 	}
 }
 
@@ -311,7 +313,7 @@ func createHashWithCertAndPrivateKey(d fp.ResourceData) func([]byte) E.Either[er
 		d,
 		getCertificateE,
 		common.MapStgToBytesE,
-		E.Chain(encrypt.CertFingerprint),
+		E.Chain(encrypt.OpenSSLCertFingerprint),
 	)
 	// get the fingerprint for the private key
 	privKeyE := F.Pipe4(

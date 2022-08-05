@@ -18,6 +18,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/terraform-provider-hpcr/data"
 	D "github.com/terraform-provider-hpcr/data"
 	RA "github.com/terraform-provider-hpcr/fp/array"
 	E "github.com/terraform-provider-hpcr/fp/either"
@@ -142,4 +143,21 @@ func TestCertificate(t *testing.T) {
 		CertSerial,
 		E.ToError[[]byte],
 	))
+}
+
+func TestCertFingerprint(t *testing.T) {
+	// fingerprint from openSSL
+	fpOpenSSL := F.Pipe2(
+		data.DefaultCertificate,
+		S.ToBytes,
+		OpenSSLCertFingerprint,
+	)
+	// fingerprint directly from crypto
+	fpCrypto := F.Pipe2(
+		data.DefaultCertificate,
+		S.ToBytes,
+		CryptoCertFingerprint,
+	)
+	// make sure they match
+	assert.Equal(t, fpOpenSSL, fpCrypto)
 }

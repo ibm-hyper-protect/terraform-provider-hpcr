@@ -69,6 +69,7 @@ func ResourceTgz() *schema.Resource {
 func resourceEncTgz(ctx *Context) func(d fp.ResourceData) ResourceDataE {
 	// get the update method depending on the context
 	update := updateEncryptedResource(ctx)
+	hashWithCert := createHashWithCert(ctx)
 
 	return func(d fp.ResourceData) ResourceDataE {
 
@@ -77,7 +78,7 @@ func resourceEncTgz(ctx *Context) func(d fp.ResourceData) ResourceDataE {
 
 		return F.Pipe2(
 			tarE,
-			E.Chain(createHashWithCert(d)),
+			E.Chain(hashWithCert(d)),
 			E.Chain(F.Flow3(
 				checksumMatchO(d),
 				update(d)(tarE),

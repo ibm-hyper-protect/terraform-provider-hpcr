@@ -195,7 +195,24 @@ func rsaFromCertificate(cert *x509.Certificate) E.Either[error, *rsa.PublicKey] 
 	return toRsaPublicKey(cert.PublicKey)
 }
 
+func rawFromCertificate(cert *x509.Certificate) []byte {
+	return cert.Raw
+}
+
 // CryptoEncryptBasic implements basic encryption using golang crypto libraries given the certificate
 func CryptoEncryptBasic(cert []byte) func([]byte) E.Either[error, string] {
 	return EncryptBasic(CryptoRandomPassword(keylen), CryptoAsymmetricEncryptCert(cert), CryptoSymmetricEncrypt)
 }
+
+func shaToBytes(sha [32]byte) []byte {
+	return sha[:]
+}
+
+// CryptoCertFingerprint computes the fingerprint of a certificate using the crypto library
+var CryptoCertFingerprint = F.Flow5(
+	pemDecodeE,
+	E.Chain(parseCertificateE),
+	E.Map[error](rawFromCertificate),
+	E.Map[error](sha256.Sum256),
+	E.Map[error](shaToBytes),
+)

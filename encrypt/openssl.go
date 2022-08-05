@@ -80,8 +80,10 @@ var (
 	)
 
 	// gets the fingerprint of a certificate
-	CertFingerprint = F.Flow2(
-		OpenSSL("x509", "-noout", "-fingerprint", "-sha256"),
+	OpenSSLCertFingerprint = F.Flow4(
+		OpenSSL("x509", "--outform", "DER"),
+		mapStdout,
+		E.Chain(OpenSSL("sha256", "--binary")),
 		mapStdout,
 	)
 
