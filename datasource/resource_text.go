@@ -60,6 +60,9 @@ func ResourceTextEncrypted() *schema.Resource {
 
 func resourceEncText(ctx *Context) func(d fp.ResourceData) ResourceDataE {
 
+	// get the update method depending on the context
+	update := updateEncryptedResource(ctx)
+
 	return func(d fp.ResourceData) ResourceDataE {
 		// marshal input text
 		textE := textBytes(d)
@@ -69,7 +72,7 @@ func resourceEncText(ctx *Context) func(d fp.ResourceData) ResourceDataE {
 			E.Chain(createHashWithCert(d)),
 			E.Chain(F.Flow3(
 				checksumMatchO(d),
-				updateEncryptedResource(d)(textE),
+				update(d)(textE),
 				getResourceData(d),
 			),
 			),

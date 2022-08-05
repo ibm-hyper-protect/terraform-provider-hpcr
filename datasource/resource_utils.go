@@ -228,16 +228,18 @@ var (
 )
 
 // callback to update a resource using encryption base64 encoding
-func updateEncryptedResource(d fp.ResourceData) func(E.Either[error, []byte]) func(O.Option[string]) O.Option[ResourceDataE] {
-	return updateResource(d)(func(data []byte) E.Either[error, string] {
-		return F.Pipe4(
-			d,
-			getCertificateE,
-			common.MapStgToBytesE,
-			E.Map[error](encrypt.OpenSSLEncryptBasic),
-			E.Chain(I.Ap[[]byte, E.Either[error, string]](data)),
-		)
-	})
+func updateEncryptedResource(ctx *Context) func(d fp.ResourceData) func(E.Either[error, []byte]) func(O.Option[string]) O.Option[ResourceDataE] {
+	return func(d fp.ResourceData) func(E.Either[error, []byte]) func(O.Option[string]) O.Option[ResourceDataE] {
+		return updateResource(d)(func(data []byte) E.Either[error, string] {
+			return F.Pipe4(
+				d,
+				getCertificateE,
+				common.MapStgToBytesE,
+				E.Map[error](ctx.EncryptBasic),
+				E.Chain(I.Ap[[]byte, E.Either[error, string]](data)),
+			)
+		})
+	}
 }
 
 func resourceLifeCycle(f func(ctx *Context) func(fp.ResourceData) ResourceDataE) ResourceLifeCycle {
