@@ -27,6 +27,8 @@ import (
 	F "github.com/terraform-provider-hpcr/fp/function"
 	I "github.com/terraform-provider-hpcr/fp/identity"
 	O "github.com/terraform-provider-hpcr/fp/option"
+	P "github.com/terraform-provider-hpcr/fp/predicate"
+	S "github.com/terraform-provider-hpcr/fp/string"
 	T "github.com/terraform-provider-hpcr/fp/tuple"
 )
 
@@ -90,6 +92,9 @@ var (
 		E.Chain(OpenSSL("sha256", "--binary")),
 		mapStdout,
 	)
+
+	// tests if a string contains "OpenSSL"
+	includesOpenSSL = S.Includes("OpenSSL")
 )
 
 // version string of the openSSL binary together with the binary
@@ -121,11 +126,14 @@ func validOpenSSL() E.Either[error, string] {
 	return F.Pipe1(
 		openSSLVersion(),
 		E.Chain(func(version OpenSSLVersion) E.Either[error, string] {
-			v := getVersion(version)
-			if strings.Contains(v, "OpenSSL") {
-				return E.Of[error](getPath(version))
-			}
-			return E.Left[error, string](fmt.Errorf("openSSL Version [%s] is unsupported", v))
+			return F.Pipe3(
+				version,
+				O.FromPredicate(P.ContraMap(getVersion)(includesOpenSSL)),
+				O.Map(getPath),
+				E.FromOption[error, string](func() error {
+					return fmt.Errorf("openSSL Version [%s] is unsupported", version)
+				}),
+			)
 		}),
 	)
 }

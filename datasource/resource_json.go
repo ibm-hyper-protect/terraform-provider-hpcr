@@ -60,38 +60,42 @@ func ResourceJSONEncrypted() *schema.Resource {
 	}
 }
 
-func resourceEncJson(d fp.ResourceData) ResourceDataE {
+func resourceEncJson(ctx *Context) func(d fp.ResourceData) ResourceDataE {
 
-	// marshal input text
-	jsonE := jsonBytes(d)
+	return func(d fp.ResourceData) ResourceDataE {
+		// marshal input text
+		jsonE := jsonBytes(d)
 
-	return F.Pipe2(
-		jsonE,
-		E.Chain(createHashWithCert(d)),
-		E.Chain(F.Flow3(
-			checksumMatchO(d),
-			updateEncryptedResource(d)(jsonE),
-			getResourceData(d),
-		),
-		),
-	)
+		return F.Pipe2(
+			jsonE,
+			E.Chain(createHashWithCert(d)),
+			E.Chain(F.Flow3(
+				checksumMatchO(d),
+				updateEncryptedResource(d)(jsonE),
+				getResourceData(d),
+			),
+			),
+		)
+	}
 }
 
-func resourceJson(d fp.ResourceData) ResourceDataE {
+func resourceJson(ctx *Context) func(d fp.ResourceData) ResourceDataE {
 
-	// marshal input text
-	jsonE := jsonBytes(d)
+	return func(d fp.ResourceData) ResourceDataE {
+		// marshal input text
+		jsonE := jsonBytes(d)
 
-	return F.Pipe2(
-		jsonE,
-		createHashE,
-		E.Chain(F.Flow3(
-			checksumMatchO(d),
-			updateBase64Resource(d)(jsonE),
-			getResourceData(d),
-		),
-		),
-	)
+		return F.Pipe2(
+			jsonE,
+			createHashE,
+			E.Chain(F.Flow3(
+				checksumMatchO(d),
+				updateBase64Resource(d)(jsonE),
+				getResourceData(d),
+			),
+			),
+		)
+	}
 }
 
 var (

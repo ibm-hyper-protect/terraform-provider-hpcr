@@ -97,6 +97,20 @@ func encryptBasic(encE E.Either[error, Encrypter], decE E.Either[error, Decrypte
 
 }
 
+func TestDefaultEncryption(t *testing.T) {
+	// detect the default encryption environment
+	env := DefaultEncryption()
+	assert.NotNil(t, env.EncryptBasic)
+}
+
+func TestDefaultEncryptionFallback(t *testing.T) {
+	somepath := "/somepath/openssl.exe"
+	t.Setenv(KeyEnvOpenSSL, somepath)
+	// detect the default encryption environment
+	env := DefaultEncryption()
+	assert.NotNil(t, env.EncryptBasic)
+}
+
 func TestOpenSSLEncryptBasic(t *testing.T) {
 	enc := encryptBasic(openSSLEncryptBasic, openSSLDecryptBasic)
 	enc(t)

@@ -85,21 +85,23 @@ func updateContract(d fp.ResourceData) func(E.Either[error, []byte]) func(O.Opti
 	})
 }
 
-func resourceEncContract(d fp.ResourceData) ResourceDataE {
+func resourceEncContract(ctx *Context) func(d fp.ResourceData) ResourceDataE {
 
-	// marshal input text
-	contractE := contractBytes(d)
+	return func(d fp.ResourceData) ResourceDataE {
+		// marshal input text
+		contractE := contractBytes(d)
 
-	return F.Pipe2(
-		contractE,
-		E.Chain(createHashWithCertAndPrivateKey(d)),
-		E.Chain(F.Flow3(
-			checksumMatchO(d),
-			updateContract(d)(contractE),
-			getResourceData(d),
-		),
-		),
-	)
+		return F.Pipe2(
+			contractE,
+			E.Chain(createHashWithCertAndPrivateKey(d)),
+			E.Chain(F.Flow3(
+				checksumMatchO(d),
+				updateContract(d)(contractE),
+				getResourceData(d),
+			),
+			),
+		)
+	}
 }
 
 var (

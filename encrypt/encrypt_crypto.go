@@ -34,11 +34,26 @@ import (
 )
 
 var (
+	parseCertificateE   = E.Eitherize1(x509.ParseCertificate)
 	parsePKIXPublicKeyE = E.Eitherize1(x509.ParsePKIXPublicKey)
 	toRsaPublicKey      = common.ToTypeE[*rsa.PublicKey]
 	randomSaltE         = cryptoRandomE(saltlen)
 	aesCipherE          = E.Eitherize1(aes.NewCipher)
 	salted              = []byte("Salted__")
+
+	// certToRsaKey decodes a certificate into a public key
+	certToRsaKey = F.Flow3(
+		pemDecodeE,
+		E.Chain(parseCertificateE),
+		E.Chain(rsaFromCertificate),
+	)
+
+	// pubToRsaKey decodes a public key to rsa format
+	pubToRsaKey = F.Flow3(
+		pemDecodeE,
+		E.Chain(parsePKIXPublicKeyE),
+		E.Chain(toRsaPublicKey),
+	)
 )
 
 // cryptoRandomE returns a random sequence of bytes with the given length
@@ -86,25 +101,35 @@ func encryptPKCS1v15(pub *rsa.PublicKey) func([]byte) E.Either[error, []byte] {
 	}
 }
 
-// CryptoAsymmetricEncryptPub creates a function that encrypts a piece of text using a public key
-func CryptoAsymmetricEncryptPub(publicKey []byte) func([]byte) E.Either[error, string] {
-	// decode the input to an RSA public key
-	encE := F.Pipe4(
-		publicKey,
-		pemDecodeE,
-		E.Chain(parsePKIXPublicKeyE),
-		E.Chain(toRsaPublicKey),
+// cryptoAsymmetricEncrypt creates a function that encrypts a piece of text using a public key
+func cryptoAsymmetricEncrypt(decKey func([]byte) E.Either[error, *rsa.PublicKey]) func(publicKey []byte) func([]byte) E.Either[error, string] {
+	// prepare the encryption callback
+	enc := F.Flow2(
+		decKey,
 		E.Map[error](encryptPKCS1v15),
 	)
-	// returns the encryption function
-	return func(data []byte) E.Either[error, string] {
-		return F.Pipe2(
-			encE,
-			E.Chain(I.Ap[[]byte, E.Either[error, []byte]](data)),
-			E.Map[error](common.Base64Encode),
+	return func(publicKey []byte) func([]byte) E.Either[error, string] {
+		// decode the input to an RSA public key
+		encE := F.Pipe1(
+			publicKey,
+			enc,
 		)
+		// returns the encryption function
+		return func(data []byte) E.Either[error, string] {
+			return F.Pipe2(
+				encE,
+				E.Chain(I.Ap[[]byte, E.Either[error, []byte]](data)),
+				E.Map[error](common.Base64Encode),
+			)
+		}
 	}
 }
+
+// CryptoAsymmetricEncryptPub creates a function that encrypts a piece of text using a public key
+var CryptoAsymmetricEncryptPub = cryptoAsymmetricEncrypt(pubToRsaKey)
+
+// CryptoAsymmetricEncryptCert creates a function that encrypts a piece of text using a cerficiate
+var CryptoAsymmetricEncryptCert = cryptoAsymmetricEncrypt(certToRsaKey)
 
 // cbcEncrypt creates a new encrypter and then encrypts a plaintext into a cyphertext
 func cbcEncrypt(b cipher.Block, iv []byte) func([]byte) []byte {
@@ -166,7 +191,11 @@ func CryptoSymmetricEncrypt(srcPlainbBytes []byte) func([]byte) E.Either[error, 
 	}
 }
 
-// CryptoEncryptBasic implements basic encryption using golang crypto libraries given the public key
+func rsaFromCertificate(cert *x509.Certificate) E.Either[error, *rsa.PublicKey] {
+	return toRsaPublicKey(cert.PublicKey)
+}
+
+// CryptoEncryptBasic implements basic encryption using golang crypto libraries given the certificate
 func CryptoEncryptBasic(cert []byte) func([]byte) E.Either[error, string] {
-	return EncryptBasic(CryptoRandomPassword(keylen), CryptoAsymmetricEncryptPub(cert), CryptoSymmetricEncrypt)
+	return EncryptBasic(CryptoRandomPassword(keylen), CryptoAsymmetricEncryptCert(cert), CryptoSymmetricEncrypt)
 }

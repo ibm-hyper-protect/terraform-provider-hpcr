@@ -24,6 +24,22 @@ import (
 	I "github.com/terraform-provider-hpcr/fp/identity"
 )
 
+func TestValidOpenSSL(t *testing.T) {
+	// check if we have a valid openSSL binary
+	validBinaryE := validOpenSSL()
+
+	assert.True(t, E.IsRight(validBinaryE))
+}
+
+func TestInvalidOpenSSL(t *testing.T) {
+	somepath := "/somepath/openssl.exe"
+	t.Setenv(KeyEnvOpenSSL, somepath)
+	// check if we have a valid openSSL binary
+	validBinaryE := validOpenSSL()
+
+	assert.True(t, E.IsLeft(validBinaryE))
+}
+
 func TestOpenSSLBinaryFromEnv(t *testing.T) {
 	somepath := "/somepath/openssl.exe"
 	t.Setenv(KeyEnvOpenSSL, somepath)

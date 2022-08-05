@@ -13,10 +13,21 @@
 // limitations under the License.
 package string
 
+import (
+	"strings"
+
+	F "github.com/terraform-provider-hpcr/fp/function"
+)
+
 func ToBytes(a string) []byte {
 	return []byte(a)
 }
 
 func Equals(a string, b string) bool {
 	return a == b
+}
+
+// Includes returns a predicate that tests for the existence of the search string
+func Includes(searchString string) func(s string) bool {
+	return F.Bind2nd(strings.Contains, searchString)
 }

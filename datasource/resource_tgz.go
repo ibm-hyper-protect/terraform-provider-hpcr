@@ -66,38 +66,44 @@ func ResourceTgz() *schema.Resource {
 	}
 }
 
-func resourceEncTgz(d fp.ResourceData) ResourceDataE {
+func resourceEncTgz(ctx *Context) func(d fp.ResourceData) ResourceDataE {
 
-	// marshal input folder
-	tarE := tarFolder(d)
+	return func(d fp.ResourceData) ResourceDataE {
 
-	return F.Pipe2(
-		tarE,
-		E.Chain(createHashWithCert(d)),
-		E.Chain(F.Flow3(
-			checksumMatchO(d),
-			updateEncryptedResource(d)(tarE),
-			getResourceData(d),
-		),
-		),
-	)
+		// marshal input folder
+		tarE := tarFolder(d)
+
+		return F.Pipe2(
+			tarE,
+			E.Chain(createHashWithCert(d)),
+			E.Chain(F.Flow3(
+				checksumMatchO(d),
+				updateEncryptedResource(d)(tarE),
+				getResourceData(d),
+			),
+			),
+		)
+	}
 }
 
-func resourceTgz(d fp.ResourceData) ResourceDataE {
+func resourceTgz(ctx *Context) func(fp.ResourceData) ResourceDataE {
 
-	// marshal input folder
-	tarE := tarFolder(d)
+	return func(d fp.ResourceData) ResourceDataE {
 
-	return F.Pipe2(
-		tarE,
-		createHashE,
-		E.Chain(F.Flow3(
-			checksumMatchO(d),
-			updateBase64Resource(d)(tarE),
-			getResourceData(d),
-		),
-		),
-	)
+		// marshal input folder
+		tarE := tarFolder(d)
+
+		return F.Pipe2(
+			tarE,
+			createHashE,
+			E.Chain(F.Flow3(
+				checksumMatchO(d),
+				updateBase64Resource(d)(tarE),
+				getResourceData(d),
+			),
+			),
+		)
+	}
 }
 
 var (

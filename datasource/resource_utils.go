@@ -40,7 +40,10 @@ type ResourceDataE = E.Either[error, fp.ResourceData]
 type ResourceLifeCycle = T.Tuple3[func(*schema.ResourceData, any) error, func(*schema.ResourceData, any) error, func(*schema.ResourceData, any) error]
 
 // produces a new UUID
-var uuidE = E.Eitherize0(uuid.GenerateUUID)
+var (
+	uuidE      = E.Eitherize0(uuid.GenerateUUID)
+	toContextE = common.ToTypeE[*Context]
+)
 
 // assigns a new uuid to a resource
 func setUniqueID(d fp.ResourceData) ResourceDataE {
@@ -237,28 +240,44 @@ func updateEncryptedResource(d fp.ResourceData) func(E.Either[error, []byte]) fu
 	})
 }
 
-func resourceLifeCycle(f func(fp.ResourceData) ResourceDataE) ResourceLifeCycle {
+func resourceLifeCycle(f func(ctx *Context) func(fp.ResourceData) ResourceDataE) ResourceLifeCycle {
+
+	// lift f into the context
+	withCtx := F.Flow2(
+		toContextE,
+		E.Map[error](f),
+	)
 
 	create := func(d *schema.ResourceData, m any) error {
 
 		return F.Pipe4(
-			d,
-			fp.CreateResourceDataProxy,
-			setUniqueID,
-			E.Chain(f),
+			m,
+			withCtx,
+			E.Ap[error, fp.ResourceData, E.Either[error, fp.ResourceData]](F.Pipe2(
+				d,
+				fp.CreateResourceDataProxy,
+				setUniqueID,
+			)),
+			E.Flatten[error, fp.ResourceData],
 			E.ToError[fp.ResourceData],
 		)
+
 	}
 
 	read := func(d *schema.ResourceData, m any) error {
 
 		return F.Pipe3(
-			d,
-			fp.CreateResourceDataProxy,
-			f,
+			m,
+			withCtx,
+			E.Chain(I.Ap[fp.ResourceData, E.Either[error, fp.ResourceData]](F.Pipe1(
+				d,
+				fp.CreateResourceDataProxy,
+			))),
 			E.ToError[fp.ResourceData],
 		)
+
 	}
+
 	delete := resourceDeleteNoOp
 
 	return T.MakeTuple3(create, read, delete)
