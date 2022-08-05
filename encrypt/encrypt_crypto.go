@@ -125,10 +125,10 @@ func cryptoAsymmetricEncrypt(decKey func([]byte) E.Either[error, *rsa.PublicKey]
 	}
 }
 
-// CryptoAsymmetricEncryptPub creates a function that encrypts a piece of text using a public key
+// // CryptoAsymmetricEncryptPub encrypts a piece of text using a public key
 var CryptoAsymmetricEncryptPub = cryptoAsymmetricEncrypt(pubToRsaKey)
 
-// CryptoAsymmetricEncryptCert creates a function that encrypts a piece of text using a cerficiate
+// CryptoAsymmetricEncryptCert encrypts a piece of text using a certificate
 var CryptoAsymmetricEncryptCert = cryptoAsymmetricEncrypt(certToRsaKey)
 
 // cbcEncrypt creates a new encrypter and then encrypts a plaintext into a cyphertext

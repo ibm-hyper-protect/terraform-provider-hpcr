@@ -33,7 +33,7 @@ func openSSLEncryption() Encryption {
 	}
 }
 
-// openSSLEncryption returns the encryption environment using golang crypto
+// cryptoEncryption returns the encryption environment using golang crypto
 func cryptoEncryption() Encryption {
 	return Encryption{
 		EncryptBasic:    CryptoEncryptBasic,
@@ -41,7 +41,7 @@ func cryptoEncryption() Encryption {
 	}
 }
 
-// detects the encryption environment
+// DefaultEncryption detects the encryption environment
 func DefaultEncryption() Encryption {
 	return F.Pipe1(
 		validOpenSSL(),
