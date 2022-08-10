@@ -74,11 +74,11 @@ func TestEncryptPassword(t *testing.T) {
 }
 
 func TestPrivateKey(t *testing.T) {
-	privKey := PrivateKey()
+	privKey := OpenSSLPrivateKey()
 
 	pubKey := F.Pipe2(
 		privKey,
-		E.Chain(PublicKey),
+		E.Chain(OpenSSLPublicKey),
 		common.MapBytesToStgE,
 	)
 
@@ -87,13 +87,13 @@ func TestPrivateKey(t *testing.T) {
 
 func TestSignDigest(t *testing.T) {
 	// some key
-	privKeyE := PrivateKey()
+	privKeyE := OpenSSLPrivateKey()
 	// some input data
 	data := []byte("Carsten")
 
 	signE := F.Pipe1(
 		privKeyE,
-		E.Map[error](SignDigest),
+		E.Map[error](OpenSSLSignDigest),
 	)
 
 	resE := F.Pipe2(
@@ -107,12 +107,34 @@ func TestSignDigest(t *testing.T) {
 
 func TestPrivKeyFingerprint(t *testing.T) {
 	// some key
-	privKeyE := PrivateKey()
+	privKeyE := OpenSSLPrivateKey()
 
 	fpE := F.Pipe1(
 		privKeyE,
-		E.Chain(PrivKeyFingerprint),
+		E.Chain(OpenSSLPrivKeyFingerprint),
 	)
 
 	assert.True(t, E.IsRight(fpE))
+}
+
+// TestOpenSSLSignature checks if the signature works when created and verified by the openSSL APIs
+func TestOpenSSLSignature(t *testing.T) {
+	SignatureTest(
+		OpenSSLPrivateKey,
+		OpenSSLPublicKey,
+		OpenSSLRandomPassword(3333),
+		OpenSSLSignDigest,
+		OpenSSLVerifyDigest,
+	)(t)
+}
+
+// TestCryptoOpenSSLSignature checks if the signature works when created and verified by the openSSL APIs
+func TestCryptoOpenSSLSignature(t *testing.T) {
+	SignatureTest(
+		OpenSSLPrivateKey,
+		OpenSSLPublicKey,
+		OpenSSLRandomPassword(3333),
+		CryptoSignDigest,
+		OpenSSLVerifyDigest,
+	)(t)
 }

@@ -37,10 +37,10 @@ var Contract1 string
 
 var (
 	// keypair for testing
-	privKey = encrypt.PrivateKey()
+	privKey = encrypt.OpenSSLPrivateKey()
 	pubKey  = F.Pipe1(
 		privKey,
-		E.Chain(encrypt.PublicKey),
+		E.Chain(encrypt.OpenSSLPublicKey),
 	)
 
 	// the encryption function based on the keys
@@ -53,7 +53,7 @@ var (
 )
 
 func TestAddSigningKey(t *testing.T) {
-	privKeyE := encrypt.PrivateKey()
+	privKeyE := encrypt.OpenSSLPrivateKey()
 	// add to key
 	addKey := F.Pipe1(
 		privKeyE,
@@ -73,7 +73,7 @@ func TestAddSigningKey(t *testing.T) {
 
 	pubE := F.Pipe2(
 		privKeyE,
-		E.Chain(encrypt.PublicKey),
+		E.Chain(encrypt.OpenSSLPublicKey),
 		common.MapBytesToStgE,
 	)
 
@@ -129,7 +129,7 @@ func TestUpsertEncrypted(t *testing.T) {
 }
 
 func TestUpsertSigningKey(t *testing.T) {
-	privKeyE := encrypt.PrivateKey()
+	privKeyE := encrypt.OpenSSLPrivateKey()
 	// add to key
 	upsertKeyE := F.Pipe1(
 		privKeyE,
@@ -162,7 +162,7 @@ func TestUpsertSigningKey(t *testing.T) {
 
 func TestEncryptAndSignContract(t *testing.T) {
 	// the private key
-	privKeyE := encrypt.PrivateKey()
+	privKeyE := encrypt.OpenSSLPrivateKey()
 	// the encryption function
 	signerE := F.Pipe2(
 		openSSLEncryptBasicE,
@@ -191,7 +191,7 @@ func TestEncryptAndSignContract(t *testing.T) {
 
 func TestEnvWorkloadSignature(t *testing.T) {
 	// the private key
-	privKeyE := encrypt.PrivateKey()
+	privKeyE := encrypt.OpenSSLPrivateKey()
 
 	signer := F.Pipe1(
 		privKeyE,

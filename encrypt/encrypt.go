@@ -22,22 +22,34 @@ type Encryption struct {
 	// EncryptBasic implements basic encryption using openSSL given the certificate
 	EncryptBasic func(cert []byte) func([]byte) E.Either[error, string]
 	// CertFingerprint computes the fingerprint of a certificate
-	CertFingerprint (func([]byte) E.Either[error, []byte])
+	CertFingerprint func([]byte) E.Either[error, []byte]
+	// PrivKeyFingerprint computes the fingerprint of a private key
+	PrivKeyFingerprint func([]byte) E.Either[error, []byte]
+	// PrivKey computes a new private key
+	PrivKey func() E.Either[error, []byte]
+	// SignDigest computes the sha256 signature using a private key
+	SignDigest func(data []byte) func([]byte) E.Either[error, []byte]
 }
 
 // openSSLEncryption returns the encryption environment using OpenSSL
 func openSSLEncryption() Encryption {
 	return Encryption{
-		EncryptBasic:    OpenSSLEncryptBasic,
-		CertFingerprint: OpenSSLCertFingerprint,
+		EncryptBasic:       OpenSSLEncryptBasic,
+		CertFingerprint:    OpenSSLCertFingerprint,
+		PrivKeyFingerprint: OpenSSLPrivKeyFingerprint,
+		PrivKey:            OpenSSLPrivateKey,
+		SignDigest:         OpenSSLSignDigest,
 	}
 }
 
 // cryptoEncryption returns the encryption environment using golang crypto
 func cryptoEncryption() Encryption {
 	return Encryption{
-		EncryptBasic:    CryptoEncryptBasic,
-		CertFingerprint: CryptoCertFingerprint,
+		EncryptBasic:       CryptoEncryptBasic,
+		CertFingerprint:    CryptoCertFingerprint,
+		PrivKeyFingerprint: CryptoPrivKeyFingerprint,
+		PrivKey:            CryptoPrivateKey,
+		SignDigest:         OpenSSLSignDigest,
 	}
 }
 

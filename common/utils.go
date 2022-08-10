@@ -44,7 +44,13 @@ var (
 	MapBytesToStgE = E.Map[error](B.ToString)
 	MapStgToBytesE = E.Map[error](S.ToBytes)
 	MapRefAnyE     = E.Map[error](F.Ref[any])
+
+	FromErrorO = O.FromPredicate(isError)
 )
+
+func isError(err error) bool {
+	return err != nil
+}
 
 func ToTypeO[A any](data any) O.Option[A] {
 	value, ok := data.(A)

@@ -18,7 +18,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/terraform-provider-hpcr/common"
 	"github.com/terraform-provider-hpcr/contract"
-	"github.com/terraform-provider-hpcr/encrypt"
 	"github.com/terraform-provider-hpcr/fp"
 	E "github.com/terraform-provider-hpcr/fp/either"
 	F "github.com/terraform-provider-hpcr/fp/function"
@@ -49,43 +48,49 @@ func ResourceContractEncrypted() *schema.Resource {
 }
 
 // callback to update a resource using encryption base64 encoding
-func updateContract(d fp.ResourceData) func(E.Either[error, []byte]) func(O.Option[string]) O.Option[ResourceDataE] {
-	return updateResource(d)(func(data []byte) E.Either[error, string] {
+func updateContract(ctx *Context) func(d fp.ResourceData) func(E.Either[error, []byte]) func(O.Option[string]) O.Option[ResourceDataE] {
+	return func(d fp.ResourceData) func(E.Either[error, []byte]) func(O.Option[string]) O.Option[ResourceDataE] {
+		return updateResource(d)(func(data []byte) E.Either[error, string] {
 
-		// marshal key or create the private key
-		privKeyE := F.Pipe2(
-			getPrivKeyE(d),
-			common.MapStgToBytesE,
-			E.Alt(encrypt.PrivateKey),
-		)
+			// marshal key or create the private key
+			privKeyE := F.Pipe2(
+				getPrivKeyE(d),
+				common.MapStgToBytesE,
+				E.Alt(ctx.PrivKey),
+			)
 
-		// deserialize the contract into a map
-		contractE := F.Pipe2(
-			data,
-			contract.ParseRawMapE,
-			contract.MapDerefRawMapE,
-		)
+			// deserialize the contract into a map
+			contractE := F.Pipe2(
+				data,
+				contract.ParseRawMapE,
+				contract.MapDerefRawMapE,
+			)
 
-		// create the function that can execute the signature
-		resE := F.Pipe10(
-			d,
-			getCertificateE,
-			common.MapStgToBytesE,
-			E.Map[error](encrypt.OpenSSLEncryptBasic),
-			E.Map[error](contract.EncryptAndSignContract),
-			E.Ap[error, []byte, func(contract.RawMap) E.Either[error, contract.RawMap]](privKeyE),
-			E.Ap[error, contract.RawMap, E.Either[error, contract.RawMap]](contractE),
-			E.Flatten[error, contract.RawMap],
-			contract.MapRefRawMapE,
-			E.Chain(contract.StringifyRawMapE),
-			common.MapBytesToStgE,
-		)
+			// create the function that can execute the signature
+			resE := F.Pipe10(
+				d,
+				getCertificateE,
+				common.MapStgToBytesE,
+				E.Map[error](ctx.EncryptBasic),
+				E.Map[error](contract.EncryptAndSignContract),
+				E.Ap[error, []byte, func(contract.RawMap) E.Either[error, contract.RawMap]](privKeyE),
+				E.Ap[error, contract.RawMap, E.Either[error, contract.RawMap]](contractE),
+				E.Flatten[error, contract.RawMap],
+				contract.MapRefRawMapE,
+				E.Chain(contract.StringifyRawMapE),
+				common.MapBytesToStgE,
+			)
 
-		return resE
-	})
+			return resE
+		})
+	}
 }
 
 func resourceEncContract(ctx *Context) func(d fp.ResourceData) ResourceDataE {
+
+	// contextualize
+	hashWithCertAndPrivateKey := createHashWithCertAndPrivateKey(ctx)
+	update := updateContract(ctx)
 
 	return func(d fp.ResourceData) ResourceDataE {
 		// marshal input text
@@ -93,10 +98,10 @@ func resourceEncContract(ctx *Context) func(d fp.ResourceData) ResourceDataE {
 
 		return F.Pipe2(
 			contractE,
-			E.Chain(createHashWithCertAndPrivateKey(d)),
+			E.Chain(hashWithCertAndPrivateKey(d)),
 			E.Chain(F.Flow3(
 				checksumMatchO(d),
-				updateContract(d)(contractE),
+				update(d)(contractE),
 				getResourceData(d),
 			),
 			),

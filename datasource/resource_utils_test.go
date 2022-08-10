@@ -29,7 +29,7 @@ import (
 
 func TestHashWithCertAndKey(t *testing.T) {
 
-	privKeyE := encrypt.PrivateKey()
+	privKeyE := encrypt.OpenSSLPrivateKey()
 
 	dataE := F.Pipe2(
 		privKeyE,
@@ -49,7 +49,7 @@ func TestHashWithCertAndKey(t *testing.T) {
 
 	hashE := F.Pipe2(
 		dataE,
-		E.Map[error](createHashWithCertAndPrivateKey),
+		E.Map[error](createHashWithCertAndPrivateKey(&defaultContext)),
 		E.Chain(I.Ap[[]byte, E.Either[error, string]](test)),
 	)
 
@@ -58,7 +58,7 @@ func TestHashWithCertAndKey(t *testing.T) {
 
 func TestHashWithCertAndNoKey(t *testing.T) {
 
-	privKeyE := encrypt.PrivateKey()
+	privKeyE := encrypt.OpenSSLPrivateKey()
 
 	dataE := F.Pipe2(
 		privKeyE,
@@ -77,7 +77,7 @@ func TestHashWithCertAndNoKey(t *testing.T) {
 
 	hashE := F.Pipe2(
 		dataE,
-		E.Map[error](createHashWithCertAndPrivateKey),
+		E.Map[error](createHashWithCertAndPrivateKey(&defaultContext)),
 		E.Chain(I.Ap[[]byte, E.Either[error, string]](test)),
 	)
 

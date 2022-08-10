@@ -22,7 +22,46 @@ import (
 	F "github.com/terraform-provider-hpcr/fp/function"
 )
 
+// TestCryptoSignature checks if the signature works when created and verified by the crypto APIs
+func TestCryptoSignature(t *testing.T) {
+	SignatureTest(
+		CryptoPrivateKey,
+		CryptoPublicKey,
+		CryptoRandomPassword(3333),
+		CryptoSignDigest,
+		CryptoVerifyDigest,
+	)(t)
+}
+
+// TestCryptoSignature checks if the signature works when created by OpenSSL and verified by the crypto APIs
+func TestOpenSSLCryptoSignature(t *testing.T) {
+	SignatureTest(
+		OpenSSLPrivateKey,
+		CryptoPublicKey,
+		OpenSSLRandomPassword(3333),
+		OpenSSLSignDigest,
+		CryptoVerifyDigest,
+	)(t)
+}
+
+func TestCryptoPrivateKey(t *testing.T) {
+	// generate a random key
+	privKeyE := CryptoPrivateKey()
+	// extract public key via openSSL and crypto and compare
+	fpOpenSSL := F.Pipe1(
+		privKeyE,
+		E.Chain(OpenSSLPrivKeyFingerprint),
+	)
+	fpCrypto := F.Pipe1(
+		privKeyE,
+		E.Chain(CryptoPrivKeyFingerprint),
+	)
+
+	assert.Equal(t, fpOpenSSL, fpCrypto)
+}
+
 func TestCryptRandomPassword(t *testing.T) {
+
 	n := keylen
 	pwd := CryptoRandomPassword(n)
 
@@ -33,3 +72,19 @@ func TestCryptRandomPassword(t *testing.T) {
 
 	assert.Equal(t, E.Of[error](n), lenE)
 }
+
+// func TestCryptPrivKey(t *testing.T) {
+// 	privKeyE := readFileE("../build/key.priv")
+// 	// fingerprint from openSSL
+// 	fpOpenSSL := F.Pipe1(
+// 		privKeyE,
+// 		E.Chain(OpenSSLPrivKeyFingerprint),
+// 	)
+// 	// fingerprint directly from crypto
+// 	fpCrypto := F.Pipe1(
+// 		privKeyE,
+// 		E.Chain(CryptoPrivKeyFingerprint),
+// 	)
+// 	// make sure they match
+// 	assert.Equal(t, fpOpenSSL, fpCrypto)
+// }

@@ -57,7 +57,7 @@ func anyToBytes(a any) []byte {
 // computes the signature across workload and env
 func createEnvWorkloadSignature(privKey []byte) func(RawMap) E.Either[error, string] {
 	// callback to construct the digest
-	sign := encrypt.SignDigest(privKey)
+	sign := encrypt.OpenSSLSignDigest(privKey)
 
 	// lookup workload and env
 	getEnvO := F.Flow2(
@@ -107,7 +107,7 @@ func addSigningKey(key []byte) func(RawMap) E.Either[error, RawMap] {
 	// function to add the pkey into a map
 	pemE := F.Pipe4(
 		key,
-		encrypt.PublicKey,
+		encrypt.OpenSSLPublicKey,
 		common.MapBytesToStgE,
 		E.Map[error](toAny[string]),
 		E.Map[error](F.Bind1st(R.UpsertAt[string, any], KeySigningKey)),

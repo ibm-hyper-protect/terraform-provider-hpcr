@@ -22,7 +22,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/terraform-provider-hpcr/common"
 	"github.com/terraform-provider-hpcr/data"
-	"github.com/terraform-provider-hpcr/encrypt"
 	"github.com/terraform-provider-hpcr/fp"
 	B "github.com/terraform-provider-hpcr/fp/bytes"
 	E "github.com/terraform-provider-hpcr/fp/either"
@@ -307,33 +306,36 @@ func createHashWithCert(ctx *Context) func(d fp.ResourceData) func([]byte) E.Eit
 }
 
 // computes a hash for the given bytes and includes the fingerprint of the certificate as part of the hash
-func createHashWithCertAndPrivateKey(d fp.ResourceData) func([]byte) E.Either[error, string] {
-	// get the fingerprint for the certificate
-	certE := F.Pipe3(
-		d,
-		getCertificateE,
-		common.MapStgToBytesE,
-		E.Chain(encrypt.OpenSSLCertFingerprint),
-	)
-	// get the fingerprint for the private key
-	privKeyE := F.Pipe4(
-		d,
-		getPrivKeyE,
-		common.MapStgToBytesE,
-		E.Chain(encrypt.PrivKeyFingerprint),
-		E.Alt(F.Constant(E.Of[error](B.Monoid.Empty()))),
-	)
-	// combine into one
-	fp := E.Sequence2(func(left, right []byte) E.Either[error, []byte] {
-		return E.Of[error](B.Monoid.Concat(left, right))
-	})
+func createHashWithCertAndPrivateKey(ctx *Context) func(d fp.ResourceData) func([]byte) E.Either[error, string] {
 
-	// combine the fingerprint with the actual data
-	return func(data []byte) E.Either[error, string] {
-		return F.Pipe2(
-			fp(certE, privKeyE),
-			E.Map[error](F.Bind2nd(B.Monoid.Concat, data)),
-			createHashE,
+	return func(d fp.ResourceData) func([]byte) E.Either[error, string] {
+		// get the fingerprint for the certificate
+		certE := F.Pipe3(
+			d,
+			getCertificateE,
+			common.MapStgToBytesE,
+			E.Chain(ctx.CertFingerprint),
 		)
+		// get the fingerprint for the private key
+		privKeyE := F.Pipe4(
+			d,
+			getPrivKeyE,
+			common.MapStgToBytesE,
+			E.Chain(ctx.PrivKeyFingerprint),
+			E.Alt(F.Constant(E.Of[error](B.Monoid.Empty()))),
+		)
+		// combine into one
+		fp := E.Sequence2(func(left, right []byte) E.Either[error, []byte] {
+			return E.Of[error](B.Monoid.Concat(left, right))
+		})
+
+		// combine the fingerprint with the actual data
+		return func(data []byte) E.Either[error, string] {
+			return F.Pipe2(
+				fp(certE, privKeyE),
+				E.Map[error](F.Bind2nd(B.Monoid.Concat, data)),
+				createHashE,
+			)
+		}
 	}
 }

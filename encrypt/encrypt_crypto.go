@@ -14,6 +14,7 @@
 package encrypt
 
 import (
+	"crypto"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
@@ -30,16 +31,19 @@ import (
 	E "github.com/terraform-provider-hpcr/fp/either"
 	F "github.com/terraform-provider-hpcr/fp/function"
 	I "github.com/terraform-provider-hpcr/fp/identity"
+	O "github.com/terraform-provider-hpcr/fp/option"
 	"golang.org/x/crypto/pbkdf2"
 )
 
 var (
-	parseCertificateE   = E.Eitherize1(x509.ParseCertificate)
-	parsePKIXPublicKeyE = E.Eitherize1(x509.ParsePKIXPublicKey)
-	toRsaPublicKey      = common.ToTypeE[*rsa.PublicKey]
-	randomSaltE         = cryptoRandomE(saltlen)
-	aesCipherE          = E.Eitherize1(aes.NewCipher)
-	salted              = []byte("Salted__")
+	parseCertificateE     = E.Eitherize1(x509.ParseCertificate)
+	parsePKIXPublicKeyE   = E.Eitherize1(x509.ParsePKIXPublicKey)
+	parsePKCS1PrivateKeyE = E.Eitherize1(x509.ParsePKCS1PrivateKey)
+	marshalPKIXPublicKeyE = E.Eitherize1(x509.MarshalPKIXPublicKey)
+	toRsaPublicKey        = common.ToTypeE[*rsa.PublicKey]
+	randomSaltE           = cryptoRandomE(saltlen)
+	aesCipherE            = E.Eitherize1(aes.NewCipher)
+	salted                = []byte("Salted__")
 
 	// certToRsaKey decodes a certificate into a public key
 	certToRsaKey = F.Flow3(
@@ -53,6 +57,49 @@ var (
 		pemDecodeE,
 		E.Chain(parsePKIXPublicKeyE),
 		E.Chain(toRsaPublicKey),
+	)
+
+	// CryptoCertFingerprint computes the fingerprint of a certificate using the crypto library
+	CryptoCertFingerprint = F.Flow5(
+		pemDecodeE,
+		E.Chain(parseCertificateE),
+		E.Map[error](rawFromCertificate),
+		E.Map[error](sha256.Sum256),
+		E.Map[error](shaToBytes),
+	)
+
+	// CryptoPrivKeyFingerprint computes the fingerprint of a private key using the crypto library
+	CryptoPrivKeyFingerprint = F.Flow7(
+		pemDecodeE,
+		E.Chain(parsePKCS1PrivateKeyE),
+		E.Map[error](privToPub),
+		E.Map[error](pubToAny),
+		E.Chain(marshalPKIXPublicKeyE),
+		E.Map[error](sha256.Sum256),
+		E.Map[error](shaToBytes),
+	)
+
+	// CryptoVerifyDigest verifies the signature of the input data against a signature
+	CryptoVerifyDigest = F.Flow2(
+		pubToRsaKey,
+		E.Fold(errorValidator, verifyPKCS1v15),
+	)
+
+	// CryptoPublicKey extracts the public key from a private key
+	CryptoPublicKey = F.Flow6(
+		pemDecodeE,
+		E.Chain(parsePKCS1PrivateKeyE),
+		E.Map[error](privToPub),
+		E.Map[error](pubToAny),
+		E.Chain(marshalPKIXPublicKeyE),
+		E.Map[error](func(data []byte) []byte {
+			return pem.EncodeToMemory(
+				&pem.Block{
+					Type:  "PUBLIC KEY",
+					Bytes: data,
+				},
+			)
+		}),
 	)
 )
 
@@ -208,11 +255,79 @@ func shaToBytes(sha [32]byte) []byte {
 	return sha[:]
 }
 
-// CryptoCertFingerprint computes the fingerprint of a certificate using the crypto library
-var CryptoCertFingerprint = F.Flow5(
-	pemDecodeE,
-	E.Chain(parseCertificateE),
-	E.Map[error](rawFromCertificate),
-	E.Map[error](sha256.Sum256),
-	E.Map[error](shaToBytes),
+func privToPub(privKey *rsa.PrivateKey) *rsa.PublicKey {
+	return &privKey.PublicKey
+}
+
+func pubToAny(pubKey *rsa.PublicKey) any {
+	return pubKey
+}
+
+func privKeyToPem(privKey *rsa.PrivateKey) []byte {
+	return pem.EncodeToMemory(
+		&pem.Block{
+			Type:  "RSA PRIVATE KEY",
+			Bytes: x509.MarshalPKCS1PrivateKey(privKey),
+		},
+	)
+}
+
+// CryptoPrivateKey generates a private key
+func CryptoPrivateKey() E.Either[error, []byte] {
+	return F.Pipe1(
+		E.TryCatchError(func() (*rsa.PrivateKey, error) {
+			return rsa.GenerateKey(rand.Reader, 4096)
+		}),
+		E.Map[error](privKeyToPem),
+	)
+}
+
+// implements the signing operation in a functional way
+func signPKCS1v15(privateKey *rsa.PrivateKey) func([]byte) E.Either[error, []byte] {
+	return func(digest []byte) E.Either[error, []byte] {
+		return E.TryCatchError(func() ([]byte, error) {
+			return rsa.SignPKCS1v15(rand.Reader, privateKey, crypto.SHA256, digest)
+		})
+	}
+}
+
+// CryptoSignDigest generates a signature across the sha256
+func CryptoSignDigest(privKey []byte) func([]byte) E.Either[error, []byte] {
+	// parse the private key and derive the signer from it
+	signE := F.Pipe3(
+		privKey,
+		pemDecodeE,
+		E.Chain(parsePKCS1PrivateKeyE),
+		E.Map[error](signPKCS1v15),
+	)
+	return func(data []byte) E.Either[error, []byte] {
+		// compute the digest
+		digestE := F.Pipe2(
+			data,
+			sha256.Sum256,
+			shaToBytes,
+		)
+		// apply the signer
+		return F.Pipe1(
+			signE,
+			E.Chain(I.Ap[[]byte, E.Either[error, []byte]](digestE)),
+		)
+	}
+}
+
+// implements the validation operation in a functional way
+func verifyPKCS1v15(pubKey *rsa.PublicKey) func([]byte) func([]byte) O.Option[error] {
+	return func(data []byte) func([]byte) O.Option[error] {
+		digest := sha256.Sum256(data)
+		return func(signature []byte) O.Option[error] {
+			return common.FromErrorO(rsa.VerifyPKCS1v15(pubKey, crypto.SHA256, digest[:], signature))
+		}
+	}
+}
+
+// errorValidator returns a validator that returns the orignal error
+var errorValidator = F.Flow3(
+	O.Of[error],
+	F.Constant1[[]byte, O.Option[error]],
+	F.Constant1[[]byte, func([]byte) O.Option[error]],
 )

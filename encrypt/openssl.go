@@ -57,7 +57,8 @@ var (
 		E.Map[error](common.Base64Encode),
 	)
 
-	SignDigest = handle(signDigest)
+	// OpenSSLSignDigest signs the sha256 digest using a private key
+	OpenSSLSignDigest = handle(signDigest)
 
 	AsymmetricEncryptPub = handle(asymmetricEncryptPub)
 
@@ -67,19 +68,19 @@ var (
 
 	SymmetricEncrypt = handle(symmetricEncrypt)
 
-	// gets the public key from a private key
-	PublicKey = F.Flow2(
+	// OpenSSLPublicKey gets the public key from a private key
+	OpenSSLPublicKey = F.Flow2(
 		OpenSSL("rsa", "-pubout"),
 		mapStdout,
 	)
 
-	// gets the serial number from a certificate
+	// CertSerial gets the serial number from a certificate
 	CertSerial = F.Flow2(
 		OpenSSL("x509", "-serial", "-noout"),
 		mapStdout,
 	)
 
-	// gets the fingerprint of a certificate
+	// OpenSSLCertFingerprint gets the fingerprint of a certificate
 	OpenSSLCertFingerprint = F.Flow4(
 		OpenSSL("x509", "--outform", "DER"),
 		mapStdout,
@@ -88,7 +89,7 @@ var (
 	)
 
 	// gets the fingerprint of the private key
-	PrivKeyFingerprint = F.Flow4(
+	OpenSSLPrivKeyFingerprint = F.Flow4(
 		OpenSSL("rsa", "-pubout", "-outform", "DER"),
 		mapStdout,
 		E.Chain(OpenSSL("sha256", "--binary")),
@@ -261,11 +262,28 @@ func SymmetricDecrypt(token string) func([]byte) E.Either[error, []byte] {
 	}
 }
 
-// PrivateKey generates a private key
-func PrivateKey() E.Either[error, []byte] {
+// OpenSSLPrivateKey generates a private key
+func OpenSSLPrivateKey() E.Either[error, []byte] {
 	return F.Pipe2(
 		emptyBytes,
 		OpenSSL("genrsa", "4096"),
 		mapStdout,
 	)
+}
+
+// OpenSSLVerifyDigest verifies the signature of the input data against a signature
+func OpenSSLVerifyDigest(pubKey []byte) func([]byte) func([]byte) O.Option[error] {
+	return func(data []byte) func([]byte) O.Option[error] {
+		return func(signature []byte) O.Option[error] {
+			return F.Pipe2(
+				data,
+				handle(func(pubKeyFile string) func([]byte) E.Either[error, common.CommandOutput] {
+					return handle(func(signatureFile string) func([]byte) E.Either[error, common.CommandOutput] {
+						return OpenSSL("dgst", "-verify", pubKeyFile, "-sha256", "-signature", signatureFile)
+					})(signature)
+				})(pubKey),
+				E.Fold(O.Of[error], F.Constant1[common.CommandOutput](O.None[error]())),
+			)
+		}
+	}
 }

@@ -31,10 +31,10 @@ type Decrypter = func(string) E.Either[error, []byte]
 
 var (
 	// keypair for testing
-	privKey = PrivateKey()
+	privKey = OpenSSLPrivateKey()
 	pubKey  = F.Pipe1(
 		privKey,
-		E.Chain(PublicKey),
+		E.Chain(OpenSSLPublicKey),
 	)
 
 	// the encryption function based on the keys
@@ -157,6 +157,21 @@ func TestCertFingerprint(t *testing.T) {
 		data.DefaultCertificate,
 		S.ToBytes,
 		CryptoCertFingerprint,
+	)
+	// make sure they match
+	assert.Equal(t, fpOpenSSL, fpCrypto)
+}
+
+func TestPrivKeyFingerprints(t *testing.T) {
+	// fingerprint from openSSL
+	fpOpenSSL := F.Pipe1(
+		privKey,
+		E.Chain(OpenSSLPrivKeyFingerprint),
+	)
+	// fingerprint directly from crypto
+	fpCrypto := F.Pipe1(
+		privKey,
+		E.Chain(CryptoPrivKeyFingerprint),
 	)
 	// make sure they match
 	assert.Equal(t, fpOpenSSL, fpCrypto)
