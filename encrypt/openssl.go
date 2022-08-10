@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//	http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,6 +27,8 @@ import (
 	F "github.com/terraform-provider-hpcr/fp/function"
 	I "github.com/terraform-provider-hpcr/fp/identity"
 	O "github.com/terraform-provider-hpcr/fp/option"
+	P "github.com/terraform-provider-hpcr/fp/predicate"
+	S "github.com/terraform-provider-hpcr/fp/string"
 	T "github.com/terraform-provider-hpcr/fp/tuple"
 )
 
@@ -55,7 +57,8 @@ var (
 		E.Map[error](common.Base64Encode),
 	)
 
-	SignDigest = handle(signDigest)
+	// OpenSSLSignDigest signs the sha256 digest using a private key
+	OpenSSLSignDigest = handle(signDigest)
 
 	AsymmetricEncryptPub = handle(asymmetricEncryptPub)
 
@@ -65,31 +68,36 @@ var (
 
 	SymmetricEncrypt = handle(symmetricEncrypt)
 
-	// gets the public key from a private key
-	PublicKey = F.Flow2(
+	// OpenSSLPublicKey gets the public key from a private key
+	OpenSSLPublicKey = F.Flow2(
 		OpenSSL("rsa", "-pubout"),
 		mapStdout,
 	)
 
-	// gets the serial number from a certificate
+	// CertSerial gets the serial number from a certificate
 	CertSerial = F.Flow2(
 		OpenSSL("x509", "-serial", "-noout"),
 		mapStdout,
 	)
 
-	// gets the fingerprint of a certificate
-	CertFingerprint = F.Flow2(
-		OpenSSL("x509", "-noout", "-fingerprint", "-sha256"),
+	// OpenSSLCertFingerprint gets the fingerprint of a certificate
+	OpenSSLCertFingerprint = F.Flow4(
+		OpenSSL("x509", "--outform", "DER"),
+		mapStdout,
+		E.Chain(OpenSSL("sha256", "--binary")),
 		mapStdout,
 	)
 
 	// gets the fingerprint of the private key
-	PrivKeyFingerprint = F.Flow4(
+	OpenSSLPrivKeyFingerprint = F.Flow4(
 		OpenSSL("rsa", "-pubout", "-outform", "DER"),
 		mapStdout,
 		E.Chain(OpenSSL("sha256", "--binary")),
 		mapStdout,
 	)
+
+	// tests if a string contains "OpenSSL"
+	includesOpenSSL = S.Includes("OpenSSL")
 )
 
 // version string of the openSSL binary together with the binary
@@ -121,11 +129,14 @@ func validOpenSSL() E.Either[error, string] {
 	return F.Pipe1(
 		openSSLVersion(),
 		E.Chain(func(version OpenSSLVersion) E.Either[error, string] {
-			v := getVersion(version)
-			if strings.Contains(v, "OpenSSL") {
-				return E.Of[error](getPath(version))
-			}
-			return E.Left[error, string](fmt.Errorf("openSSL Version [%s] is unsupported", v))
+			return F.Pipe3(
+				version,
+				O.FromPredicate(P.ContraMap(getVersion)(includesOpenSSL)),
+				O.Map(getPath),
+				E.FromOption[error, string](func() error {
+					return fmt.Errorf("openSSL Version [%s] is unsupported", version)
+				}),
+			)
 		}),
 	)
 }
@@ -156,7 +167,8 @@ func OpenSSL(args ...string) func([]byte) E.Either[error, common.CommandOutput] 
 	}
 }
 
-func RandomPassword(count int) func() E.Either[error, []byte] {
+// OpenSSLRandomPassword creates a random password of given length using characters from the base64 alphabet only
+func OpenSSLRandomPassword(count int) func() E.Either[error, []byte] {
 	cmdE := OpenSSL("rand", fmt.Sprintf("%d", count))
 	slice := B.Slice(0, count)
 	return func() E.Either[error, []byte] {
@@ -250,11 +262,31 @@ func SymmetricDecrypt(token string) func([]byte) E.Either[error, []byte] {
 	}
 }
 
-// PrivateKey generates a private key
-func PrivateKey() E.Either[error, []byte] {
+// OpenSSLPrivateKey generates a private key
+func OpenSSLPrivateKey() E.Either[error, []byte] {
 	return F.Pipe2(
 		emptyBytes,
 		OpenSSL("genrsa", "4096"),
 		mapStdout,
 	)
+}
+
+// OpenSSLVerifyDigest verifies the signature of the input data against a signature
+func OpenSSLVerifyDigest(pubKey []byte) func([]byte) func([]byte) O.Option[error] {
+	// shortcut for the fold operation
+	foldE := E.Fold(O.Of[error], F.Constant1[common.CommandOutput](O.None[error]()))
+	// callback functions
+	return func(data []byte) func([]byte) O.Option[error] {
+		return func(signature []byte) O.Option[error] {
+			return F.Pipe2(
+				data,
+				handle(func(pubKeyFile string) func([]byte) E.Either[error, common.CommandOutput] {
+					return handle(func(signatureFile string) func([]byte) E.Either[error, common.CommandOutput] {
+						return OpenSSL("dgst", "-verify", pubKeyFile, "-sha256", "-signature", signatureFile)
+					})(signature)
+				})(pubKey),
+				foldE,
+			)
+		}
+	}
 }

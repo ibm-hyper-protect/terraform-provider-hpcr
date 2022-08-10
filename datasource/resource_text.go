@@ -58,38 +58,46 @@ func ResourceTextEncrypted() *schema.Resource {
 	}
 }
 
-func resourceEncText(d fp.ResourceData) ResourceDataE {
+func resourceEncText(ctx *Context) func(d fp.ResourceData) ResourceDataE {
 
-	// marshal input text
-	textE := textBytes(d)
+	// get the update method depending on the context
+	update := updateEncryptedResource(ctx)
+	hashWithCert := createHashWithCert(ctx)
 
-	return F.Pipe2(
-		textE,
-		E.Chain(createHashWithCert(d)),
-		E.Chain(F.Flow3(
-			checksumMatchO(d),
-			updateEncryptedResource(d)(textE),
-			getResourceData(d),
-		),
-		),
-	)
+	return func(d fp.ResourceData) ResourceDataE {
+		// marshal input text
+		textE := textBytes(d)
+
+		return F.Pipe2(
+			textE,
+			E.Chain(hashWithCert(d)),
+			E.Chain(F.Flow3(
+				checksumMatchO(d),
+				update(d)(textE),
+				getResourceData(d),
+			),
+			),
+		)
+	}
 }
 
-func resourceText(d fp.ResourceData) ResourceDataE {
+func resourceText(ctx *Context) func(d fp.ResourceData) ResourceDataE {
 
-	// marshal input text
-	textE := textBytes(d)
+	return func(d fp.ResourceData) ResourceDataE {
+		// marshal input text
+		textE := textBytes(d)
 
-	return F.Pipe2(
-		textE,
-		createHashE,
-		E.Chain(F.Flow3(
-			checksumMatchO(d),
-			updatePlainTextResource(d)(textE),
-			getResourceData(d),
-		),
-		),
-	)
+		return F.Pipe2(
+			textE,
+			createHashE,
+			E.Chain(F.Flow3(
+				checksumMatchO(d),
+				updatePlainTextResource(d)(textE),
+				getResourceData(d),
+			),
+			),
+		)
+	}
 }
 
 var (

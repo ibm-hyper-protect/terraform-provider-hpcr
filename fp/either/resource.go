@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//	http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,7 +17,7 @@ import (
 	F "github.com/terraform-provider-hpcr/fp/function"
 )
 
-// constructs a function that creates a resource, then operates on it and then releases the resource
+// WithResource constructs a function that creates a resource, then operates on it and then releases the resource
 func WithResource[E, R, A any](onCreate func() Either[E, R], onRelease func(R) Either[E, any]) func(func(R) Either[E, A]) Either[E, A] {
 
 	return func(f func(R) Either[E, A]) Either[E, A] {

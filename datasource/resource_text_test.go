@@ -20,11 +20,17 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/terraform-provider-hpcr/common"
 	D "github.com/terraform-provider-hpcr/data"
+	"github.com/terraform-provider-hpcr/encrypt"
 	"github.com/terraform-provider-hpcr/fp"
 	E "github.com/terraform-provider-hpcr/fp/either"
 	F "github.com/terraform-provider-hpcr/fp/function"
 	"github.com/terraform-provider-hpcr/validation"
 )
+
+var defaultContext = Context{
+	encrypt.DefaultEncryption(),
+	"test",
+}
 
 func TestUnencryptedText(t *testing.T) {
 	data := make(map[string]any)
@@ -35,7 +41,7 @@ func TestUnencryptedText(t *testing.T) {
 	res := F.Pipe3(
 		data,
 		CreateResourceDataMock,
-		resourceText,
+		resourceText(&defaultContext),
 		E.ToError[fp.ResourceData],
 	)
 
@@ -50,11 +56,13 @@ func TestEncryptedText(t *testing.T) {
 	data[common.KeyText] = "sample text"
 	data[common.KeyCert] = D.DefaultCertificate
 
+	encText := resourceEncText(&defaultContext)
+
 	res := F.Pipe4(
 		data,
 		CreateResourceDataMock,
-		resourceEncText,
-		E.Chain(resourceEncText),
+		encText,
+		E.Chain(encText),
 		E.ToError[fp.ResourceData],
 	)
 

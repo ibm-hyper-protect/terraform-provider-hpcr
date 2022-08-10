@@ -37,27 +37,31 @@ var Contract1 string
 
 var (
 	// keypair for testing
-	privKey = encrypt.PrivateKey()
+	privKey = encrypt.OpenSSLPrivateKey()
 	pubKey  = F.Pipe1(
 		privKey,
-		E.Chain(encrypt.PublicKey),
+		E.Chain(encrypt.OpenSSLPublicKey),
 	)
 
 	// the encryption function based on the keys
 	openSSLEncryptBasicE = F.Pipe1(
 		pubKey,
 		E.Map[error](func(pubKey []byte) func([]byte) E.Either[error, string] {
-			return encrypt.EncryptBasic(encrypt.RandomPassword(32), encrypt.AsymmetricEncryptPub(pubKey), encrypt.SymmetricEncrypt)
+			return encrypt.EncryptBasic(encrypt.OpenSSLRandomPassword(32), encrypt.AsymmetricEncryptPub(pubKey), encrypt.SymmetricEncrypt)
 		}),
 	)
 )
 
+func openSSLEncryptAndSignContract(pubKey []byte) func([]byte) func(RawMap) E.Either[error, RawMap] {
+	return EncryptAndSignContract(encrypt.EncryptBasic(encrypt.OpenSSLRandomPassword(32), encrypt.AsymmetricEncryptPub(pubKey), encrypt.SymmetricEncrypt), encrypt.OpenSSLSignDigest, encrypt.OpenSSLPublicKey)
+}
+
 func TestAddSigningKey(t *testing.T) {
-	privKeyE := encrypt.PrivateKey()
+	privKeyE := encrypt.OpenSSLPrivateKey()
 	// add to key
 	addKey := F.Pipe1(
 		privKeyE,
-		E.Map[error](addSigningKey),
+		E.Map[error](addSigningKey(encrypt.OpenSSLPublicKey)),
 	)
 	// the target map
 	var env RawMap
@@ -73,7 +77,7 @@ func TestAddSigningKey(t *testing.T) {
 
 	pubE := F.Pipe2(
 		privKeyE,
-		E.Chain(encrypt.PublicKey),
+		E.Chain(encrypt.OpenSSLPublicKey),
 		common.MapBytesToStgE,
 	)
 
@@ -129,11 +133,11 @@ func TestUpsertEncrypted(t *testing.T) {
 }
 
 func TestUpsertSigningKey(t *testing.T) {
-	privKeyE := encrypt.PrivateKey()
+	privKeyE := encrypt.OpenSSLPrivateKey()
 	// add to key
 	upsertKeyE := F.Pipe1(
 		privKeyE,
-		E.Map[error](upsertSigningKey),
+		E.Map[error](upsertSigningKey(encrypt.OpenSSLPublicKey)),
 	)
 	// prepare some contract without a key
 	contractE := F.Pipe3(
@@ -162,11 +166,11 @@ func TestUpsertSigningKey(t *testing.T) {
 
 func TestEncryptAndSignContract(t *testing.T) {
 	// the private key
-	privKeyE := encrypt.PrivateKey()
+	privKeyE := encrypt.OpenSSLPrivateKey()
 	// the encryption function
 	signerE := F.Pipe2(
-		openSSLEncryptBasicE,
-		E.Map[error](EncryptAndSignContract),
+		pubKey,
+		E.Map[error](openSSLEncryptAndSignContract),
 		E.Ap[error, []byte, func(RawMap) E.Either[error, RawMap]](privKeyE),
 	)
 	// prepare some contract without a key
@@ -185,17 +189,18 @@ func TestEncryptAndSignContract(t *testing.T) {
 		E.Chain(Y.Stringify[RawMap]),
 		common.MapBytesToStgE,
 	)
+	assert.True(t, E.IsRight(resE))
 
 	fmt.Println(resE)
 }
 
 func TestEnvWorkloadSignature(t *testing.T) {
 	// the private key
-	privKeyE := encrypt.PrivateKey()
+	privKeyE := encrypt.OpenSSLPrivateKey()
 
 	signer := F.Pipe1(
 		privKeyE,
-		E.Map[error](createEnvWorkloadSignature),
+		E.Map[error](createEnvWorkloadSignature(encrypt.OpenSSLSignDigest)),
 	)
 
 	// some sample data

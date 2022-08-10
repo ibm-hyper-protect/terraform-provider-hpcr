@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/terraform-provider-hpcr/common"
 	"github.com/terraform-provider-hpcr/contract"
 	D "github.com/terraform-provider-hpcr/data"
@@ -29,7 +30,7 @@ import (
 
 func TestHashWithCertAndKey(t *testing.T) {
 
-	privKeyE := encrypt.PrivateKey()
+	privKeyE := encrypt.OpenSSLPrivateKey()
 
 	dataE := F.Pipe2(
 		privKeyE,
@@ -49,16 +50,18 @@ func TestHashWithCertAndKey(t *testing.T) {
 
 	hashE := F.Pipe2(
 		dataE,
-		E.Map[error](createHashWithCertAndPrivateKey),
+		E.Map[error](createHashWithCertAndPrivateKey(&defaultContext)),
 		E.Chain(I.Ap[[]byte, E.Either[error, string]](test)),
 	)
+
+	assert.True(t, E.IsRight(hashE))
 
 	fmt.Println(hashE)
 }
 
 func TestHashWithCertAndNoKey(t *testing.T) {
 
-	privKeyE := encrypt.PrivateKey()
+	privKeyE := encrypt.OpenSSLPrivateKey()
 
 	dataE := F.Pipe2(
 		privKeyE,
@@ -77,9 +80,11 @@ func TestHashWithCertAndNoKey(t *testing.T) {
 
 	hashE := F.Pipe2(
 		dataE,
-		E.Map[error](createHashWithCertAndPrivateKey),
+		E.Map[error](createHashWithCertAndPrivateKey(&defaultContext)),
 		E.Chain(I.Ap[[]byte, E.Either[error, string]](test)),
 	)
+
+	assert.True(t, E.IsRight(hashE))
 
 	fmt.Println(hashE)
 }
@@ -96,9 +101,11 @@ func TestHashWithCert(t *testing.T) {
 	hashE := F.Pipe3(
 		data,
 		CreateResourceDataMock,
-		createHashWithCert,
+		createHashWithCert(&defaultContext),
 		I.Ap[[]byte, E.Either[error, string]](test),
 	)
+
+	assert.True(t, E.IsRight(hashE))
 
 	fmt.Println(hashE)
 }

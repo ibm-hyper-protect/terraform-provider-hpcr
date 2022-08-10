@@ -40,7 +40,7 @@ func TestContract(t *testing.T) {
 	res := F.Pipe3(
 		data,
 		CreateResourceDataMock,
-		resourceEncContract,
+		resourceEncContract(&defaultContext),
 		E.ToError[fp.ResourceData],
 	)
 

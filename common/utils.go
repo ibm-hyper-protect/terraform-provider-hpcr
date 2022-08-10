@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//	http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -44,7 +44,13 @@ var (
 	MapBytesToStgE = E.Map[error](B.ToString)
 	MapStgToBytesE = E.Map[error](S.ToBytes)
 	MapRefAnyE     = E.Map[error](F.Ref[any])
+
+	FromErrorO = O.FromPredicate(isError)
 )
+
+func isError(err error) bool {
+	return err != nil
+}
 
 func ToTypeO[A any](data any) O.Option[A] {
 	value, ok := data.(A)

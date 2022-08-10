@@ -22,7 +22,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/terraform-provider-hpcr/common"
 	"github.com/terraform-provider-hpcr/data"
-	"github.com/terraform-provider-hpcr/encrypt"
 	"github.com/terraform-provider-hpcr/fp"
 	B "github.com/terraform-provider-hpcr/fp/bytes"
 	E "github.com/terraform-provider-hpcr/fp/either"
@@ -40,7 +39,10 @@ type ResourceDataE = E.Either[error, fp.ResourceData]
 type ResourceLifeCycle = T.Tuple3[func(*schema.ResourceData, any) error, func(*schema.ResourceData, any) error, func(*schema.ResourceData, any) error]
 
 // produces a new UUID
-var uuidE = E.Eitherize0(uuid.GenerateUUID)
+var (
+	uuidE      = E.Eitherize0(uuid.GenerateUUID)
+	toContextE = common.ToTypeE[*Context]
+)
 
 // assigns a new uuid to a resource
 func setUniqueID(d fp.ResourceData) ResourceDataE {
@@ -225,92 +227,115 @@ var (
 )
 
 // callback to update a resource using encryption base64 encoding
-func updateEncryptedResource(d fp.ResourceData) func(E.Either[error, []byte]) func(O.Option[string]) O.Option[ResourceDataE] {
-	return updateResource(d)(func(data []byte) E.Either[error, string] {
-		return F.Pipe4(
-			d,
-			getCertificateE,
-			common.MapStgToBytesE,
-			E.Map[error](encrypt.OpenSSLEncryptBasic),
-			E.Chain(I.Ap[[]byte, E.Either[error, string]](data)),
-		)
-	})
+func updateEncryptedResource(ctx *Context) func(d fp.ResourceData) func(E.Either[error, []byte]) func(O.Option[string]) O.Option[ResourceDataE] {
+	return func(d fp.ResourceData) func(E.Either[error, []byte]) func(O.Option[string]) O.Option[ResourceDataE] {
+		return updateResource(d)(func(data []byte) E.Either[error, string] {
+			return F.Pipe4(
+				d,
+				getCertificateE,
+				common.MapStgToBytesE,
+				E.Map[error](ctx.EncryptBasic),
+				E.Chain(I.Ap[[]byte, E.Either[error, string]](data)),
+			)
+		})
+	}
 }
 
-func resourceLifeCycle(f func(fp.ResourceData) ResourceDataE) ResourceLifeCycle {
+func resourceLifeCycle(f func(ctx *Context) func(fp.ResourceData) ResourceDataE) ResourceLifeCycle {
+
+	// lift f into the context
+	withCtx := F.Flow2(
+		toContextE,
+		E.Map[error](f),
+	)
 
 	create := func(d *schema.ResourceData, m any) error {
 
 		return F.Pipe4(
-			d,
-			fp.CreateResourceDataProxy,
-			setUniqueID,
-			E.Chain(f),
+			m,
+			withCtx,
+			E.Ap[error, fp.ResourceData, E.Either[error, fp.ResourceData]](F.Pipe2(
+				d,
+				fp.CreateResourceDataProxy,
+				setUniqueID,
+			)),
+			E.Flatten[error, fp.ResourceData],
 			E.ToError[fp.ResourceData],
 		)
+
 	}
 
 	read := func(d *schema.ResourceData, m any) error {
 
 		return F.Pipe3(
-			d,
-			fp.CreateResourceDataProxy,
-			f,
+			m,
+			withCtx,
+			E.Chain(I.Ap[fp.ResourceData, E.Either[error, fp.ResourceData]](F.Pipe1(
+				d,
+				fp.CreateResourceDataProxy,
+			))),
 			E.ToError[fp.ResourceData],
 		)
+
 	}
+
 	delete := resourceDeleteNoOp
 
 	return T.MakeTuple3(create, read, delete)
 }
 
 // computes a hash for the given bytes and includes the fingerprint of the certificate as part of the hash
-func createHashWithCert(d fp.ResourceData) func([]byte) E.Either[error, string] {
-	// get the fingerprint
-	fpE := F.Pipe3(
-		d,
-		getCertificateE,
-		common.MapStgToBytesE,
-		E.Chain(encrypt.CertFingerprint),
-	)
-	// combine the fingerprint with the actual data
-	return func(data []byte) E.Either[error, string] {
-		return F.Pipe2(
-			fpE,
-			E.Map[error](F.Bind2nd(B.Monoid.Concat, data)),
-			createHashE,
+func createHashWithCert(ctx *Context) func(d fp.ResourceData) func([]byte) E.Either[error, string] {
+	return func(d fp.ResourceData) func([]byte) E.Either[error, string] {
+		// get the fingerprint
+		fpE := F.Pipe3(
+			d,
+			getCertificateE,
+			common.MapStgToBytesE,
+			E.Chain(ctx.CertFingerprint),
 		)
+		// combine the fingerprint with the actual data
+		return func(data []byte) E.Either[error, string] {
+			return F.Pipe2(
+				fpE,
+				E.Map[error](F.Bind2nd(B.Monoid.Concat, data)),
+				createHashE,
+			)
+		}
 	}
 }
 
 // computes a hash for the given bytes and includes the fingerprint of the certificate as part of the hash
-func createHashWithCertAndPrivateKey(d fp.ResourceData) func([]byte) E.Either[error, string] {
-	// get the fingerprint for the certificate
-	certE := F.Pipe3(
-		d,
-		getCertificateE,
-		common.MapStgToBytesE,
-		E.Chain(encrypt.CertFingerprint),
-	)
-	// get the fingerprint for the private key
-	privKeyE := F.Pipe4(
-		d,
-		getPrivKeyE,
-		common.MapStgToBytesE,
-		E.Chain(encrypt.PrivKeyFingerprint),
-		E.Alt(F.Constant(E.Of[error](B.Monoid.Empty()))),
-	)
-	// combine into one
-	fp := E.Sequence2(func(left, right []byte) E.Either[error, []byte] {
-		return E.Of[error](B.Monoid.Concat(left, right))
-	})
+func createHashWithCertAndPrivateKey(ctx *Context) func(d fp.ResourceData) func([]byte) E.Either[error, string] {
 
-	// combine the fingerprint with the actual data
-	return func(data []byte) E.Either[error, string] {
-		return F.Pipe2(
-			fp(certE, privKeyE),
-			E.Map[error](F.Bind2nd(B.Monoid.Concat, data)),
-			createHashE,
+	return func(d fp.ResourceData) func([]byte) E.Either[error, string] {
+		// get the fingerprint for the certificate
+		certE := F.Pipe3(
+			d,
+			getCertificateE,
+			common.MapStgToBytesE,
+			E.Chain(ctx.CertFingerprint),
 		)
+		// get the fingerprint for the private key
+		privKeyE := F.Pipe4(
+			d,
+			getPrivKeyE,
+			common.MapStgToBytesE,
+			E.Chain(ctx.PrivKeyFingerprint),
+			E.Alt(F.Constant(E.Of[error](B.Monoid.Empty()))),
+		)
+		// combine into one
+		fp := E.Sequence2(func(left, right []byte) E.Either[error, []byte] {
+			return E.Of[error](B.Monoid.Concat(left, right))
+		})
+
+		// combine the fingerprint with the actual data
+		return func(data []byte) E.Either[error, string] {
+			return F.Pipe2(
+				fp(certE, privKeyE),
+				E.Map[error](F.Bind2nd(B.Monoid.Concat, data)),
+				createHashE,
+			)
+		}
 	}
 }
