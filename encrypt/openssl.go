@@ -273,6 +273,9 @@ func OpenSSLPrivateKey() E.Either[error, []byte] {
 
 // OpenSSLVerifyDigest verifies the signature of the input data against a signature
 func OpenSSLVerifyDigest(pubKey []byte) func([]byte) func([]byte) O.Option[error] {
+	// shortcut for the fold operation
+	foldE := E.Fold(O.Of[error], F.Constant1[common.CommandOutput](O.None[error]()))
+	// callback functions
 	return func(data []byte) func([]byte) O.Option[error] {
 		return func(signature []byte) O.Option[error] {
 			return F.Pipe2(
@@ -282,7 +285,7 @@ func OpenSSLVerifyDigest(pubKey []byte) func([]byte) func([]byte) O.Option[error
 						return OpenSSL("dgst", "-verify", pubKeyFile, "-sha256", "-signature", signatureFile)
 					})(signature)
 				})(pubKey),
-				E.Fold(O.Of[error], F.Constant1[common.CommandOutput](O.None[error]())),
+				foldE,
 			)
 		}
 	}
