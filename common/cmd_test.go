@@ -14,7 +14,6 @@
 package common
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -30,8 +29,6 @@ func TestCommandOk(t *testing.T) {
 func TestCommandFail(t *testing.T) {
 
 	cmdE := ExecCommand("openssl", "help1")(make([]byte, 0))
-
-	fmt.Println(cmdE)
 
 	assert.True(t, cmdE.IsLeft())
 }

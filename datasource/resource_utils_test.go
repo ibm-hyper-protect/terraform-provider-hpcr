@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/terraform-provider-hpcr/common"
 	"github.com/terraform-provider-hpcr/contract"
 	D "github.com/terraform-provider-hpcr/data"
@@ -53,6 +54,8 @@ func TestHashWithCertAndKey(t *testing.T) {
 		E.Chain(I.Ap[[]byte, E.Either[error, string]](test)),
 	)
 
+	assert.True(t, E.IsRight(hashE))
+
 	fmt.Println(hashE)
 }
 
@@ -81,6 +84,8 @@ func TestHashWithCertAndNoKey(t *testing.T) {
 		E.Chain(I.Ap[[]byte, E.Either[error, string]](test)),
 	)
 
+	assert.True(t, E.IsRight(hashE))
+
 	fmt.Println(hashE)
 }
 
@@ -99,6 +104,8 @@ func TestHashWithCert(t *testing.T) {
 		createHashWithCert(&defaultContext),
 		I.Ap[[]byte, E.Either[error, string]](test),
 	)
+
+	assert.True(t, E.IsRight(hashE))
 
 	fmt.Println(hashE)
 }

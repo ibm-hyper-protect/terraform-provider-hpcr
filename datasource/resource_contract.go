@@ -47,8 +47,21 @@ func ResourceContractEncrypted() *schema.Resource {
 	}
 }
 
+func encryptAndSignContract(
+	enc func([]byte) func([]byte) E.Either[error, string],
+	signer func([]byte) func([]byte) E.Either[error, []byte],
+	pubKey func([]byte) E.Either[error, []byte],
+) func([]byte) func([]byte) func(contract.RawMap) E.Either[error, contract.RawMap] {
+	return func(cert []byte) func([]byte) func(contract.RawMap) E.Either[error, contract.RawMap] {
+		return contract.EncryptAndSignContract(enc(cert), signer, pubKey)
+	}
+}
+
 // callback to update a resource using encryption base64 encoding
 func updateContract(ctx *Context) func(d fp.ResourceData) func(E.Either[error, []byte]) func(O.Option[string]) O.Option[ResourceDataE] {
+	// contextualize the encrypter
+	encryptAndSign := encryptAndSignContract(ctx.EncryptBasic, ctx.SignDigest, ctx.PubKey)
+
 	return func(d fp.ResourceData) func(E.Either[error, []byte]) func(O.Option[string]) O.Option[ResourceDataE] {
 		return updateResource(d)(func(data []byte) E.Either[error, string] {
 
@@ -67,12 +80,11 @@ func updateContract(ctx *Context) func(d fp.ResourceData) func(E.Either[error, [
 			)
 
 			// create the function that can execute the signature
-			resE := F.Pipe10(
+			resE := F.Pipe9(
 				d,
 				getCertificateE,
 				common.MapStgToBytesE,
-				E.Map[error](ctx.EncryptBasic),
-				E.Map[error](contract.EncryptAndSignContract),
+				E.Map[error](encryptAndSign),
 				E.Ap[error, []byte, func(contract.RawMap) E.Either[error, contract.RawMap]](privKeyE),
 				E.Ap[error, contract.RawMap, E.Either[error, contract.RawMap]](contractE),
 				E.Flatten[error, contract.RawMap],
