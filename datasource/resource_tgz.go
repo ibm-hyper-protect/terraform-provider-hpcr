@@ -52,6 +52,20 @@ func ResourceTgzEncrypted() *schema.Resource {
 	}
 }
 
+func ResourceTgzFile() *schema.Resource {
+	return &schema.Resource{
+		Create: tgzUnencrypted.F1,
+		Read:   tgzUnencrypted.F2,
+		Delete: tgzUnencrypted.F3,
+		Schema: map[string]*schema.Schema{
+			common.KeyFileContent: &schemaFileContent,
+			common.KeyRendered:    &schemaRenderedOut,
+			common.KeySha256:      &schemaSha256Out,
+		},
+		Description: "Generates a base64 encoded string from the TGZed docker-compose file.",
+	}
+}
+
 func ResourceTgz() *schema.Resource {
 	return &schema.Resource{
 		Create: tgzUnencrypted.F1,

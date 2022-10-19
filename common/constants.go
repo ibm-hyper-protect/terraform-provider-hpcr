@@ -14,14 +14,15 @@
 package common
 
 const (
-	KeyRendered = "rendered"
-	KeyCert     = "cert"
-	KeyPrivKey  = "privkey"
-	KeySha256   = "sha256"
-	KeyFolder   = "folder"
-	KeyText     = "text"
-	KeyContract = "contract"
-	KeyJSON     = "json"
+	KeyRendered    = "rendered"
+	KeyCert        = "cert"
+	KeyPrivKey     = "privkey"
+	KeySha256      = "sha256"
+	KeyFolder      = "folder"
+	KeyText        = "text"
+	KeyContract    = "contract"
+	KeyFileContent = "fileContent"
+	KeyJSON        = "json"
 
 	PrefixBasicEncoding = "hyper-protect-basic"
 )

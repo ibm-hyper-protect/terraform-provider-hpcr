@@ -24,6 +24,7 @@ func Provider(version, commit string) func() *schema.Provider {
 			ResourcesMap: map[string]*schema.Resource{
 				"hpcr_tgz":                datasource.ResourceTgz(),
 				"hpcr_tgz_encrypted":      datasource.ResourceTgzEncrypted(),
+				"hpcr_tgz_basic":          datasource.ResourceTgzFile(),
 				"hpcr_text":               datasource.ResourceText(),
 				"hpcr_text_encrypted":     datasource.ResourceTextEncrypted(),
 				"hpcr_json":               datasource.ResourceJSON(),

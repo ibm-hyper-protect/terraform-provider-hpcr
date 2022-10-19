@@ -107,6 +107,13 @@ var (
 		ValidateDiagFunc: validation.DiagFolder,
 	}
 
+	schemaFileContent = schema.Schema{
+		Type:        schema.TypeString,
+		Required:    true,
+		ForceNew:    true,
+		Description: "Docker-compose file contents",
+	}
+
 	schemaCertIn = schema.Schema{
 		Type:             schema.TypeString,
 		Description:      "Certificate used to encrypt the JSON document in PEM format",
