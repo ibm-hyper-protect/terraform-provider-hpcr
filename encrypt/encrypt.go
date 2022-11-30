@@ -18,6 +18,7 @@ import (
 	F "github.com/terraform-provider-hpcr/fp/function"
 )
 
+// Encryption captures the crypto functions required to implement the source providers
 type Encryption struct {
 	// EncryptBasic implements basic encryption given the certificate
 	EncryptBasic func([]byte) func([]byte) E.Either[error, string]
