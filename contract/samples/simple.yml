@@ -18,3 +18,4 @@ env:
 workload:
   type: workload
   confidential-containers: {}
+
