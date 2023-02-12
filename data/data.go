@@ -17,7 +17,7 @@ import (
 	_ "embed"
 )
 
-//go:embed ibm-hyper-protect-container-runtime-1-0-s390x-7-encrypt.crt
+//go:embed ibm-hyper-protect-container-runtime-1-0-s390x-8-encrypt.crt
 var DefaultCertificate string
 
 //go:embed hpha-se-contract-schema-1.1.100.json
