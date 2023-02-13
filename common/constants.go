@@ -22,6 +22,10 @@ const (
 	KeyText     = "text"
 	KeyContract = "contract"
 	KeyJSON     = "json"
+	KeyImages   = "images"
+	KeyImageID  = "image"
+	KeyVersion  = "version"
+	KeySpec     = "spec"
 
 	PrefixBasicEncoding = "hyper-protect-basic"
 )

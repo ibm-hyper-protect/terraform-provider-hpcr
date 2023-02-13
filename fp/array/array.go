@@ -15,6 +15,7 @@ package array
 
 import (
 	F "github.com/terraform-provider-hpcr/fp/function"
+	O "github.com/terraform-provider-hpcr/fp/option"
 )
 
 func MakeBy[A any](n int, f func(int) A) []A {
@@ -67,4 +68,31 @@ func MonadChain[A, B any](fa []A, f func(a A) []B) []B {
 
 func Flatten[A any](mma [][]A) []A {
 	return MonadChain(mma, F.Identity[[]A])
+}
+
+func filter[A any](fa []A, pred func(A) bool) []A {
+	var result []A
+	count := len(fa)
+	for i := 0; i < count; i++ {
+		a := fa[i]
+		if pred(a) {
+			result = append(result, a)
+		}
+	}
+	return result
+}
+
+func Filter[A any](pred func(A) bool) func([]A) []A {
+	return F.Bind2nd(filter[A], pred)
+}
+
+func Size[A any](fa []A) int {
+	return len(fa)
+}
+
+func Head[A any](as []A) O.Option[A] {
+	if len(as) <= 0 {
+		return O.None[A]()
+	}
+	return O.Of(as[0])
 }
