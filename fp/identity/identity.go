@@ -24,3 +24,7 @@ func MonadAp[A, B any](fab func(A) B, fa A) B {
 func Ap[A, B any](fa A) func(func(A) B) B {
 	return F.Bind2nd(MonadAp[A, B], fa)
 }
+
+func Map[A, B any](f func(A) B) func(A) B {
+	return f
+}
