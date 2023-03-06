@@ -18,10 +18,10 @@ import (
 
 	_ "embed"
 
+	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
+	I "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/identity"
 	"github.com/stretchr/testify/assert"
-	E "github.com/terraform-provider-hpcr/fp/either"
-	F "github.com/terraform-provider-hpcr/fp/function"
-	I "github.com/terraform-provider-hpcr/fp/identity"
 )
 
 //go:embed samples/simple.yml

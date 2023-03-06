@@ -14,8 +14,8 @@
 package encrypt
 
 import (
-	E "github.com/terraform-provider-hpcr/fp/either"
-	F "github.com/terraform-provider-hpcr/fp/function"
+	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
 )
 
 // Encryption captures the crypto functions required to implement the source providers

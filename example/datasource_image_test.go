@@ -6,9 +6,9 @@ import (
 
 	"github.com/Masterminds/semver"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	E "github.com/terraform-provider-hpcr/fp/either"
-	F "github.com/terraform-provider-hpcr/fp/function"
-	O "github.com/terraform-provider-hpcr/fp/option"
+	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
+	O "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/option"
 )
 
 //go:embed images.json

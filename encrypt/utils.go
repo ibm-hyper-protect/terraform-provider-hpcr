@@ -17,10 +17,10 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/terraform-provider-hpcr/common"
-	E "github.com/terraform-provider-hpcr/fp/either"
-	F "github.com/terraform-provider-hpcr/fp/function"
-	T "github.com/terraform-provider-hpcr/fp/tuple"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
+	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
+	T "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/tuple"
 )
 
 const (

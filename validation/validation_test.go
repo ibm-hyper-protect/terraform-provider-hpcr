@@ -16,8 +16,8 @@ package validation
 import (
 	"testing"
 
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/data"
 	"github.com/stretchr/testify/assert"
-	"github.com/terraform-provider-hpcr/data"
 )
 
 func TestDiagPath(t *testing.T) {

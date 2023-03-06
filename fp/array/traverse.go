@@ -14,7 +14,7 @@
 package array
 
 import (
-	F "github.com/terraform-provider-hpcr/fp/function"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
 )
 
 /*

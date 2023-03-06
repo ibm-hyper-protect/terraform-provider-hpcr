@@ -18,14 +18,14 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/contract"
+	D "github.com/ibm-hyper-protect/terraform-provider-hpcr/data"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/encrypt"
+	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
+	I "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/identity"
 	"github.com/stretchr/testify/assert"
-	"github.com/terraform-provider-hpcr/common"
-	"github.com/terraform-provider-hpcr/contract"
-	D "github.com/terraform-provider-hpcr/data"
-	"github.com/terraform-provider-hpcr/encrypt"
-	E "github.com/terraform-provider-hpcr/fp/either"
-	F "github.com/terraform-provider-hpcr/fp/function"
-	I "github.com/terraform-provider-hpcr/fp/identity"
 )
 
 func TestHashWithCertAndKey(t *testing.T) {

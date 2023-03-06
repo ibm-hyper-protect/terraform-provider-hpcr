@@ -20,9 +20,9 @@ import (
 	"io"
 	"testing"
 
+	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
 	"github.com/stretchr/testify/assert"
-	E "github.com/terraform-provider-hpcr/fp/either"
-	F "github.com/terraform-provider-hpcr/fp/function"
 )
 
 func TestTgz(t *testing.T) {

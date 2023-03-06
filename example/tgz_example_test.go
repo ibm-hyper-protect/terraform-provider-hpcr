@@ -19,7 +19,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/terraform-provider-hpcr/validation"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/validation"
 )
 
 //go:embed example1.tf

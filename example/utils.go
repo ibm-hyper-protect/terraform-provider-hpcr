@@ -19,14 +19,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/terraform-provider-hpcr/common"
-	E "github.com/terraform-provider-hpcr/fp/either"
-	F "github.com/terraform-provider-hpcr/fp/function"
-	I "github.com/terraform-provider-hpcr/fp/identity"
-	O "github.com/terraform-provider-hpcr/fp/option"
-	S "github.com/terraform-provider-hpcr/fp/string"
-	Y "github.com/terraform-provider-hpcr/fp/yaml"
-	"github.com/terraform-provider-hpcr/provider"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
+	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
+	I "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/identity"
+	O "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/option"
+	S "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/string"
+	Y "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/yaml"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/provider"
 )
 
 var (

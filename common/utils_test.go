@@ -19,9 +19,9 @@ import (
 
 	"os"
 
+	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
 	"github.com/stretchr/testify/assert"
-	E "github.com/terraform-provider-hpcr/fp/either"
-	F "github.com/terraform-provider-hpcr/fp/function"
 )
 
 var statE = E.Eitherize1(os.Stat)

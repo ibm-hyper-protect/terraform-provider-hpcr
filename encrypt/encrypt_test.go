@@ -17,13 +17,13 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/data"
+	D "github.com/ibm-hyper-protect/terraform-provider-hpcr/data"
+	RA "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/array"
+	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
+	S "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/string"
 	"github.com/stretchr/testify/assert"
-	"github.com/terraform-provider-hpcr/data"
-	D "github.com/terraform-provider-hpcr/data"
-	RA "github.com/terraform-provider-hpcr/fp/array"
-	E "github.com/terraform-provider-hpcr/fp/either"
-	F "github.com/terraform-provider-hpcr/fp/function"
-	S "github.com/terraform-provider-hpcr/fp/string"
 )
 
 type Encrypter = func([]byte) E.Either[error, string]

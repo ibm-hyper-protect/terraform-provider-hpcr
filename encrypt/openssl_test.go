@@ -17,11 +17,11 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
+	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
+	I "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/identity"
 	"github.com/stretchr/testify/assert"
-	"github.com/terraform-provider-hpcr/common"
-	E "github.com/terraform-provider-hpcr/fp/either"
-	F "github.com/terraform-provider-hpcr/fp/function"
-	I "github.com/terraform-provider-hpcr/fp/identity"
 )
 
 func TestValidOpenSSL(t *testing.T) {

@@ -15,7 +15,7 @@
 package datasource
 
 import (
-	"github.com/terraform-provider-hpcr/fp"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/fp"
 )
 
 type resourceDataMock struct {

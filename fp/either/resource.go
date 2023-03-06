@@ -14,7 +14,7 @@
 package either
 
 import (
-	F "github.com/terraform-provider-hpcr/fp/function"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
 )
 
 // WithResource constructs a function that creates a resource, then operates on it and then releases the resource

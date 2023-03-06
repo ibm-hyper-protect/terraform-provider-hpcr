@@ -17,11 +17,11 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/terraform-provider-hpcr/common"
-	E "github.com/terraform-provider-hpcr/fp/either"
-	F "github.com/terraform-provider-hpcr/fp/function"
-	I "github.com/terraform-provider-hpcr/fp/identity"
-	O "github.com/terraform-provider-hpcr/fp/option"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
+	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
+	I "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/identity"
+	O "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/option"
 )
 
 type ResourceData interface {

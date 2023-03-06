@@ -19,12 +19,12 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
+	D "github.com/ibm-hyper-protect/terraform-provider-hpcr/data"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/fp"
+	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
 	"github.com/stretchr/testify/assert"
-	"github.com/terraform-provider-hpcr/common"
-	D "github.com/terraform-provider-hpcr/data"
-	"github.com/terraform-provider-hpcr/fp"
-	E "github.com/terraform-provider-hpcr/fp/either"
-	F "github.com/terraform-provider-hpcr/fp/function"
 )
 
 //go:embed samples/contract1.yaml

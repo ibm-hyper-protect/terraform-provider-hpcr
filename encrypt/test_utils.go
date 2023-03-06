@@ -16,10 +16,10 @@ package encrypt
 import (
 	"testing"
 
+	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
+	O "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/option"
 	"github.com/stretchr/testify/assert"
-	E "github.com/terraform-provider-hpcr/fp/either"
-	F "github.com/terraform-provider-hpcr/fp/function"
-	O "github.com/terraform-provider-hpcr/fp/option"
 )
 
 func SignatureTest(

@@ -21,15 +21,15 @@ import (
 
 	_ "embed"
 
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/encrypt"
+	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
+	I "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/identity"
+	R "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/record"
+	S "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/string"
+	Y "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/yaml"
 	"github.com/stretchr/testify/assert"
-	"github.com/terraform-provider-hpcr/common"
-	"github.com/terraform-provider-hpcr/encrypt"
-	E "github.com/terraform-provider-hpcr/fp/either"
-	F "github.com/terraform-provider-hpcr/fp/function"
-	I "github.com/terraform-provider-hpcr/fp/identity"
-	R "github.com/terraform-provider-hpcr/fp/record"
-	S "github.com/terraform-provider-hpcr/fp/string"
-	Y "github.com/terraform-provider-hpcr/fp/yaml"
 )
 
 //go:embed samples/contract1.yaml

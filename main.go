@@ -19,7 +19,7 @@ package main
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
-	"github.com/terraform-provider-hpcr/provider"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/provider"
 )
 
 var (

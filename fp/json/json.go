@@ -16,7 +16,7 @@ package json
 import (
 	"encoding/json"
 
-	E "github.com/terraform-provider-hpcr/fp/either"
+	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
 )
 
 func Parse[A any](data []byte) E.Either[error, *A] {

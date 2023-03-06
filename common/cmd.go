@@ -18,10 +18,10 @@ import (
 	"fmt"
 	"os/exec"
 
-	B "github.com/terraform-provider-hpcr/fp/bytes"
-	E "github.com/terraform-provider-hpcr/fp/either"
-	F "github.com/terraform-provider-hpcr/fp/function"
-	T "github.com/terraform-provider-hpcr/fp/tuple"
+	B "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/bytes"
+	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
+	T "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/tuple"
 )
 
 type CommandOutput = T.Tuple2[[]byte, []byte]
