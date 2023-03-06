@@ -20,10 +20,10 @@ import (
 	"os"
 	"path/filepath"
 
-	E "github.com/terraform-provider-hpcr/fp/either"
-	F "github.com/terraform-provider-hpcr/fp/function"
-	I "github.com/terraform-provider-hpcr/fp/identity"
-	T "github.com/terraform-provider-hpcr/fp/tuple"
+	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
+	I "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/identity"
+	T "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/tuple"
 )
 
 var (

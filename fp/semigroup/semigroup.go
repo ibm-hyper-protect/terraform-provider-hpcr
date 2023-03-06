@@ -15,7 +15,7 @@
 package semigroup
 
 import (
-	M "github.com/terraform-provider-hpcr/fp/magma"
+	M "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/magma"
 )
 
 type Semigroup[A any] interface {

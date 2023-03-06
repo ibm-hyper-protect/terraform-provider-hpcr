@@ -16,10 +16,10 @@ package datasource
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/terraform-provider-hpcr/common"
-	"github.com/terraform-provider-hpcr/fp"
-	E "github.com/terraform-provider-hpcr/fp/either"
-	F "github.com/terraform-provider-hpcr/fp/function"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/fp"
+	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
 )
 
 var (

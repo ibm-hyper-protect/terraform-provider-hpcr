@@ -15,7 +15,7 @@ package provider
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/terraform-provider-hpcr/datasource"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/datasource"
 )
 
 func Provider(version, commit string) func() *schema.Provider {

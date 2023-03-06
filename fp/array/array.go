@@ -14,8 +14,8 @@
 package array
 
 import (
-	F "github.com/terraform-provider-hpcr/fp/function"
-	O "github.com/terraform-provider-hpcr/fp/option"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
+	O "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/option"
 )
 
 func MakeBy[A any](n int, f func(int) A) []A {

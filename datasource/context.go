@@ -18,7 +18,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/terraform-provider-hpcr/encrypt"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/encrypt"
 )
 
 type Context struct {

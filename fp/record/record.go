@@ -15,8 +15,8 @@
 package record
 
 import (
-	F "github.com/terraform-provider-hpcr/fp/function"
-	O "github.com/terraform-provider-hpcr/fp/option"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
+	O "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/option"
 )
 
 func reduceWithIndex[K comparable, V, R any](r map[K]V, f func(K, R, V) R, initial R) R {

@@ -14,7 +14,7 @@
 package array
 
 import (
-	M "github.com/terraform-provider-hpcr/fp/monoid"
+	M "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/monoid"
 )
 
 func concat[A any](left, right []A) []A {

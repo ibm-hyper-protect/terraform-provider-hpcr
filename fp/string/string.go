@@ -16,7 +16,7 @@ package string
 import (
 	"strings"
 
-	F "github.com/terraform-provider-hpcr/fp/function"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
 )
 
 func ToBytes(a string) []byte {

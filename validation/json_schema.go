@@ -19,16 +19,16 @@ import (
 
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	D "github.com/ibm-hyper-protect/terraform-provider-hpcr/data"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/fp"
+	A "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/array"
+	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
+	J "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/json"
+	O "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/option"
+	S "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/string"
+	Y "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/yaml"
 	"github.com/qri-io/jsonschema"
-	D "github.com/terraform-provider-hpcr/data"
-	"github.com/terraform-provider-hpcr/fp"
-	A "github.com/terraform-provider-hpcr/fp/array"
-	E "github.com/terraform-provider-hpcr/fp/either"
-	F "github.com/terraform-provider-hpcr/fp/function"
-	J "github.com/terraform-provider-hpcr/fp/json"
-	O "github.com/terraform-provider-hpcr/fp/option"
-	S "github.com/terraform-provider-hpcr/fp/string"
-	Y "github.com/terraform-provider-hpcr/fp/yaml"
 )
 
 type RawMap = map[string]any

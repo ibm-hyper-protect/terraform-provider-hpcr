@@ -14,7 +14,7 @@
 package bytes
 
 import (
-	A "github.com/terraform-provider-hpcr/fp/array"
+	A "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/array"
 )
 
 // monoid for byte arrays

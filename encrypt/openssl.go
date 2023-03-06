@@ -19,17 +19,17 @@ import (
 	"os"
 	"strings"
 
-	"github.com/terraform-provider-hpcr/common"
-	RA "github.com/terraform-provider-hpcr/fp/array"
-	B "github.com/terraform-provider-hpcr/fp/bytes"
-	E "github.com/terraform-provider-hpcr/fp/either"
-	FL "github.com/terraform-provider-hpcr/fp/file"
-	F "github.com/terraform-provider-hpcr/fp/function"
-	I "github.com/terraform-provider-hpcr/fp/identity"
-	O "github.com/terraform-provider-hpcr/fp/option"
-	P "github.com/terraform-provider-hpcr/fp/predicate"
-	S "github.com/terraform-provider-hpcr/fp/string"
-	T "github.com/terraform-provider-hpcr/fp/tuple"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
+	RA "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/array"
+	B "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/bytes"
+	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
+	FL "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/file"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
+	I "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/identity"
+	O "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/option"
+	P "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/predicate"
+	S "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/string"
+	T "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/tuple"
 )
 
 // OpenSSLVersion represents the openSSL version, including the path to the binary

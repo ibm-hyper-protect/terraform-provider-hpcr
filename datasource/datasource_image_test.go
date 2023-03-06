@@ -19,11 +19,11 @@ import (
 	"fmt"
 	"testing"
 
+	A "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/array"
+	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
+	I "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/identity"
 	"github.com/stretchr/testify/assert"
-	A "github.com/terraform-provider-hpcr/fp/array"
-	E "github.com/terraform-provider-hpcr/fp/either"
-	F "github.com/terraform-provider-hpcr/fp/function"
-	I "github.com/terraform-provider-hpcr/fp/identity"
 )
 
 //go:embed samples/images.json

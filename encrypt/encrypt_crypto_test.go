@@ -16,10 +16,10 @@ package encrypt
 import (
 	"testing"
 
+	B "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/bytes"
+	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
 	"github.com/stretchr/testify/assert"
-	B "github.com/terraform-provider-hpcr/fp/bytes"
-	E "github.com/terraform-provider-hpcr/fp/either"
-	F "github.com/terraform-provider-hpcr/fp/function"
 )
 
 // TestCryptoSignature checks if the signature works when created and verified by the crypto APIs

@@ -14,8 +14,8 @@
 package either
 
 import (
-	F "github.com/terraform-provider-hpcr/fp/function"
-	O "github.com/terraform-provider-hpcr/fp/option"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
+	O "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/option"
 )
 
 type Either[E, A any] interface {

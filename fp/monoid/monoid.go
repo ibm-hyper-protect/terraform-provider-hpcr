@@ -15,7 +15,7 @@
 package monoid
 
 import (
-	S "github.com/terraform-provider-hpcr/fp/semigroup"
+	S "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/semigroup"
 )
 
 type Monoid[A any] interface {

@@ -18,11 +18,11 @@ import (
 	"fmt"
 	"os"
 
-	B "github.com/terraform-provider-hpcr/fp/bytes"
-	E "github.com/terraform-provider-hpcr/fp/either"
-	F "github.com/terraform-provider-hpcr/fp/function"
-	O "github.com/terraform-provider-hpcr/fp/option"
-	S "github.com/terraform-provider-hpcr/fp/string"
+	B "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/bytes"
+	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
+	O "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/option"
+	S "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/string"
 )
 
 var (

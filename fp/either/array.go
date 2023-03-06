@@ -14,8 +14,8 @@
 package either
 
 import (
-	RA "github.com/terraform-provider-hpcr/fp/array"
-	F "github.com/terraform-provider-hpcr/fp/function"
+	RA "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/array"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
 )
 
 func TraverseArray[E, A, B any](f func(A) Either[E, B]) func([]A) Either[E, []B] {

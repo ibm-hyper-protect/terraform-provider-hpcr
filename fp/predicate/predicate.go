@@ -14,7 +14,7 @@
 package predicate
 
 import (
-	F "github.com/terraform-provider-hpcr/fp/function"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
 )
 
 func Not[A any](predicate func(A) bool) func(A) bool {
