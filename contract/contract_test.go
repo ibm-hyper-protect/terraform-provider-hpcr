@@ -47,13 +47,13 @@ var (
 	openSSLEncryptBasicE = F.Pipe1(
 		pubKey,
 		E.Map[error](func(pubKey []byte) func([]byte) E.Either[error, string] {
-			return encrypt.EncryptBasic(encrypt.OpenSSLRandomPassword(32), encrypt.AsymmetricEncryptPub(pubKey), encrypt.SymmetricEncrypt)
+			return encrypt.EncryptBasic(encrypt.OpenSSLRandomPassword(32), encrypt.OpenSSLAsymmetricEncryptPub(pubKey), encrypt.OpenSSLSymmetricEncrypt)
 		}),
 	)
 )
 
 func openSSLEncryptAndSignContract(pubKey []byte) func([]byte) func(RawMap) E.Either[error, RawMap] {
-	return EncryptAndSignContract(encrypt.EncryptBasic(encrypt.OpenSSLRandomPassword(32), encrypt.AsymmetricEncryptPub(pubKey), encrypt.SymmetricEncrypt), encrypt.OpenSSLSignDigest, encrypt.OpenSSLPublicKey)
+	return EncryptAndSignContract(encrypt.EncryptBasic(encrypt.OpenSSLRandomPassword(32), encrypt.OpenSSLAsymmetricEncryptPub(pubKey), encrypt.OpenSSLSymmetricEncrypt), encrypt.OpenSSLSignDigest, encrypt.OpenSSLPublicKey)
 }
 
 func TestAddSigningKey(t *testing.T) {

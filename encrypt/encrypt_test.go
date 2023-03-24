@@ -39,7 +39,7 @@ var (
 
 	// the encryption function based on the keys
 	openSSLEncryptBasic = createEncryptBasic(func(pubKey []byte) Encrypter {
-		return EncryptBasic(OpenSSLRandomPassword(keylen), AsymmetricEncryptPub(pubKey), SymmetricEncrypt)
+		return EncryptBasic(OpenSSLRandomPassword(keylen), OpenSSLAsymmetricEncryptPub(pubKey), OpenSSLSymmetricEncrypt)
 	})
 
 	// the encryption function based on the keys

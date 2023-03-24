@@ -52,6 +52,12 @@ var (
 		E.Chain(rsaFromCertificate),
 	)
 
+	// privToRsaKey decodes a pkcs file into a private key
+	privToRsaKey = F.Flow2(
+		pemDecodeE,
+		E.Chain(parsePKCS1PrivateKeyE),
+	)
+
 	// pubToRsaKey decodes a public key to rsa format
 	pubToRsaKey = F.Flow3(
 		pemDecodeE,
@@ -148,6 +154,15 @@ func encryptPKCS1v15(pub *rsa.PublicKey) func([]byte) E.Either[error, []byte] {
 	}
 }
 
+// decryptPKCS1v15 creates a function that decrypts a piece of text using a private key
+func decryptPKCS1v15(pub *rsa.PrivateKey) func([]byte) E.Either[error, []byte] {
+	return func(ciphertext []byte) E.Either[error, []byte] {
+		return E.TryCatchError(func() ([]byte, error) {
+			return rsa.DecryptPKCS1v15(rand.Reader, pub, ciphertext)
+		})
+	}
+}
+
 // cryptoAsymmetricEncrypt creates a function that encrypts a piece of text using a public key
 func cryptoAsymmetricEncrypt(decKey func([]byte) E.Either[error, *rsa.PublicKey]) func(publicKey []byte) func([]byte) E.Either[error, string] {
 	// prepare the encryption callback
@@ -178,7 +193,10 @@ var CryptoAsymmetricEncryptPub = cryptoAsymmetricEncrypt(pubToRsaKey)
 // CryptoAsymmetricEncryptCert encrypts a piece of text using a certificate
 var CryptoAsymmetricEncryptCert = cryptoAsymmetricEncrypt(certToRsaKey)
 
-// cbcEncrypt creates a new encrypter and then encrypts a plaintext into a cyphertext
+// CryptoAsymmetricDecrypt decrypts a piece of text using a private key
+var CryptoAsymmetricDecrypt = cryptoAsymmetricDecrypt(privToRsaKey)
+
+// cbcEncrypt creates a new encrypter and then encrypts a plaintext into a ciphertext
 func cbcEncrypt(b cipher.Block, iv []byte) func([]byte) []byte {
 	return func(src []byte) []byte {
 		ciphertext := make([]byte, len(src))
@@ -187,12 +205,21 @@ func cbcEncrypt(b cipher.Block, iv []byte) func([]byte) []byte {
 	}
 }
 
+// cbcDecrypt creates a new decryptor and then decrypts ciphertext into plaintext
+func cbcDecrypt(b cipher.Block, iv []byte) func([]byte) []byte {
+	return func(src []byte) []byte {
+		plaintext := make([]byte, len(src))
+		cipher.NewCBCDecrypter(b, iv).CryptBlocks(plaintext, src)
+		return plaintext
+	}
+}
+
 // CryptoSymmetricEncrypt encrypts a set of bytes using a password
-func CryptoSymmetricEncrypt(srcPlainbBytes []byte) func([]byte) E.Either[error, string] {
+func CryptoSymmetricEncrypt(srcPlainBytes []byte) func([]byte) E.Either[error, string] {
 	// Pad plaintext to a multiple of BlockSize with random padding.
-	bytesToPad := aes.BlockSize - (len(srcPlainbBytes) % aes.BlockSize)
+	bytesToPad := aes.BlockSize - (len(srcPlainBytes) % aes.BlockSize)
 	// pad the byte array
-	paddedPlainBytes := B.Monoid.Concat(srcPlainbBytes, RA.Replicate(bytesToPad, byte(bytesToPad)))
+	paddedPlainBytes := B.Monoid.Concat(srcPlainBytes, RA.Replicate(bytesToPad, byte(bytesToPad)))
 	// length of plain text
 	lenPlainBytes := len(paddedPlainBytes)
 	// prepare the length buffer
@@ -221,7 +248,7 @@ func CryptoSymmetricEncrypt(srcPlainbBytes []byte) func([]byte) E.Either[error, 
 			E.Chain(aesCipherE),
 		)
 		// derive the encrypter
-		ciphertextE := E.Sequence2(func(b cipher.Block, iv []byte) E.Either[error, func([]byte) []byte] {
+		ciphertextE := E.Sequence2(func(b cipher.Block, iv []byte) E.Either[error, []byte] {
 			return F.Pipe2(
 				cbcEncrypt(b, iv),
 				I.Ap[[]byte, []byte](paddedPlainBytes),
@@ -249,6 +276,11 @@ func rawFromCertificate(cert *x509.Certificate) []byte {
 // CryptoEncryptBasic implements basic encryption using golang crypto libraries given the certificate
 func CryptoEncryptBasic(cert []byte) func([]byte) E.Either[error, string] {
 	return EncryptBasic(CryptoRandomPassword(keylen), CryptoAsymmetricEncryptCert(cert), CryptoSymmetricEncrypt)
+}
+
+// OpenSSLDecryptBasic implements basic decryption using golang crypto libraries given the private key
+func CryptoDecryptBasic(privKey []byte) func(string) E.Either[error, []byte] {
+	return DecryptBasic(CryptoAsymmetricDecrypt(privKey), CryptoSymmetricDecrypt)
 }
 
 func shaToBytes(sha [32]byte) []byte {
@@ -331,3 +363,82 @@ var errorValidator = F.Flow3(
 	F.Constant1[[]byte, O.Option[error]],
 	F.Constant1[[]byte, func([]byte) O.Option[error]],
 )
+
+func unpad(data []byte) []byte {
+	size := len(data)
+	count := int(data[size-1])
+	return data[0 : size-count]
+}
+
+// CryptoSymmetricDecrypt encrypts a set of bytes using a password
+func CryptoSymmetricDecrypt(srcText string) func([]byte) E.Either[error, []byte] {
+	// some offsets
+	offSalt := len(salted)
+	offciphertext := offSalt + saltlen
+	// decode the source (would start with `salted`)
+	srcBytesE := common.Base64DecodeE(srcText)
+	// get the salt
+	saltE := F.Pipe1(
+		srcBytesE,
+		E.Map[error](B.Slice(offSalt, offciphertext)),
+	)
+	// get the ciphertext
+	ciphertextE := F.Pipe1(
+		srcBytesE,
+		E.Map[error](B.SliceRight(offciphertext)),
+	)
+
+	return func(password []byte) E.Either[error, []byte] {
+		// derive a key
+		keyE := F.Pipe1(
+			saltE,
+			E.Map[error](func(salt []byte) []byte {
+				return pbkdf2.Key(password, salt, iterations, keylen+aes.BlockSize, sha256.New)
+			}),
+		)
+		// the initialization vector
+		ivE := F.Pipe1(
+			keyE,
+			E.Map[error](B.Slice(keylen, keylen+aes.BlockSize)),
+		)
+		// the block
+		blockE := F.Pipe2(
+			keyE,
+			E.Map[error](B.Slice(0, keylen)),
+			E.Chain(aesCipherE),
+		)
+		// decrypt
+		return E.Sequence3(func(b cipher.Block, iv []byte, ciphertext []byte) E.Either[error, []byte] {
+			return F.Pipe3(
+				cbcDecrypt(b, iv),
+				I.Ap[[]byte, []byte](ciphertext),
+				unpad,
+				E.Of[error, []byte],
+			)
+		})(blockE, ivE, ciphertextE)
+	}
+}
+
+// cryptoAsymmetricDecrypt creates a function that encrypts a piece of text using a private key
+func cryptoAsymmetricDecrypt(decKey func([]byte) E.Either[error, *rsa.PrivateKey]) func(privKey []byte) func(string) E.Either[error, []byte] {
+	// prepare the decryption callback
+	dec := F.Flow2(
+		decKey,
+		E.Map[error](decryptPKCS1v15),
+	)
+	return func(privKey []byte) func(string) E.Either[error, []byte] {
+		// decode the input to an RSA public key
+		decE := F.Pipe1(
+			privKey,
+			dec,
+		)
+		// returns the encryption function
+		return func(data string) E.Either[error, []byte] {
+			return F.Pipe2(
+				decE,
+				E.Ap[error, []byte, E.Either[error, []byte]](common.Base64DecodeE(data)),
+				E.Flatten[error, []byte],
+			)
+		}
+	}
+}

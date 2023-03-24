@@ -14,18 +14,19 @@
 package common
 
 const (
-	KeyRendered = "rendered"
-	KeyCert     = "cert"
-	KeyPrivKey  = "privkey"
-	KeySha256   = "sha256"
-	KeyFolder   = "folder"
-	KeyText     = "text"
-	KeyContract = "contract"
-	KeyJSON     = "json"
-	KeyImages   = "images"
-	KeyImageID  = "image"
-	KeyVersion  = "version"
-	KeySpec     = "spec"
+	KeyRendered    = "rendered"
+	KeyCert        = "cert"
+	KeyPrivKey     = "privkey"
+	KeySha256      = "sha256"
+	KeyFolder      = "folder"
+	KeyText        = "text"
+	KeyContract    = "contract"
+	KeyJSON        = "json"
+	KeyImages      = "images"
+	KeyImageID     = "image"
+	KeyVersion     = "version"
+	KeySpec        = "spec"
+	KeyAttestation = "attestation"
 
 	PrefixBasicEncoding = "hyper-protect-basic"
 )
