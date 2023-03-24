@@ -60,13 +60,13 @@ var (
 	// OpenSSLSignDigest signs the sha256 digest using a private key
 	OpenSSLSignDigest = handle(signDigest)
 
-	AsymmetricEncryptPub = handle(asymmetricEncryptPub)
+	OpenSSLAsymmetricEncryptPub = handle(asymmetricEncryptPub)
 
-	AsymmetricEncryptCert = handle(asymmetricEncryptCert)
+	OpenSSLAsymmetricEncryptCert = handle(asymmetricEncryptCert)
 
-	AsymmerticDecrypt = handle(asymmetricDecrypt)
+	OpenSSLAsymmetricDecrypt = handle(asymmetricDecrypt)
 
-	SymmetricEncrypt = handle(symmetricEncrypt)
+	OpenSSLSymmetricEncrypt = handle(symmetricEncrypt)
 
 	// OpenSSLPublicKey gets the public key from a private key
 	OpenSSLPublicKey = F.Flow2(
@@ -246,7 +246,7 @@ func symmetricDecrypt(dataFile string) func([]byte) E.Either[error, []byte] {
 	)
 }
 
-func SymmetricDecrypt(token string) func([]byte) E.Either[error, []byte] {
+func OpenSSLSymmetricDecrypt(token string) func([]byte) E.Either[error, []byte] {
 	// decode the token and produce the decryption function
 	dec := F.Pipe2(
 		token,

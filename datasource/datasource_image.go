@@ -44,21 +44,23 @@ type (
 		OS           string `json:"os"`
 		Status       string `json:"status"`
 		Visibility   string `json:"visibility"`
+		Checksum     string `json:"checksum"`
 	}
 
 	ImageVersion struct {
-		ID      string
-		Version *semver.Version
+		ID       string
+		Checksum string
+		Version  *semver.Version
 	}
 )
 
 var (
-	schemaImages = schema.Schema{
+	schemaImagesIn = schema.Schema{
 		Type:        schema.TypeString,
 		Required:    true,
 		Description: "List of images in JSON format",
 	}
-	schemaSpec = schema.Schema{
+	schemaSpecIn = schema.Schema{
 		Type:             schema.TypeString,
 		Optional:         true,
 		Default:          "*",
@@ -66,13 +68,13 @@ var (
 		ValidateDiagFunc: validateSpecFunc,
 	}
 
-	schemaID = schema.Schema{
+	schemaIDOut = schema.Schema{
 		Type:        schema.TypeString,
 		Computed:    true,
 		Description: "ID of the selected image",
 	}
 
-	schemaVersion = schema.Schema{
+	schemaVersionOut = schema.Schema{
 		Type:        schema.TypeString,
 		Computed:    true,
 		Description: "Version number of the selected image",
@@ -116,9 +118,11 @@ func sortByVersion(imgs []ImageVersion) []ImageVersion {
 }
 
 func imageVersionFomImage(img Image) ImageVersion {
+	// assemble some infos
 	parsed := reHyperProtectName.FindStringSubmatch(img.Name)
 	version := semver.MustParse(fmt.Sprintf("%s.%s.%s", parsed[1], parsed[2], parsed[3]))
-	return ImageVersion{ID: img.ID, Version: version}
+	// produce the result record
+	return ImageVersion{ID: img.ID, Version: version, Checksum: img.Checksum}
 }
 
 // isCandidateImage tests if an image is a potential match for a hyper protect image
@@ -196,11 +200,13 @@ func DatasourceImage() *schema.Resource {
 	return &schema.Resource{
 		Read: selectImage,
 		Schema: map[string]*schema.Schema{
-			common.KeyImages: &schemaImages,
-			common.KeySpec:   &schemaSpec,
-
-			common.KeyImageID: &schemaID,
-			common.KeyVersion: &schemaVersion,
+			// input properties
+			common.KeyImages: &schemaImagesIn,
+			common.KeySpec:   &schemaSpecIn,
+			// output properties
+			common.KeyImageID: &schemaIDOut,
+			common.KeyVersion: &schemaVersionOut,
+			common.KeySha256:  &schemaSha256Out,
 		},
 		Description: "Selects an HPCR image from a JSON formatted list of images.",
 	}

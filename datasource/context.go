@@ -23,6 +23,7 @@ import (
 
 type Context struct {
 	encrypt.Encryption
+	encrypt.Decryption
 	version string
 }
 
@@ -31,6 +32,7 @@ func ConfigureContext(version string) func(context.Context, *schema.ResourceData
 
 		ctx := Context{
 			encrypt.DefaultEncryption(),
+			encrypt.DefaultDecryption(),
 			version,
 		}
 

@@ -14,6 +14,7 @@
 package validation
 
 import (
+	"crypto/rsa"
 	"fmt"
 	"io/fs"
 	"os"
@@ -38,6 +39,18 @@ func toDiagnostics[A any](value E.Either[error, A]) diag.Diagnostics {
 	return F.Pipe1(
 		value,
 		E.Fold(diag.FromErr, F.Constant1[A, diag.Diagnostics](nil)),
+	)
+}
+
+// DiagPrivateKey validates that the given private key is indeed a private key
+func DiagPrivateKey(data any, _ cty.Path) diag.Diagnostics {
+	// convert the key
+	return F.Pipe4(
+		data,
+		fp.ToTypeE[string],
+		common.MapStgToBytesE,
+		E.Chain(encrypt.PrivToRsaKey),
+		toDiagnostics[*rsa.PrivateKey],
 	)
 }
 

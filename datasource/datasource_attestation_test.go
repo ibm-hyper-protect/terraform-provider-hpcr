@@ -1,4 +1,4 @@
-// Copyright 2022 IBM Corp.
+// Copyright 2023 IBM Corp.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,58 +15,67 @@
 package datasource
 
 import (
+	_ "embed"
 	"testing"
 
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/attestation"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
-	D "github.com/ibm-hyper-protect/terraform-provider-hpcr/data"
-	"github.com/ibm-hyper-protect/terraform-provider-hpcr/encrypt"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/fp"
 	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
 	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
-	"github.com/ibm-hyper-protect/terraform-provider-hpcr/validation"
 	"github.com/stretchr/testify/assert"
 )
 
-var defaultContext = Context{
-	encrypt.DefaultEncryption(),
-	encrypt.DefaultDecryption(),
-	"test",
-}
+//go:embed samples/attestation/unencrypted.txt
+var UnencryptedAttestation string
 
-func TestUnencryptedText(t *testing.T) {
+//go:embed samples/attestation/se-checksums.txt.enc
+var EncryptedAttestation string
+
+//go:embed samples/attestation/attestation
+var EncPrivKey string
+
+func TestUnencryptedAttestation(t *testing.T) {
 	data := make(map[string]any)
 
 	// prepare input data
-	data[common.KeyText] = "sample text"
+	data[common.KeyAttestation] = UnencryptedAttestation
 
 	res := F.Pipe3(
 		data,
 		CreateResourceDataMock,
-		resourceText(&defaultContext),
+		handleAttestationWithContext(&defaultContext),
 		E.ToError[fp.ResourceData],
 	)
 
 	assert.NoError(t, res)
-	assert.Equal(t, data[common.KeyText], data[common.KeyRendered])
+
+	checksums, ok := data[common.KeyChecksums].(attestation.ChecksumMap)
+	assert.NotNil(t, checksums)
+	assert.True(t, ok)
+
+	assert.Equal(t, "a6f6228bbf820e766ebe43c51e97332dda92e9744e719a646f611fe0681d2458", checksums["cidata/user-data"])
 }
 
-func TestEncryptedText(t *testing.T) {
+func TestEncryptedAttestation(t *testing.T) {
 	data := make(map[string]any)
 
 	// prepare input data
-	data[common.KeyText] = "sample text"
-	data[common.KeyCert] = D.DefaultCertificate
+	data[common.KeyAttestation] = EncryptedAttestation
+	data[common.KeyPrivKey] = EncPrivKey
 
-	encText := resourceEncText(&defaultContext)
-
-	res := F.Pipe4(
+	res := F.Pipe3(
 		data,
 		CreateResourceDataMock,
-		encText,
-		E.Chain(encText),
+		handleAttestationWithContext(&defaultContext),
 		E.ToError[fp.ResourceData],
 	)
 
 	assert.NoError(t, res)
-	assert.Regexp(t, validation.TokenRe, data[common.KeyRendered])
+
+	checksums, ok := data[common.KeyChecksums].(attestation.ChecksumMap)
+	assert.NotNil(t, checksums)
+	assert.True(t, ok)
+
+	assert.Equal(t, "a6f6228bbf820e766ebe43c51e97332dda92e9744e719a646f611fe0681d2458", checksums["cidata/user-data"])
 }

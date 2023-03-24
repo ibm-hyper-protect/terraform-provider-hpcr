@@ -96,3 +96,13 @@ func Head[A any](as []A) O.Option[A] {
 	}
 	return O.Of(as[0])
 }
+
+func IsNonEmpty[A any](data []A) bool {
+	return len(data) > 0
+}
+
+func Reduce[A, B any](f func(B, A) B, initial B) func([]A) B {
+	return func(as []A) B {
+		return reduce(as, f, initial)
+	}
+}

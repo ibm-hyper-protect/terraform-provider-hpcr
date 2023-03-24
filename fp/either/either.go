@@ -139,9 +139,28 @@ func MonadSequence2[E, T1, T2, R any](e1 Either[E, T1], e2 Either[E, T2], f func
 	return f(e1.(right[T1]).a, e2.(right[T2]).a)
 }
 
+func MonadSequence3[E, T1, T2, T3, R any](e1 Either[E, T1], e2 Either[E, T2], e3 Either[E, T3], f func(T1, T2, T3) Either[E, R]) Either[E, R] {
+	if IsLeft(e1) {
+		return Left[E, R](e1.(left[E]).e)
+	}
+	if IsLeft(e2) {
+		return Left[E, R](e2.(left[E]).e)
+	}
+	if IsLeft(e3) {
+		return Left[E, R](e3.(left[E]).e)
+	}
+	return f(e1.(right[T1]).a, e2.(right[T2]).a, e3.(right[T3]).a)
+}
+
 func Sequence2[E, T1, T2, R any](f func(T1, T2) Either[E, R]) func(Either[E, T1], Either[E, T2]) Either[E, R] {
 	return func(e1 Either[E, T1], e2 Either[E, T2]) Either[E, R] {
 		return MonadSequence2(e1, e2, f)
+	}
+}
+
+func Sequence3[E, T1, T2, T3, R any](f func(T1, T2, T3) Either[E, R]) func(Either[E, T1], Either[E, T2], Either[E, T3]) Either[E, R] {
+	return func(e1 Either[E, T1], e2 Either[E, T2], e3 Either[E, T3]) Either[E, R] {
+		return MonadSequence3(e1, e2, e3, f)
 	}
 }
 

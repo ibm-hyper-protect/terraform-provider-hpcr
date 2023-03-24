@@ -19,10 +19,10 @@ import (
 
 // OpenSSLEncryptBasic implements basic encryption using openSSL given the certificate
 func OpenSSLEncryptBasic(cert []byte) func([]byte) E.Either[error, string] {
-	return EncryptBasic(OpenSSLRandomPassword(keylen), AsymmetricEncryptCert(cert), SymmetricEncrypt)
+	return EncryptBasic(OpenSSLRandomPassword(keylen), OpenSSLAsymmetricEncryptCert(cert), OpenSSLSymmetricEncrypt)
 }
 
 // OpenSSLDecryptBasic implements basic decryption using openSSL given the private key
 func OpenSSLDecryptBasic(privKey []byte) func(string) E.Either[error, []byte] {
-	return DecryptBasic(AsymmerticDecrypt(privKey), SymmetricDecrypt)
+	return DecryptBasic(OpenSSLAsymmetricDecrypt(privKey), OpenSSLSymmetricDecrypt)
 }
