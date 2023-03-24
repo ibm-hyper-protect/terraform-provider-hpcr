@@ -63,14 +63,17 @@ var (
 	seqResourceData = E.SequenceArray[error, fp.ResourceData]()
 	setRendered     = fp.ResourceDataSet[string](common.KeyRendered)
 	setSha256       = fp.ResourceDataSet[string](common.KeySha256)
+	setChecksums    = fp.ResourceDataSet[map[string]string](common.KeyChecksums)
 	getJsonE        = fp.ResourceDataGetE[any](common.KeyJSON)
 	getTextE        = fp.ResourceDataGetE[string](common.KeyText)
 	getContractE    = fp.ResourceDataGetE[string](common.KeyContract)
 	getPrivKeyE     = fp.ResourceDataGetE[string](common.KeyPrivKey)
 	getFolderE      = fp.ResourceDataGetE[string](common.KeyFolder)
+	getAttestationE = fp.ResourceDataGetE[string](common.KeyAttestation)
 	getCertificateE = fp.ResourceDataGetE[string](common.KeyCert)
 
-	getSha256O = fp.ResourceDataGetO[string](common.KeySha256)
+	getSha256O  = fp.ResourceDataGetO[string](common.KeySha256)
+	getPrivKeyO = fp.ResourceDataGetO[string](common.KeyPrivKey)
 
 	createHashE = E.Map[error](createHash)
 
@@ -109,7 +112,7 @@ var (
 
 	schemaCertIn = schema.Schema{
 		Type:             schema.TypeString,
-		Description:      "Certificate used to encrypt the JSON document in PEM format",
+		Description:      "Certificate used to encrypt the JSON document, in PEM format",
 		Optional:         true,
 		ForceNew:         true,
 		Default:          data.DefaultCertificate,
@@ -122,7 +125,7 @@ var (
 		Optional:         true,
 		ForceNew:         true,
 		Sensitive:        true,
-		ValidateDiagFunc: validation.DiagCertificate,
+		ValidateDiagFunc: validation.DiagPrivateKey,
 	}
 
 	schemaRenderedOut = schema.Schema{

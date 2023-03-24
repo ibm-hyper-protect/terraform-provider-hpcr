@@ -31,7 +31,8 @@ func Provider(version, commit string) func() *schema.Provider {
 				"hpcr_contract_encrypted": datasource.ResourceContractEncrypted(),
 			},
 			DataSourcesMap: map[string]*schema.Resource{
-				"hpcr_image": datasource.DatasourceImage(),
+				"hpcr_image":       datasource.DatasourceImage(),
+				"hpcr_attestation": datasource.DatasourceAttestation(),
 			},
 			ConfigureContextFunc: datasource.ConfigureContext(version),
 		}

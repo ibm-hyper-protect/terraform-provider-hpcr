@@ -52,8 +52,8 @@ var (
 		E.Chain(rsaFromCertificate),
 	)
 
-	// privToRsaKey decodes a pkcs file into a private key
-	privToRsaKey = F.Flow2(
+	// PrivToRsaKey decodes a pkcs file into a private key
+	PrivToRsaKey = F.Flow2(
 		pemDecodeE,
 		E.Chain(parsePKCS1PrivateKeyE),
 	)
@@ -194,7 +194,7 @@ var CryptoAsymmetricEncryptPub = cryptoAsymmetricEncrypt(pubToRsaKey)
 var CryptoAsymmetricEncryptCert = cryptoAsymmetricEncrypt(certToRsaKey)
 
 // CryptoAsymmetricDecrypt decrypts a piece of text using a private key
-var CryptoAsymmetricDecrypt = cryptoAsymmetricDecrypt(privToRsaKey)
+var CryptoAsymmetricDecrypt = cryptoAsymmetricDecrypt(PrivToRsaKey)
 
 // cbcEncrypt creates a new encrypter and then encrypts a plaintext into a ciphertext
 func cbcEncrypt(b cipher.Block, iv []byte) func([]byte) []byte {

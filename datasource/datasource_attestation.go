@@ -15,10 +15,17 @@
 package datasource
 
 import (
-	"fmt"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/attestation"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/data"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/validation"
+
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/fp"
+	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
+	O "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/option"
+	S "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/string"
 )
 
 var (
@@ -27,26 +34,104 @@ var (
 		Required:    true,
 		Description: "The encrypted or unencrypted attestation record",
 	}
+	schemaAttestationCertIn = schema.Schema{
+		Type:             schema.TypeString,
+		Description:      "Certificate used to validate the attestation signature, in PEM format",
+		Optional:         true,
+		Default:          data.DefaultCertificate,
+		ValidateDiagFunc: validation.DiagCertificate,
+	}
+	schemaAttestationPrivKeyIn = schema.Schema{
+		Type:             schema.TypeString,
+		Description:      "Private key used to decrypt an encrypted attestation record. If missing the attestation record is assumed to be unencrypted.",
+		Optional:         true,
+		Sensitive:        true,
+		ValidateDiagFunc: validation.DiagPrivateKey,
+	}
+	schemaChecksumsOut = schema.Schema{
+		Type:        schema.TypeMap,
+		Description: "Map from filename to checksum of the attestation record.",
+		Computed:    true,
+	}
 )
 
 func DatasourceAttestation() *schema.Resource {
 	return &schema.Resource{
 		Read: handleAttestation,
 		Schema: map[string]*schema.Schema{
+			// input parameters
 			common.KeyAttestation: &schemaAttestationIn,
+			common.KeyPrivKey:     &schemaAttestationPrivKeyIn,
+			common.KeyCert:        &schemaAttestationCertIn,
+			// output parameters
+			common.KeyChecksums: &schemaChecksumsOut,
 		},
 		Description: "handles the analysis of an attestation record.",
 	}
 }
 
-func handleAttestation(data *schema.ResourceData, ctx any) error {
+// parseAttestationRecord
+var parseAttestationRecord = F.Flow2(
+	attestation.ParseAttestationRecord,
+	E.Of[error, attestation.ChecksumMap],
+)
 
-	attestation, ok := data.GetOk(common.KeyAttestation)
-	if !ok {
-		return fmt.Errorf("input missing for [%s]", common.KeyAttestation)
+func handleAttestationWithContext(ctx *Context) func(data fp.ResourceData) ResourceDataE {
+	// the decryptor
+	decryptAttestation := attestation.DecryptAttestation(ctx.DecryptBasic)
+
+	return func(data fp.ResourceData) ResourceDataE {
+		// some applicatives
+		apE := fp.ResourceDataAp[fp.ResourceData](data)
+		// final result
+		resE := E.MapTo[error, []fp.ResourceData](data)
+
+		// the attestation record
+		attestationE := F.Pipe1(
+			data,
+			getAttestationE,
+		)
+
+		// attestation parser function
+		attestationParser := F.Pipe2(
+			data,
+			getPrivKeyO,
+			O.Fold(F.Constant(parseAttestationRecord), F.Flow2(
+				S.ToBytes,
+				decryptAttestation,
+			)),
+		)
+
+		// output records
+		checksumMapE := F.Pipe3(
+			attestationE,
+			E.Chain(attestationParser),
+			E.Map[error](setChecksums),
+			apE,
+		)
+
+		// combine all outputs
+		return F.Pipe2(
+			[]ResourceDataE{checksumMapE},
+			seqResourceData,
+			resE,
+		)
 	}
+}
 
-	fmt.Printf("attestation: [%v]", attestation)
-
-	return nil
+// handleAttestation is the data source callback, it dispatches to a more convenient API
+func handleAttestation(data *schema.ResourceData, ctx any) error {
+	// lift f into the context
+	return F.Pipe5(
+		ctx,
+		toContextE,
+		E.Map[error](handleAttestationWithContext),
+		E.Ap[error, fp.ResourceData, ResourceDataE](F.Pipe2(
+			data,
+			fp.CreateResourceDataProxy,
+			setUniqueID,
+		)),
+		E.Flatten[error, fp.ResourceData],
+		E.ToError[fp.ResourceData],
+	)
 }

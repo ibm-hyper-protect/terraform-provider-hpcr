@@ -27,6 +27,7 @@ const (
 	KeyVersion     = "version"
 	KeySpec        = "spec"
 	KeyAttestation = "attestation"
+	KeyChecksums   = "checksums"
 
 	PrefixBasicEncoding = "hyper-protect-basic"
 )

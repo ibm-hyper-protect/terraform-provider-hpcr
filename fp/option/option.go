@@ -123,3 +123,19 @@ func Sequence2[T1, T2, R any](f func(T1, T2) Option[R]) func(Option[T1], Option[
 		return MonadSequence2(o1, o2, f)
 	}
 }
+
+func fromValidation0[A any](f func() (A, bool)) Option[A] {
+	a, ok := f()
+	if ok {
+		return Some(a)
+	}
+	return None[A]()
+}
+
+func Optionize1[T1, R any](f func(T1) (R, bool)) func(T1) Option[R] {
+	return func(t1 T1) Option[R] {
+		return fromValidation0(func() (R, bool) {
+			return f(t1)
+		})
+	}
+}

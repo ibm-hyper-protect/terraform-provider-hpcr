@@ -16,7 +16,16 @@ package attestation
 
 import (
 	_ "embed"
+	"fmt"
 	"testing"
+
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/encrypt"
+	"github.com/stretchr/testify/assert"
+
+	B "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/bytes"
+	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
+	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
+	R "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/record"
 )
 
 //go:embed samples/encrypted/attestation.base64
@@ -26,10 +35,32 @@ var encBase64 string
 var encPub string
 
 //go:embed samples/encrypted/attestation
-var encPriv string
+var encPriv []byte
+
+var (
+	getChecksums     = R.Lookup[string, []byte]("se-checksums.txt.enc")
+	getContract      = R.Lookup[string, string]("cidata/user-data")
+	defaultDecryptor = encrypt.DefaultDecryption()
+)
 
 func TestParseAndDecryptAttestation(t *testing.T) {
+	// decode the sample
+	token := F.Pipe3(
+		encBase64,
+		untarBase64,
+		E.ChainOptionK[error, FileList, []byte](func() error { return fmt.Errorf("unable to read checksums") })(getChecksums),
+		E.Map[error](B.ToString),
+	)
 
-	// get the keys
+	// get the decryptor
+	dec := DecryptAttestation(defaultDecryptor.DecryptBasic)(encPriv)
 
+	// decrypt the record
+	checksum := F.Pipe2(
+		token,
+		E.Chain(dec),
+		E.ChainOptionK[error, ChecksumMap, string](func() error { return fmt.Errorf("unable to read checksum for contracz") })(getContract),
+	)
+
+	assert.Equal(t, E.Of[error]("a6f6228bbf820e766ebe43c51e97332dda92e9744e719a646f611fe0681d2458"), checksum)
 }
