@@ -55,6 +55,7 @@ var (
 	}
 )
 
+// DatasourceAttestation is a data source to work with HPCR attestation records
 func DatasourceAttestation() *schema.Resource {
 	return &schema.Resource{
 		Read: handleAttestation,
