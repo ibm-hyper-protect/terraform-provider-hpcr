@@ -35,6 +35,9 @@ import (
 //go:embed samples/contract1.yaml
 var Contract1 string
 
+//go:embed samples/contract2.yaml
+var Contract2 string
+
 var (
 	// keypair for testing
 	privKey = encrypt.OpenSSLPrivateKey()
@@ -94,7 +97,7 @@ func TestUpsertEncrypted(t *testing.T) {
 	// the encryption function
 	upsertE := F.Pipe1(
 		openSSLEncryptBasicE,
-		E.Map[error](upsertEncrypted),
+		E.Map[error](upsertYAMLEncrypted),
 	)
 	// encrypt env
 	encEnv := F.Pipe1(
@@ -216,4 +219,34 @@ func TestEnvWorkloadSignature(t *testing.T) {
 	)
 
 	assert.True(t, E.IsRight(signatureE))
+}
+
+func TestEncryptAndSignContractWithAttestation(t *testing.T) {
+	// the private key
+	privKeyE := encrypt.OpenSSLPrivateKey()
+	// the encryption function
+	signerE := F.Pipe2(
+		pubKey,
+		E.Map[error](openSSLEncryptAndSignContract),
+		E.Ap[error, []byte, func(RawMap) E.Either[error, RawMap]](privKeyE),
+	)
+	// prepare some contract without a key
+	contractE := F.Pipe3(
+		Contract2,
+		S.ToBytes,
+		Y.Parse[RawMap],
+		E.Map[error](F.Deref[RawMap]),
+	)
+	// add signature and encrypt the fields
+	resE := F.Pipe5(
+		signerE,
+		E.Ap[error, RawMap, E.Either[error, RawMap]](contractE),
+		E.Flatten[error, RawMap],
+		E.Map[error](F.Ref[RawMap]),
+		E.Chain(Y.Stringify[RawMap]),
+		common.MapBytesToStgE,
+	)
+	assert.True(t, E.IsRight(resE))
+
+	fmt.Println(resE)
 }

@@ -24,6 +24,7 @@ import (
 	I "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/identity"
 	O "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/option"
 	R "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/record"
+	S "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/string"
 	Y "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/yaml"
 )
 
@@ -32,6 +33,7 @@ type RawMap = map[string]any
 var (
 	KeyEnv                  = "env"
 	KeyWorkload             = "workload"
+	KeyAttestationPublicKey = "attestationPublicKey"
 	KeySigningKey           = "signingKey"
 	KeyEnvWorkloadSignature = "envWorkloadSignature"
 
@@ -43,6 +45,24 @@ var (
 	StringifyRawMapE = Y.Stringify[RawMap]
 	MapDerefRawMapE  = E.Map[error](F.Deref[RawMap])
 	MapRefRawMapE    = E.Map[error](F.Ref[RawMap])
+
+	// converts an arbitrary value to YAML
+	anyToYAML = F.Flow2(
+		F.Ref[any],
+		Y.Stringify[any],
+	)
+
+	// converts a string value to bytes
+	anyToString = F.Flow2(
+		common.ToTypeE[string],
+		E.Map[error](S.ToBytes),
+	)
+
+	// function that accepts a map, transforms the given key and returns a map with the key encrypted
+	upsertYAMLEncrypted = upsertEncrypted(anyToYAML)
+
+	// function that accepts a map, transforms the given key and returns a map with the key encrypted
+	upsertStringEncrypted = upsertEncrypted(anyToString)
 )
 
 func toAny[A any](a A) any {
@@ -162,28 +182,29 @@ func upsertSigningKey(pubKey func([]byte) E.Either[error, []byte]) func([]byte) 
 }
 
 // function that accepts a map, transforms the given key and returns a map with the key encrypted
-func upsertEncrypted(enc func(data []byte) E.Either[error, string]) func(string) func(RawMap) E.Either[error, RawMap] {
-	// callback that accepts the key
-	return func(key string) func(RawMap) E.Either[error, RawMap] {
-		// callback to insert the key into the target
-		setKey := F.Bind1st(R.UpsertAt[string, any], key)
-		getKey := R.Lookup[string, any](key)
-		// returns the actual upserter
-		return func(dst RawMap) E.Either[error, RawMap] {
-			// lookup the original key
-			return F.Pipe3(
-				dst,
-				getKey,
-				O.Map(F.Flow6(
-					F.Ref[any],
-					Y.Stringify[any],
-					E.Chain(enc),
-					E.Map[error](toAny[string]),
-					E.Map[error](setKey),
-					E.Map[error](I.Ap[RawMap, RawMap](dst)),
-				)),
-				O.GetOrElse(F.Constant(E.Of[error](dst))),
-			)
+func upsertEncrypted(serializer func(any) E.Either[error, []byte]) func(enc func(data []byte) E.Either[error, string]) func(string) func(RawMap) E.Either[error, RawMap] {
+	return func(enc func(data []byte) E.Either[error, string]) func(string) func(RawMap) E.Either[error, RawMap] {
+		// callback that accepts the key
+		return func(key string) func(RawMap) E.Either[error, RawMap] {
+			// callback to insert the key into the target
+			setKey := F.Bind1st(R.UpsertAt[string, any], key)
+			getKey := R.Lookup[string, any](key)
+			// returns the actual upserter
+			return func(dst RawMap) E.Either[error, RawMap] {
+				// lookup the original key
+				return F.Pipe3(
+					dst,
+					getKey,
+					O.Map(F.Flow5(
+						serializer,
+						E.Chain(enc),
+						E.Map[error](toAny[string]),
+						E.Map[error](setKey),
+						E.Map[error](I.Ap[RawMap, RawMap](dst)),
+					)),
+					O.GetOrElse(F.Constant(E.Of[error](dst))),
+				)
+			}
 		}
 	}
 }
@@ -201,19 +222,22 @@ func EncryptAndSignContract(
 	upsertKey := upsertSigningKey(pubKey)
 	upsertSig := upsertEnvWorkloadSignature(signer)
 	// the function that encrypts fields
-	encrypter := upsertEncrypted(enc)
-	encEnv := encrypter(KeyEnv)
-	encWorkload := encrypter(KeyWorkload)
+	encrypterYAML := upsertYAMLEncrypted(enc)
+	encEnv := encrypterYAML(KeyEnv)
+	encWorkload := encrypterYAML(KeyWorkload)
+	encrypterString := upsertStringEncrypted(enc)
+	encAttPubKey := encrypterString(KeyAttestationPublicKey)
 	// callback to handle signature
 	return func(privKey []byte) func(RawMap) E.Either[error, RawMap] {
 		// the signature callback
 		addPubKey := upsertKey(privKey)
 		addSignature := upsertSig(privKey)
 		// execute one step after the other
-		return F.Flow4(
+		return F.Flow5(
 			addPubKey,
 			E.Chain(encEnv),
 			E.Chain(encWorkload),
+			E.Chain(encAttPubKey),
 			E.Chain(addSignature),
 		)
 	}

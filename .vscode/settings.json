@@ -4,10 +4,10 @@
             "fileMatch": [
                 "samples/contract/*.json"
             ],
-            "url": "/data/hpha-se-contract-schema-1.1.100.json"
+            "url": "/data/hpse-contract-schema-1.0.9.json"
         }
     ],
     "yaml.schemas": {
-        "data/hpha-se-contract-schema-1.1.100.json": "**/contract/**/*.yaml"
+        "data/hpse-contract-schema-1.0.9.json": "**/contract/**/*.yaml"
     }
 }
