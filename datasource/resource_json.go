@@ -51,10 +51,13 @@ func ResourceJSONEncrypted() *schema.Resource {
 		Read:   jsonEncrypted.F2,
 		Delete: jsonEncrypted.F3,
 		Schema: map[string]*schema.Schema{
-			common.KeyJSON:     &schemaJsonIn,
-			common.KeyCert:     &schemaCertIn,
+			// input parameters
+			common.KeyJSON: &schemaJsonIn,
+			common.KeyCert: &schemaCertIn,
+			// output parameters
 			common.KeyRendered: &schemaRenderedOut,
 			common.KeySha256:   &schemaSha256Out,
+			common.KeyChecksum: &schemaChecksumOut,
 		},
 		Description: "Generates an base64 encoded token from the JSON serialization of the input",
 	}

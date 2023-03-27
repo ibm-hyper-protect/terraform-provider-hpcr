@@ -35,9 +35,12 @@ func ResourceText() *schema.Resource {
 		Read:   textUnencrypted.F2,
 		Delete: textUnencrypted.F3,
 		Schema: map[string]*schema.Schema{
-			common.KeyText:     &schemaTextIn,
+			// input parameters
+			common.KeyText: &schemaTextIn,
+			// output parameters
 			common.KeyRendered: &schemaRenderedOut,
 			common.KeySha256:   &schemaSha256Out,
+			common.KeyChecksum: &schemaChecksumOut,
 		},
 		Description: "Generates an base64 encoded token from text input",
 	}
@@ -49,10 +52,13 @@ func ResourceTextEncrypted() *schema.Resource {
 		Read:   textEncrypted.F2,
 		Delete: textEncrypted.F3,
 		Schema: map[string]*schema.Schema{
-			common.KeyText:     &schemaTextIn,
-			common.KeyCert:     &schemaCertIn,
+			// input parameters
+			common.KeyText: &schemaTextIn,
+			common.KeyCert: &schemaCertIn,
+			// output parameters
 			common.KeyRendered: &schemaRenderedOut,
 			common.KeySha256:   &schemaSha256Out,
+			common.KeyChecksum: &schemaChecksumOut,
 		},
 		Description: "Generates an encrypted token from text input",
 	}
