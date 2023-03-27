@@ -46,5 +46,8 @@ func TestContract(t *testing.T) {
 
 	assert.NoError(t, res)
 
-	fmt.Println(data[common.KeyRendered])
+	assert.NotEmpty(t, data[common.KeyRendered])
+	assert.NotEmpty(t, data[common.KeyChecksum])
+
+	fmt.Println(data[common.KeyChecksum])
 }

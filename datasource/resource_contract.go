@@ -44,6 +44,7 @@ func ResourceContractEncrypted() *schema.Resource {
 			// output parameters
 			common.KeyRendered: &schemaRenderedOut,
 			common.KeySha256:   &schemaSha256Out,
+			common.KeyChecksum: &schemaChecksumOut,
 		},
 		Description: "Generates an encrypted and signed user data field",
 	}

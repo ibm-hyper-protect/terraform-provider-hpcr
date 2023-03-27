@@ -16,7 +16,7 @@ package datasource
 
 import (
 	"crypto/sha256"
-	"fmt"
+	"encoding/hex"
 
 	"github.com/hashicorp/go-uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -56,13 +56,15 @@ func setUniqueID(d fp.ResourceData) ResourceDataE {
 }
 
 func createHash(data []byte) string {
-	return fmt.Sprintf("%x", sha256.Sum256(data))
+	checksum := sha256.Sum256(data)
+	return hex.EncodeToString(checksum[:])
 }
 
 var (
 	seqResourceData = E.SequenceArray[error, fp.ResourceData]()
 	setRendered     = fp.ResourceDataSet[string](common.KeyRendered)
 	setSha256       = fp.ResourceDataSet[string](common.KeySha256)
+	setChecksum     = fp.ResourceDataSet[string](common.KeyChecksum)
 	setChecksums    = fp.ResourceDataSet[map[string]string](common.KeyChecksums)
 	getJsonE        = fp.ResourceDataGetE[any](common.KeyJSON)
 	getTextE        = fp.ResourceDataGetE[string](common.KeyText)
@@ -139,6 +141,12 @@ var (
 		Computed:    true,
 		Description: "SHA256 of the input",
 	}
+
+	schemaChecksumOut = schema.Schema{
+		Type:        schema.TypeString,
+		Computed:    true,
+		Description: "SHA256 of the output",
+	}
 )
 
 func resourceDeleteNoOp(d *schema.ResourceData, m any) error {
@@ -177,10 +185,15 @@ func updateResource(d fp.ResourceData) func(func([]byte) E.Either[error, string]
 			// serialize the content
 			return O.Map(func(checksum string) ResourceDataE {
 
-				// render the content using the serializer
-				renderedE := F.Pipe3(
+				// rendering result
+				resultE := F.Pipe1(
 					dataE,
 					serE,
+				)
+
+				// render the content using the serializer
+				renderedE := F.Pipe2(
+					resultE,
 					E.Map[error](setRendered),
 					apE,
 				)
@@ -192,8 +205,19 @@ func updateResource(d fp.ResourceData) func(func([]byte) E.Either[error, string]
 					apI,
 				)
 
+				// update the checksum
+				checksumE := F.Pipe1(
+					resultE,
+					E.Chain(F.Flow4(
+						S.ToBytes,
+						createHash,
+						setChecksum,
+						apI,
+					)),
+				)
+
 				return F.Pipe1(
-					seqResourceData([]ResourceDataE{renderedE, sha256E}),
+					seqResourceData([]ResourceDataE{renderedE, sha256E, checksumE}),
 					resE,
 				)
 			})
@@ -299,10 +323,12 @@ func createHashWithCert(ctx *Context) func(d fp.ResourceData) func([]byte) E.Eit
 		)
 		// combine the fingerprint with the actual data
 		return func(data []byte) E.Either[error, string] {
-			return F.Pipe2(
+			return F.Pipe1(
 				fpE,
-				E.Map[error](F.Bind2nd(B.Monoid.Concat, data)),
-				createHashE,
+				E.Map[error](F.Flow2(
+					F.Bind2nd(B.Monoid.Concat, data),
+					createHash,
+				)),
 			)
 		}
 	}
@@ -334,10 +360,12 @@ func createHashWithCertAndPrivateKey(ctx *Context) func(d fp.ResourceData) func(
 
 		// combine the fingerprint with the actual data
 		return func(data []byte) E.Either[error, string] {
-			return F.Pipe2(
+			return F.Pipe1(
 				fp(certE, privKeyE),
-				E.Map[error](F.Bind2nd(B.Monoid.Concat, data)),
-				createHashE,
+				E.Map[error](F.Flow2(
+					F.Bind2nd(B.Monoid.Concat, data),
+					createHash),
+				),
 			)
 		}
 	}

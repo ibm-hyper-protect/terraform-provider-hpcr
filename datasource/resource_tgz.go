@@ -43,10 +43,13 @@ func ResourceTgzEncrypted() *schema.Resource {
 		Read:   tgzEncrypted.F2,
 		Delete: tgzEncrypted.F3,
 		Schema: map[string]*schema.Schema{
-			common.KeyFolder:   &schemaFolderIn,
-			common.KeyCert:     &schemaCertIn,
+			// input parameters
+			common.KeyFolder: &schemaFolderIn,
+			common.KeyCert:   &schemaCertIn,
+			// output parameters
 			common.KeyRendered: &schemaRenderedOut,
 			common.KeySha256:   &schemaSha256Out,
+			common.KeyChecksum: &schemaChecksumOut,
 		},
 		Description: "Generates a encrypted token from the TGZed files in the folder.",
 	}
@@ -58,9 +61,12 @@ func ResourceTgz() *schema.Resource {
 		Read:   tgzUnencrypted.F2,
 		Delete: tgzUnencrypted.F3,
 		Schema: map[string]*schema.Schema{
-			common.KeyFolder:   &schemaFolderIn,
+			// input parameters
+			common.KeyFolder: &schemaFolderIn,
+			// output parameters
 			common.KeyRendered: &schemaRenderedOut,
 			common.KeySha256:   &schemaSha256Out,
+			common.KeyChecksum: &schemaChecksumOut,
 		},
 		Description: "Generates a base64 encoded string from the TGZed files in the folder.",
 	}

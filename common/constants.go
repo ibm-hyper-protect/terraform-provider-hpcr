@@ -18,6 +18,7 @@ const (
 	KeyCert        = "cert"
 	KeyPrivKey     = "privkey"
 	KeySha256      = "sha256"
+	KeyChecksum    = "checksum"
 	KeyFolder      = "folder"
 	KeyText        = "text"
 	KeyContract    = "contract"
