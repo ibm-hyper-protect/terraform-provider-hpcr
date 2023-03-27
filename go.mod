@@ -1,12 +1,12 @@
 module github.com/ibm-hyper-protect/terraform-provider-hpcr
 
-go 1.18
+go 1.20
 
 require (
 	github.com/Masterminds/semver v1.5.0
-	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
+	github.com/hashicorp/go-cty v1.4.1-0.20200723130312-85980079f637
 	github.com/hashicorp/go-uuid v1.0.3
-	github.com/hashicorp/terraform-plugin-docs v0.13.0
+	github.com/hashicorp/terraform-plugin-docs v0.14.1
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.26.1
 	github.com/qri-io/jsonschema v0.2.1
 	github.com/stretchr/testify v1.8.2
