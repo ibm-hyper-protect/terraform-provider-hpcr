@@ -1,0 +1,23 @@
+env:
+  type: env
+  logging: {}
+workload:
+  type: workload
+  compose:
+    archive: xxxd
+attestationPublicKey: |
+  -----BEGIN PUBLIC KEY-----
+    MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAvFF9XaCvJzydGyVvKjN3
+    CikFeSdmrUwL9dS8AbhHndojIXJ9pXurCzQlWE61XeOcz3ThaoXxM1dkG71KSFhe
+    VTbWqcWnMfJL8F+uD8b16o21quk+D+HG7gIb4s+gqADW8xyfbTIqO7bHu5AgswqO
+    qN1aDp+L/yLR3EjCZE7fgwXmE2MkWMusoNRf5vvf4t+cMkpii5dYSC5K0RqRiZxS
+    3dwrJICtPZqnTmbIGCg00I4PCgYx4YYdo/meZRhXeHgBCYe3wklCEHd5NgQ5Vh2P
+    snyjidlPUmrPkG7uG/qcybVwbzFaNStJ1afAEfSf/7n5JVzRcBIZORUfRmE3eDUJ
+    05n2SuxcVIkOvKFdEV13DCcR+gMQMVpiXAdiR0olT+I10Ts5o/+eBXCdeUUXf8al
+    PXO7jxMoLr717adTFwDzP4N+WnwIBRCO/JEAmn1qMu+EQEaCMgvqN6gfsQjrJ4n8
+    3T+ZKGePvuA6zAXTSTytce5yPhOaF3xplLBZo0nBPbLW73fc2MKzRmz4RCz2r7YS
+    EFLA5lgcK2Td/IS0v7ItxCJXH9kmGxSUaZlc49AAn3y80lQyN/6Pncqg4sIiABM5
+    8uv71bYV9ZEQgqi/H5/aseWGcnvuN9pe2CSh/QZawNMZZ/kcm7UXZbHiyJFDuRaY
+    07pizMbUXsSkkNJBqeVSmZcCAwEAAQ==
+    -----END PUBLIC KEY-----
+    
