@@ -33,7 +33,10 @@ import (
 
 var (
 	schemaCertCertificatesIn = schema.Schema{
-		Type:        schema.TypeMap,
+		Type: schema.TypeMap,
+		Elem: &schema.Schema{
+			Type: schema.TypeString,
+		},
 		Description: "Map of certificates from version to certificate",
 		Required:    true,
 	}
