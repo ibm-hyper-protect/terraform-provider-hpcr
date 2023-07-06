@@ -44,17 +44,23 @@ const (
 var (
 	schemaTemplateIn = schema.Schema{
 		Type:        schema.TypeString,
-		Required:    true,
+		Optional:    true,
 		Default:     defaultTemplate,
 		Description: "Template used to download the encryption certificate, it may contain the placeholders for {{.Major}}, {{.Minor}} and {{.Patch}} as replacement tokens",
 	}
 	schemaVersionsIn = schema.Schema{
-		Type:        schema.TypeList,
+		Type: schema.TypeList,
+		Elem: &schema.Schema{
+			Type: schema.TypeString,
+		},
 		Description: "List of strings, each denoting the version number of the certificate to download",
 		Required:    true,
 	}
 	schemaCertificatesOut = schema.Schema{
-		Type:        schema.TypeMap,
+		Type: schema.TypeMap,
+		Elem: &schema.Schema{
+			Type: schema.TypeString,
+		},
 		Description: "Map of certificates from version to certificate",
 		Computed:    true,
 	}
