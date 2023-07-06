@@ -15,9 +15,11 @@ package datasource
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/encrypt"
 )
 
@@ -25,6 +27,7 @@ type Context struct {
 	encrypt.Encryption
 	encrypt.Decryption
 	version string
+	client  *http.Client
 }
 
 func ConfigureContext(version string) func(context.Context, *schema.ResourceData) (any, diag.Diagnostics) {
@@ -34,6 +37,7 @@ func ConfigureContext(version string) func(context.Context, *schema.ResourceData
 			encrypt.DefaultEncryption(),
 			encrypt.DefaultDecryption(),
 			version,
+			common.DefaultHttpClient(),
 		}
 
 		return &ctx, nil
