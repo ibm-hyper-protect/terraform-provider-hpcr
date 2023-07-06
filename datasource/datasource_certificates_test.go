@@ -1,4 +1,4 @@
-// Copyright 2022 IBM Corp.
+// Copyright 2023 IBM Corp.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,56 +18,33 @@ import (
 	"testing"
 
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
-	D "github.com/ibm-hyper-protect/terraform-provider-hpcr/data"
-	"github.com/ibm-hyper-protect/terraform-provider-hpcr/encrypt"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/fp"
 	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
 	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
-	"github.com/ibm-hyper-protect/terraform-provider-hpcr/validation"
 	"github.com/stretchr/testify/assert"
 )
 
-var defaultContext = Context{
-	encrypt.DefaultEncryption(),
-	encrypt.DefaultDecryption(),
-	"test",
-	common.DefaultHttpClient(),
-}
-
-func TestUnencryptedText(t *testing.T) {
+func TestDownloadCertificates(t *testing.T) {
+	t.Skip()
 	data := make(map[string]any)
 
 	// prepare input data
-	data[common.KeyText] = "sample text"
+	data[common.KeyVersions] = []any{"1.0.11", "1.0.10"}
+	data[common.KeyTemplate] = defaultTemplate
 
 	res := F.Pipe3(
 		data,
 		CreateResourceDataMock,
-		resourceText(&defaultContext),
+		handleDownloadWithContext(&defaultContext),
 		E.ToError[fp.ResourceData],
 	)
 
 	assert.NoError(t, res)
-	assert.Equal(t, data[common.KeyText], data[common.KeyRendered])
-}
 
-func TestEncryptedText(t *testing.T) {
-	data := make(map[string]any)
+	certificates, ok := data[common.KeyCerts].(map[string]string)
+	assert.NotNil(t, certificates)
+	assert.True(t, ok)
 
-	// prepare input data
-	data[common.KeyText] = "sample text"
-	data[common.KeyCert] = D.DefaultCertificate
-
-	encText := resourceEncText(&defaultContext)
-
-	res := F.Pipe4(
-		data,
-		CreateResourceDataMock,
-		encText,
-		E.Chain(encText),
-		E.ToError[fp.ResourceData],
-	)
-
-	assert.NoError(t, res)
-	assert.Regexp(t, validation.TokenRe, data[common.KeyRendered])
+	assert.Contains(t, certificates, "1.0.11")
+	assert.Contains(t, certificates, "1.0.10")
 }

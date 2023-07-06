@@ -13,25 +13,8 @@
 // limitations under the License.
 package common
 
-const (
-	KeyAttestation = "attestation"
-	KeyCert        = "cert"
-	KeyCerts       = "certs"
-	KeyChecksum    = "checksum"
-	KeyChecksums   = "checksums"
-	KeyContract    = "contract"
-	KeyFolder      = "folder"
-	KeyImageID     = "image"
-	KeyImages      = "images"
-	KeyJSON        = "json"
-	KeyPrivKey     = "privkey"
-	KeyRendered    = "rendered"
-	KeySha256      = "sha256"
-	KeySpec        = "spec"
-	KeyTemplate    = "template"
-	KeyText        = "text"
-	KeyVersion     = "version"
-	KeyVersions    = "versions"
+import "net/http"
 
-	PrefixBasicEncoding = "hyper-protect-basic"
-)
+func DefaultHttpClient() *http.Client {
+	return http.DefaultClient
+}

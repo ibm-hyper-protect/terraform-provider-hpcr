@@ -17,6 +17,7 @@ package record
 import (
 	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
 	O "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/option"
+	T "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/tuple"
 )
 
 func reduceWithIndex[K comparable, V, R any](r map[K]V, f func(K, R, V) R, initial R) R {
@@ -67,4 +68,20 @@ func UpsertAt[K comparable, V any](k K, v V) func(map[K]V) map[K]V {
 	return func(ma map[K]V) map[K]V {
 		return upsertAt(ma, k, v)
 	}
+}
+
+func FromEntries[K comparable, V any](fa []T.Tuple2[K, V]) map[K]V {
+	m := make(map[K]V, len(fa))
+	for _, t := range fa {
+		m[t.F1] = t.F2
+	}
+	return m
+}
+
+func ToEntries[K comparable, V any](fa map[K]V) []T.Tuple2[K, V] {
+	var a []T.Tuple2[K, V]
+	for k, v := range fa {
+		a = append(a, T.MakeTuple2(k, v))
+	}
+	return a
 }
