@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"text/template"
 
 	"github.com/Masterminds/semver"
@@ -35,6 +36,7 @@ import (
 const (
 	// default template used to download certificates
 	defaultTemplate = "https://cloud.ibm.com/media/docs/downloads/hyper-protect-container-runtime/ibm-hyper-protect-container-runtime-{{.Major}}-{{.Minor}}-s390x-{{.Patch}}-encrypt.crt"
+
 	// template key
 	KeyMajor = "Major"
 	KeyMinor = "Minor"
@@ -168,9 +170,10 @@ func handleDownloadWithContext(ctx *Context) func(data fp.ResourceData) Resource
 			E.Chain(E.TraverseArray(parseVersion)),
 		)
 		// resolve and download
-		certificatesE := F.Pipe6(
+		certificatesE := F.Pipe7(
 			data,
 			getTemplateE,
+			E.Map[error](strings.TrimSpace),
 			E.Chain(parseTemplate("downloadURL")),
 			E.Map[error](F.Flow3(
 				resolveUrl,
