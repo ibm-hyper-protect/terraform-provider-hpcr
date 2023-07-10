@@ -39,6 +39,7 @@ var (
 	parseCertificateE     = E.Eitherize1(x509.ParseCertificate)
 	parsePKIXPublicKeyE   = E.Eitherize1(x509.ParsePKIXPublicKey)
 	parsePKCS1PrivateKeyE = E.Eitherize1(x509.ParsePKCS1PrivateKey)
+	parsePKCS8PrivateKeyE = E.Eitherize1(x509.ParsePKCS8PrivateKey)
 	marshalPKIXPublicKeyE = E.Eitherize1(x509.MarshalPKIXPublicKey)
 	toRsaPublicKey        = common.ToTypeE[*rsa.PublicKey]
 	randomSaltE           = cryptoRandomE(saltlen)
@@ -55,7 +56,7 @@ var (
 	// PrivToRsaKey decodes a pkcs file into a private key
 	PrivToRsaKey = F.Flow2(
 		pemDecodeE,
-		E.Chain(parsePKCS1PrivateKeyE),
+		E.Chain(parsePrivateKeyE),
 	)
 
 	// pubToRsaKey decodes a public key to rsa format
@@ -77,7 +78,7 @@ var (
 	// CryptoPrivKeyFingerprint computes the fingerprint of a private key using the crypto library
 	CryptoPrivKeyFingerprint = F.Flow7(
 		pemDecodeE,
-		E.Chain(parsePKCS1PrivateKeyE),
+		E.Chain(parsePrivateKeyE),
 		E.Map[error](privToPub),
 		E.Map[error](pubToAny),
 		E.Chain(marshalPKIXPublicKeyE),
@@ -94,7 +95,7 @@ var (
 	// CryptoPublicKey extracts the public key from a private key
 	CryptoPublicKey = F.Flow6(
 		pemDecodeE,
-		E.Chain(parsePKCS1PrivateKeyE),
+		E.Chain(parsePrivateKeyE),
 		E.Map[error](privToPub),
 		E.Map[error](pubToAny),
 		E.Chain(marshalPKIXPublicKeyE),
@@ -108,6 +109,20 @@ var (
 		}),
 	)
 )
+
+func parsePrivateKeyE(priv []byte) E.Either[error, *rsa.PrivateKey] {
+	return F.Pipe2(
+		priv,
+		parsePKCS1PrivateKeyE,
+		E.Alt(func() E.Either[error, *rsa.PrivateKey] {
+			return F.Pipe2(
+				priv,
+				parsePKCS8PrivateKeyE,
+				E.Chain(common.ToTypeE[*rsa.PrivateKey]),
+			)
+		}),
+	)
+}
 
 // cryptoRandomE returns a random sequence of bytes with the given length
 func cryptoRandomE(n int) func() E.Either[error, []byte] {
@@ -329,7 +344,7 @@ func CryptoSignDigest(privKey []byte) func([]byte) E.Either[error, []byte] {
 	signE := F.Pipe3(
 		privKey,
 		pemDecodeE,
-		E.Chain(parsePKCS1PrivateKeyE),
+		E.Chain(parsePrivateKeyE),
 		E.Map[error](signPKCS1v15),
 	)
 	return func(data []byte) E.Either[error, []byte] {
