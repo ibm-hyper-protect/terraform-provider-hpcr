@@ -16,9 +16,9 @@ package encrypt
 import (
 	"testing"
 
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
-	O "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/option"
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
+	O "github.com/IBM/fp-go/option"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -42,7 +42,7 @@ func SignatureTest(
 		// signature
 		resE := F.Pipe2(
 			signE,
-			E.Ap[error, []byte, E.Either[error, []byte]](dataE),
+			E.Ap[E.Either[error, []byte]](dataE),
 			E.Flatten[error, []byte],
 		)
 		// validate the signature
@@ -50,8 +50,8 @@ func SignatureTest(
 			privKeyE,
 			E.Chain(pubKey),
 			E.Map[error](validator),
-			E.Ap[error, []byte, func([]byte) O.Option[error]](dataE),
-			E.Ap[error, []byte, O.Option[error]](resE),
+			E.Ap[func([]byte) O.Option[error]](dataE),
+			E.Ap[O.Option[error]](resE),
 			E.GetOrElse(O.Of[error]),
 		)
 		// handle the option

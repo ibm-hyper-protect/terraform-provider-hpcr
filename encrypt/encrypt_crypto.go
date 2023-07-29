@@ -25,13 +25,13 @@ import (
 	"encoding/pem"
 	"fmt"
 
+	RA "github.com/IBM/fp-go/array"
+	B "github.com/IBM/fp-go/bytes"
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
+	I "github.com/IBM/fp-go/identity"
+	O "github.com/IBM/fp-go/option"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
-	RA "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/array"
-	B "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/bytes"
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
-	I "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/identity"
-	O "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/option"
 	"golang.org/x/crypto/pbkdf2"
 )
 
@@ -137,7 +137,7 @@ func cryptoRandomE(n int) func() E.Either[error, []byte] {
 
 // CryptoRandomPassword creates a random password of given length using characters from the base64 alphabet only
 func CryptoRandomPassword(count int) func() E.Either[error, []byte] {
-	slice := B.Slice(0, count)
+	slice := RA.Slice[byte](0, count)
 	rnd := cryptoRandomE(count)
 	return func() E.Either[error, []byte] {
 		return F.Pipe3(
@@ -195,7 +195,7 @@ func cryptoAsymmetricEncrypt(decKey func([]byte) E.Either[error, *rsa.PublicKey]
 		return func(data []byte) E.Either[error, string] {
 			return F.Pipe2(
 				encE,
-				E.Chain(I.Ap[[]byte, E.Either[error, []byte]](data)),
+				E.Chain(I.Ap[E.Either[error, []byte]](data)),
 				E.Map[error](common.Base64Encode),
 			)
 		}
@@ -254,12 +254,12 @@ func CryptoSymmetricEncrypt(srcPlainBytes []byte) func([]byte) E.Either[error, s
 		// the initialization vector
 		ivE := F.Pipe1(
 			keyE,
-			E.Map[error](B.Slice(keylen, keylen+aes.BlockSize)),
+			E.Map[error](RA.Slice[byte](keylen, keylen+aes.BlockSize)),
 		)
 		// the block
 		blockE := F.Pipe2(
 			keyE,
-			E.Map[error](B.Slice(0, keylen)),
+			E.Map[error](RA.Slice[byte](0, keylen)),
 			E.Chain(aesCipherE),
 		)
 		// derive the encrypter
@@ -357,7 +357,7 @@ func CryptoSignDigest(privKey []byte) func([]byte) E.Either[error, []byte] {
 		// apply the signer
 		return F.Pipe1(
 			signE,
-			E.Chain(I.Ap[[]byte, E.Either[error, []byte]](digestE)),
+			E.Chain(I.Ap[E.Either[error, []byte]](digestE)),
 		)
 	}
 }
@@ -395,12 +395,12 @@ func CryptoSymmetricDecrypt(srcText string) func([]byte) E.Either[error, []byte]
 	// get the salt
 	saltE := F.Pipe1(
 		srcBytesE,
-		E.Map[error](B.Slice(offSalt, offciphertext)),
+		E.Map[error](RA.Slice[byte](offSalt, offciphertext)),
 	)
 	// get the ciphertext
 	ciphertextE := F.Pipe1(
 		srcBytesE,
-		E.Map[error](B.SliceRight(offciphertext)),
+		E.Map[error](RA.SliceRight[byte](offciphertext)),
 	)
 
 	return func(password []byte) E.Either[error, []byte] {
@@ -414,12 +414,12 @@ func CryptoSymmetricDecrypt(srcText string) func([]byte) E.Either[error, []byte]
 		// the initialization vector
 		ivE := F.Pipe1(
 			keyE,
-			E.Map[error](B.Slice(keylen, keylen+aes.BlockSize)),
+			E.Map[error](RA.Slice[byte](keylen, keylen+aes.BlockSize)),
 		)
 		// the block
 		blockE := F.Pipe2(
 			keyE,
-			E.Map[error](B.Slice(0, keylen)),
+			E.Map[error](RA.Slice[byte](0, keylen)),
 			E.Chain(aesCipherE),
 		)
 		// decrypt
@@ -451,7 +451,7 @@ func cryptoAsymmetricDecrypt(decKey func([]byte) E.Either[error, *rsa.PrivateKey
 		return func(data string) E.Either[error, []byte] {
 			return F.Pipe2(
 				decE,
-				E.Ap[error, []byte, E.Either[error, []byte]](common.Base64DecodeE(data)),
+				E.Ap[E.Either[error, []byte]](common.Base64DecodeE(data)),
 				E.Flatten[error, []byte],
 			)
 		}

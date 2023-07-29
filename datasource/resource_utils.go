@@ -18,19 +18,19 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 
+	B "github.com/IBM/fp-go/bytes"
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
+	I "github.com/IBM/fp-go/identity"
+	O "github.com/IBM/fp-go/option"
+	P "github.com/IBM/fp-go/predicate"
+	S "github.com/IBM/fp-go/string"
+	T "github.com/IBM/fp-go/tuple"
 	"github.com/hashicorp/go-uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/data"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/fp"
-	B "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/bytes"
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
-	I "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/identity"
-	O "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/option"
-	P "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/predicate"
-	S "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/string"
-	T "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/tuple"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/validation"
 )
 
@@ -61,7 +61,7 @@ func createHash(data []byte) string {
 }
 
 var (
-	seqResourceData = E.SequenceArray[error, fp.ResourceData]()
+	seqResourceData = E.SequenceArray[error, fp.ResourceData]
 	setRendered     = fp.ResourceDataSet[string](common.KeyRendered)
 	setSha256       = fp.ResourceDataSet[string](common.KeySha256)
 	setChecksum     = fp.ResourceDataSet[string](common.KeyChecksum)
@@ -164,7 +164,7 @@ func checksumMatch(d fp.ResourceData) func(string) bool {
 	return func(checksum string) bool {
 		return F.Pipe1(
 			sha256O,
-			O.Fold(F.ConstFalse, F.Bind1st(S.Equals, checksum)),
+			O.Fold(F.ConstFalse, S.Equals(checksum)),
 		)
 	}
 }
@@ -172,7 +172,7 @@ func checksumMatch(d fp.ResourceData) func(string) bool {
 func updateResource(d fp.ResourceData) func(func([]byte) E.Either[error, string]) func(E.Either[error, []byte]) func(O.Option[string]) O.Option[ResourceDataE] {
 	// compute the applicatives
 	apE := fp.ResourceDataAp[fp.ResourceData](d)
-	apI := I.Ap[fp.ResourceData, ResourceDataE](d)
+	apI := I.Ap[ResourceDataE](d)
 	// final result
 	resE := E.MapTo[error, []fp.ResourceData](d)
 
@@ -243,13 +243,13 @@ var (
 	// callback to update a resource using simple base64 encoding
 	updateBase64Resource = F.Flow2(
 		updateResource,
-		I.Ap[func([]byte) E.Either[error, string], func(E.Either[error, []byte]) func(O.Option[string]) O.Option[ResourceDataE]](common.Base64EncodeE),
+		I.Ap[func(E.Either[error, []byte]) func(O.Option[string]) O.Option[ResourceDataE]](common.Base64EncodeE),
 	)
 
 	// callback to update a resource using plain text encoding
 	updatePlainTextResource = F.Flow2(
 		updateResource,
-		I.Ap[func([]byte) E.Either[error, string], func(E.Either[error, []byte]) func(O.Option[string]) O.Option[ResourceDataE]](common.PlainTextEncodeE),
+		I.Ap[func(E.Either[error, []byte]) func(O.Option[string]) O.Option[ResourceDataE]](common.PlainTextEncodeE),
 	)
 )
 
@@ -262,7 +262,7 @@ func updateEncryptedResource(ctx *Context) func(d fp.ResourceData) func(E.Either
 				getCertificateE,
 				common.MapStgToBytesE,
 				E.Map[error](ctx.EncryptBasic),
-				E.Chain(I.Ap[[]byte, E.Either[error, string]](data)),
+				E.Chain(I.Ap[E.Either[error, string]](data)),
 			)
 		})
 	}
@@ -281,7 +281,7 @@ func resourceLifeCycle(f func(ctx *Context) func(fp.ResourceData) ResourceDataE)
 		return F.Pipe4(
 			m,
 			withCtx,
-			E.Ap[error, fp.ResourceData, E.Either[error, fp.ResourceData]](F.Pipe2(
+			E.Ap[E.Either[error, fp.ResourceData]](F.Pipe2(
 				d,
 				fp.CreateResourceDataProxy,
 				setUniqueID,
@@ -297,7 +297,7 @@ func resourceLifeCycle(f func(ctx *Context) func(fp.ResourceData) ResourceDataE)
 		return F.Pipe3(
 			m,
 			withCtx,
-			E.Chain(I.Ap[fp.ResourceData, E.Either[error, fp.ResourceData]](F.Pipe1(
+			E.Chain(I.Ap[E.Either[error, fp.ResourceData]](F.Pipe1(
 				d,
 				fp.CreateResourceDataProxy,
 			))),

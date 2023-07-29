@@ -16,7 +16,7 @@ package contract
 
 import (
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/encrypt"
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
+	E "github.com/IBM/fp-go/either"
 )
 
 // OpenSSLEncryptAndSignContract returns the OpenSSL implementation of the encryption and signer

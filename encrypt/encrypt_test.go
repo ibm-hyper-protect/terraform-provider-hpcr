@@ -17,12 +17,12 @@ import (
 	"fmt"
 	"testing"
 
+	RA "github.com/IBM/fp-go/array"
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
+	S "github.com/IBM/fp-go/string"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/data"
 	D "github.com/ibm-hyper-protect/terraform-provider-hpcr/data"
-	RA "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/array"
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
-	S "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/string"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -73,13 +73,13 @@ func encryptBasic(encE E.Either[error, Encrypter], decE E.Either[error, Decrypte
 	// encrypt the text
 	encTextE := F.Pipe2(
 		encE,
-		E.Ap[error, []byte, E.Either[error, string]](textE),
+		E.Ap[E.Either[error, string]](textE),
 		E.Flatten[error, string],
 	)
 	// decrypt
 	decTextE := F.Pipe2(
 		decE,
-		E.Ap[error, string, E.Either[error, []byte]](encTextE),
+		E.Ap[E.Either[error, []byte]](encTextE),
 		E.Flatten[error, []byte],
 	)
 
@@ -87,7 +87,7 @@ func encryptBasic(encE E.Either[error, Encrypter], decE E.Either[error, Decrypte
 		// compare
 		resE := F.Pipe2(
 			[]E.Either[error, []byte]{textE, decTextE},
-			E.SequenceArray[error, []byte](),
+			E.SequenceArray[error, []byte],
 			E.Map[error](func(data [][]byte) bool {
 				return assert.Equal(t, data[0], data[1])
 			}),
@@ -129,7 +129,7 @@ func TestSplitToken(t *testing.T) {
 	goodE := F.Pipe2(
 		goodTokens,
 		RA.Map(splitToken),
-		E.SequenceArray[error, SplitToken](),
+		E.SequenceArray[error, SplitToken],
 	)
 
 	fmt.Println(goodE)

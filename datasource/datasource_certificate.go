@@ -18,17 +18,17 @@ import (
 	"fmt"
 	"sort"
 
+	A "github.com/IBM/fp-go/array"
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
+	I "github.com/IBM/fp-go/identity"
+	O "github.com/IBM/fp-go/option"
+	R "github.com/IBM/fp-go/record"
+	T "github.com/IBM/fp-go/tuple"
 	"github.com/Masterminds/semver"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/fp"
-	A "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/array"
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
-	I "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/identity"
-	O "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/option"
-	R "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/record"
-	T "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/tuple"
 )
 
 var (
@@ -139,14 +139,14 @@ func handleCertificateWithContext(ctx *Context) func(data fp.ResourceData) Resou
 			getCertSpecE,
 			E.Chain(parseConstraint),
 			E.Map[error](selectCertBySpec),
-			E.Ap[error, []T.Tuple2[*semver.Version, string], O.Option[T.Tuple2[*semver.Version, string]]](certsE),
+			E.Ap[O.Option[T.Tuple2[*semver.Version, string]]](certsE),
 			E.Chain(E.FromOption[error, T.Tuple2[*semver.Version, string]](func() error { return fmt.Errorf("unable to select a version") })),
 		)
 		// output records
 		certificateMapE := F.Pipe2(
 			selectedE,
 			E.Map[error](F.Flow2(
-				T.SecondOf2[*semver.Version, string],
+				T.Second[*semver.Version, string],
 				setCertCertificate,
 			)),
 			apE,
@@ -154,7 +154,7 @@ func handleCertificateWithContext(ctx *Context) func(data fp.ResourceData) Resou
 		versionMapE := F.Pipe2(
 			selectedE,
 			E.Map[error](F.Flow3(
-				T.FirstOf2[*semver.Version, string],
+				T.First[*semver.Version, string],
 				versionToString,
 				setCertVersion,
 			)),
@@ -178,7 +178,7 @@ func handleCertificate(data *schema.ResourceData, ctx any) error {
 		ctx,
 		toContextE,
 		E.Map[error](handleCertificateWithContext),
-		E.Ap[error, fp.ResourceData, ResourceDataE](F.Pipe2(
+		E.Ap[ResourceDataE](F.Pipe2(
 			data,
 			fp.CreateResourceDataProxy,
 			setUniqueID,

@@ -14,23 +14,22 @@
 package yaml
 
 import (
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
+	E "github.com/IBM/fp-go/either"
 	"gopkg.in/yaml.v3"
 )
 
-func Parse[A any](data []byte) E.Either[error, *A] {
-	return E.TryCatch(func() (*A, error) {
+func Parse[A any](data []byte) E.Either[error, A] {
+	return E.TryCatchError(func() (A, error) {
 		var result A
 		err := yaml.Unmarshal(data, &result)
-		return &result, err
-	}, F.Identity[error])
+		return result, err
+	})
 }
 
-func Stringify[A any](a *A) E.Either[error, []byte] {
-	return E.TryCatch(func() ([]byte, error) {
+func Stringify[A any](a A) E.Either[error, []byte] {
+	return E.TryCatchError(func() ([]byte, error) {
 		b, err := yaml.Marshal(a)
 		return b, err
-	}, F.Identity[error])
+	})
 
 }

@@ -22,15 +22,15 @@ import (
 	"strings"
 	"text/template"
 
+	B "github.com/IBM/fp-go/bytes"
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
+	R "github.com/IBM/fp-go/record"
+	T "github.com/IBM/fp-go/tuple"
 	"github.com/Masterminds/semver"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/fp"
-	B "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/bytes"
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
-	R "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/record"
-	T "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/tuple"
 )
 
 const (
@@ -180,7 +180,7 @@ func handleDownloadWithContext(ctx *Context) func(data fp.ResourceData) Resource
 				downloadE,
 				E.TraverseArray[error, *semver.Version, T.Tuple2[string, string]]),
 			),
-			E.Ap[error, []*semver.Version, E.Either[error, []T.Tuple2[string, string]]](versionsE),
+			E.Ap[E.Either[error, []T.Tuple2[string, string]]](versionsE),
 			E.Flatten[error, []T.Tuple2[string, string]],
 			E.Map[error](R.FromEntries[string, string]),
 		)
@@ -208,7 +208,7 @@ func handleDownload(data *schema.ResourceData, ctx any) error {
 		ctx,
 		toContextE,
 		E.Map[error](handleDownloadWithContext),
-		E.Ap[error, fp.ResourceData, ResourceDataE](F.Pipe2(
+		E.Ap[ResourceDataE](F.Pipe2(
 			data,
 			fp.CreateResourceDataProxy,
 			setUniqueID,

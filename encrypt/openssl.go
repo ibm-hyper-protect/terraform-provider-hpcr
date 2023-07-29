@@ -19,17 +19,16 @@ import (
 	"os"
 	"strings"
 
+	RA "github.com/IBM/fp-go/array"
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
+	I "github.com/IBM/fp-go/identity"
+	O "github.com/IBM/fp-go/option"
+	P "github.com/IBM/fp-go/predicate"
+	S "github.com/IBM/fp-go/string"
+	T "github.com/IBM/fp-go/tuple"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
-	RA "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/array"
-	B "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/bytes"
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
 	FL "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/file"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
-	I "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/identity"
-	O "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/option"
-	P "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/predicate"
-	S "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/string"
-	T "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/tuple"
 )
 
 // OpenSSLVersion represents the openSSL version, including the path to the binary
@@ -48,8 +47,8 @@ var (
 	// operator to extract stdout
 	mapStdout = E.Map[error](common.GetStdOut)
 
-	getPath    = T.FirstOf2[string, string]
-	getVersion = T.SecondOf2[string, string]
+	getPath    = T.First[string, string]
+	getVersion = T.Second[string, string]
 
 	// operator to convert stdout to base64
 	base64StdOut = F.Flow2(
@@ -162,7 +161,7 @@ func OpenSSL(args ...string) func([]byte) E.Either[error, common.CommandOutput] 
 	return func(dataIn []byte) E.Either[error, common.CommandOutput] {
 		return F.Pipe1(
 			cmdE,
-			E.Chain(I.Ap[[]byte, E.Either[error, common.CommandOutput]](dataIn)),
+			E.Chain(I.Ap[E.Either[error, common.CommandOutput]](dataIn)),
 		)
 	}
 }
@@ -170,7 +169,7 @@ func OpenSSL(args ...string) func([]byte) E.Either[error, common.CommandOutput] 
 // OpenSSLRandomPassword creates a random password of given length using characters from the base64 alphabet only
 func OpenSSLRandomPassword(count int) func() E.Either[error, []byte] {
 	cmdE := OpenSSL("rand", fmt.Sprintf("%d", count))
-	slice := B.Slice(0, count)
+	slice := RA.Slice[byte](0, count)
 	return func() E.Either[error, []byte] {
 		return F.Pipe4(
 			emptyBytes,
@@ -257,7 +256,7 @@ func OpenSSLSymmetricDecrypt(token string) func([]byte) E.Either[error, []byte] 
 	return func(pwd []byte) E.Either[error, []byte] {
 		return F.Pipe1(
 			dec,
-			E.Chain(I.Ap[[]byte, E.Either[error, []byte]](pwd)),
+			E.Chain(I.Ap[E.Either[error, []byte]](pwd)),
 		)
 	}
 }

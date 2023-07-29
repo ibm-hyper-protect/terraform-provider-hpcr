@@ -16,9 +16,9 @@ package encrypt
 import (
 	"testing"
 
-	B "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/bytes"
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
+	B "github.com/IBM/fp-go/bytes"
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -67,7 +67,7 @@ func TestCryptRandomPassword(t *testing.T) {
 
 	lenE := F.Pipe1(
 		pwd(),
-		E.Map[error](B.Len),
+		E.Map[error](B.Size),
 	)
 
 	assert.Equal(t, E.Of[error](n), lenE)

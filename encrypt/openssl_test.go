@@ -17,10 +17,10 @@ import (
 	"fmt"
 	"testing"
 
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
+	I "github.com/IBM/fp-go/identity"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
-	I "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/identity"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -98,7 +98,7 @@ func TestSignDigest(t *testing.T) {
 
 	resE := F.Pipe2(
 		signE,
-		E.Chain(I.Ap[[]byte, E.Either[error, []byte]](data)),
+		E.Chain(I.Ap[E.Either[error, []byte]](data)),
 		E.Map[error](common.Base64Encode),
 	)
 

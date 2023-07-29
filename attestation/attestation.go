@@ -24,11 +24,11 @@ import (
 	"regexp"
 	"strings"
 
-	A "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/array"
-	B "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/bytes"
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
-	R "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/record"
+	A "github.com/IBM/fp-go/array"
+	B "github.com/IBM/fp-go/bytes"
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
+	R "github.com/IBM/fp-go/record"
 )
 
 type (
@@ -47,7 +47,7 @@ func untarBase64(data string) E.Either[error, FileList] {
 	base64Dec := base64.NewDecoder(base64.StdEncoding, input)
 	gzip, err := gzip.NewReader(base64Dec)
 	if err != nil {
-		return E.Left[error, FileList](err)
+		return E.Left[FileList](err)
 	}
 	untar := tar.NewReader(gzip)
 
@@ -59,13 +59,13 @@ func untarBase64(data string) E.Either[error, FileList] {
 			break
 		}
 		if err != nil {
-			return E.Left[error, FileList](err)
+			return E.Left[FileList](err)
 		}
 		if hdr.Typeflag == tar.TypeReg {
 			// read the content
 			data, err := io.ReadAll(untar)
 			if err != nil {
-				return E.Left[error, FileList](err)
+				return E.Left[FileList](err)
 			}
 			// record this
 			res[filepath.ToSlash(filepath.Clean(hdr.Name))] = data

@@ -15,13 +15,13 @@
 package datasource
 
 import (
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
+	O "github.com/IBM/fp-go/option"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/contract"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/fp"
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
-	O "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/option"
 )
 
 var (
@@ -76,22 +76,20 @@ func updateContract(ctx *Context) func(d fp.ResourceData) func(E.Either[error, [
 			)
 
 			// deserialize the contract into a map
-			contractE := F.Pipe2(
+			contractE := F.Pipe1(
 				data,
 				contract.ParseRawMapE,
-				contract.MapDerefRawMapE,
 			)
 
 			// create the function that can execute the signature
-			resE := F.Pipe9(
+			resE := F.Pipe8(
 				d,
 				getCertificateE,
 				common.MapStgToBytesE,
 				E.Map[error](encryptAndSign),
-				E.Ap[error, []byte, func(contract.RawMap) E.Either[error, contract.RawMap]](privKeyE),
-				E.Ap[error, contract.RawMap, E.Either[error, contract.RawMap]](contractE),
+				E.Ap[func(contract.RawMap) E.Either[error, contract.RawMap]](privKeyE),
+				E.Ap[E.Either[error, contract.RawMap]](contractE),
 				E.Flatten[error, contract.RawMap],
-				contract.MapRefRawMapE,
 				E.Chain(contract.StringifyRawMapE),
 				common.MapBytesToStgE,
 			)
