@@ -167,7 +167,7 @@ func upsertSigningKey(pubKey func([]byte) E.Either[error, []byte]) func([]byte) 
 			return F.Pipe7(
 				contract,
 				getEnv,
-				O.Chain(common.ToTypeO[RawMap]),
+				O.Chain(O.ToType[RawMap]),
 				O.GetOrElse(F.Constant(make(RawMap))),
 				addKeyE,
 				E.Map[error](toAny[RawMap]),

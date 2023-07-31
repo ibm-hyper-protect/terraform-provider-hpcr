@@ -18,11 +18,11 @@ import (
 	_ "embed"
 	"testing"
 
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/attestation"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/fp"
-	E "github.com/IBM/fp-go/either"
-	F "github.com/IBM/fp-go/function"
 	"github.com/stretchr/testify/assert"
 )
 

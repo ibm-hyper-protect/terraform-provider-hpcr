@@ -24,7 +24,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
 	Y "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/yaml"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/provider"
 )
@@ -46,7 +45,7 @@ func getOutputO(s *terraform.State) func(string) O.Option[string] {
 		O.Map(func(os *terraform.OutputState) any {
 			return os.Value
 		}),
-		O.Chain(common.ToTypeO[string]),
+		O.Chain(O.ToType[string]),
 	)
 }
 

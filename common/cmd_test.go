@@ -31,5 +31,5 @@ func TestCommandFail(t *testing.T) {
 
 	cmdE := ExecCommand("openssl", "help1")(make([]byte, 0))
 
-	assert.True(t, E.IsRight(cmdE))
+	assert.True(t, E.IsLeft(cmdE))
 }

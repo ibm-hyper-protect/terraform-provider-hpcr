@@ -20,13 +20,13 @@ import (
 	"os"
 	"regexp"
 
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/encrypt"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/fp"
-	E "github.com/IBM/fp-go/either"
-	F "github.com/IBM/fp-go/function"
 )
 
 var (

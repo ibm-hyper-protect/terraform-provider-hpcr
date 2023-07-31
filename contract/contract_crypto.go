@@ -15,8 +15,8 @@
 package contract
 
 import (
-	"github.com/ibm-hyper-protect/terraform-provider-hpcr/encrypt"
 	E "github.com/IBM/fp-go/either"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/encrypt"
 )
 
 // CryptoEncryptAndSignContract returns the crypto implementation of the encryption and signer

@@ -17,10 +17,10 @@ package datasource
 import (
 	"testing"
 
-	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
-	"github.com/ibm-hyper-protect/terraform-provider-hpcr/fp"
 	E "github.com/IBM/fp-go/either"
 	F "github.com/IBM/fp-go/function"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/fp"
 	"github.com/stretchr/testify/assert"
 )
 

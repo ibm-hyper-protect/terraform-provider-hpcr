@@ -21,7 +21,6 @@ import (
 	I "github.com/IBM/fp-go/identity"
 	O "github.com/IBM/fp-go/option"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
 )
 
 type ResourceData interface {
@@ -57,7 +56,7 @@ func typeError() error {
 func ToTypeE[A any](data any) E.Either[error, A] {
 	return F.Pipe2(
 		data,
-		common.ToTypeO[A],
+		O.ToType[A],
 		E.FromOption[error, A](typeError),
 	)
 }
@@ -67,7 +66,7 @@ func ResourceDataGetO[A any](key string) func(ResourceData) O.Option[A] {
 		return F.Pipe2(
 			key,
 			O.FromValidation(d.GetOk),
-			O.Chain(common.ToTypeO[A]),
+			O.Chain(O.ToType[A]),
 		)
 	}
 }

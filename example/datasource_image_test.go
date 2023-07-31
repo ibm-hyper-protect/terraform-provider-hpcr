@@ -4,11 +4,11 @@ import (
 	_ "embed"
 	"testing"
 
-	"github.com/Masterminds/semver"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	E "github.com/IBM/fp-go/either"
 	F "github.com/IBM/fp-go/function"
 	O "github.com/IBM/fp-go/option"
+	"github.com/Masterminds/semver"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 //go:embed images.json
