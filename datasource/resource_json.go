@@ -15,19 +15,18 @@
 package datasource
 
 import (
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
+	J "github.com/IBM/fp-go/json"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/fp"
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
-	J "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/json"
 )
 
 var (
-	jsonBytes = F.Flow3(
+	jsonBytes = F.Flow2(
 		getJsonE,
-		common.MapRefAnyE,
-		E.Chain(J.Stringify[any]),
+		E.Chain(J.Marshal[any]),
 	)
 )
 

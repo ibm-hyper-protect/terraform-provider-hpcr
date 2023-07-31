@@ -18,16 +18,16 @@ import (
 	"fmt"
 	"os/exec"
 
-	B "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/bytes"
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
-	T "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/tuple"
+	RA "github.com/IBM/fp-go/array"
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
+	T "github.com/IBM/fp-go/tuple"
 )
 
 type CommandOutput = T.Tuple2[[]byte, []byte]
 
 var (
-	GetStdOut = T.FirstOf2[[]byte, []byte]
+	GetStdOut = T.First[[]byte, []byte]
 )
 
 func ExecCommand(name string, arg ...string) func([]byte) E.Either[error, CommandOutput] {
@@ -47,7 +47,7 @@ func ExecCommand(name string, arg ...string) func([]byte) E.Either[error, Comman
 				cmd.Stderr = &stdErr
 
 				err := cmd.Run()
-				return T.MakeTuple2(B.Copy(stdOut.Bytes()), B.Copy(stdErr.Bytes())), err
+				return T.MakeTuple2(RA.Copy(stdOut.Bytes()), RA.Copy(stdErr.Bytes())), err
 			}),
 			// enrich the error
 			E.MapLeft[error, CommandOutput](func(cause error) error {

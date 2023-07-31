@@ -17,10 +17,10 @@ import (
 	"fmt"
 	"regexp"
 
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
+	T "github.com/IBM/fp-go/tuple"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
-	T "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/tuple"
 )
 
 const (
@@ -33,7 +33,7 @@ var (
 	// regular expression used to split the token
 	tokenRe = regexp.MustCompile(`^hyper-protect-basic\.((?:[A-Za-z\d+/]{4})*(?:[A-Za-z\d+/]{3}=|[A-Za-z\d+/]{2}==)?)\.((?:[A-Za-z\d+/]{4})*(?:[A-Za-z\d+/]{3}=|[A-Za-z\d+/]{2}==)?)$`)
 
-	errNoMatch = E.Left[error, SplitToken](fmt.Errorf("token does not match the specification"))
+	errNoMatch = E.Left[SplitToken](fmt.Errorf("token does not match the specification"))
 )
 
 type SplitToken = T.Tuple2[string, string]
@@ -48,8 +48,8 @@ func splitToken(token string) E.Either[error, SplitToken] {
 }
 
 var (
-	getPwd   = T.FirstOf2[string, string]
-	getToken = T.SecondOf2[string, string]
+	getPwd   = T.First[string, string]
+	getToken = T.Second[string, string]
 )
 
 // EncryptBasic implements the basic encryption operations
@@ -105,7 +105,7 @@ func DecryptBasic(
 			splitE,
 			E.Map[error](getToken),
 			E.Map[error](symmDecrypt),
-			E.Ap[error, []byte, E.Either[error, []byte]](pwdE),
+			E.Ap[E.Either[error, []byte]](pwdE),
 			E.Flatten[error, []byte],
 		)
 	}

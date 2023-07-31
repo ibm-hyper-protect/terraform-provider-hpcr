@@ -17,16 +17,16 @@ import (
 	"context"
 	"log"
 
+	A "github.com/IBM/fp-go/array"
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
+	J "github.com/IBM/fp-go/json"
+	O "github.com/IBM/fp-go/option"
+	S "github.com/IBM/fp-go/string"
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	D "github.com/ibm-hyper-protect/terraform-provider-hpcr/data"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/fp"
-	A "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/array"
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
-	J "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/json"
-	O "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/option"
-	S "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/string"
 	Y "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/yaml"
 	"github.com/qri-io/jsonschema"
 )
@@ -57,17 +57,16 @@ var (
 
 // ValidateYAML validates a YAML file against the validator function by deserializing it, then validate the result
 func ValidateYAML[A any](validator func(A) []jsonschema.KeyError) func(data string) E.Either[error, A] {
-	return F.Flow4(
+	return F.Flow3(
 		S.ToBytes,
 		Y.Parse[A],
-		E.Map[error](F.Deref[A]),
 		E.Chain(func(a A) E.Either[error, A] {
 			return F.Pipe2(
 				a,
 				validator,
 				F.Flow2(
 					handleValidationErrorsO,
-					O.Fold(F.Constant(E.Of[error](a)), E.Left[error, A]),
+					O.Fold(F.Constant(E.Of[error](a)), E.Left[A, error]),
 				),
 			)
 		}),
@@ -87,10 +86,9 @@ func schemaToDiagnostics(errs []jsonschema.KeyError) diag.Diagnostics {
 }
 
 func diagYAML[A any](validator func(A) []jsonschema.KeyError) func(data string) E.Either[error, diag.Diagnostics] {
-	return F.Flow4(
+	return F.Flow3(
 		S.ToBytes,
 		Y.Parse[A],
-		E.Map[error](F.Deref[A]),
 		E.Map[error](F.Flow2(
 			validator,
 			schemaToDiagnostics,
@@ -104,7 +102,7 @@ func GetContractSchema() E.Either[error, *jsonschema.Schema] {
 	return F.Pipe2(
 		D.ContractSchema,
 		S.ToBytes,
-		J.Parse[jsonschema.Schema],
+		J.Unmarshal[*jsonschema.Schema],
 	)
 }
 
@@ -122,7 +120,7 @@ func DiagContract(data any, _ cty.Path) diag.Diagnostics {
 			validate[RawMap],
 			diagYAML[RawMap],
 		)),
-		E.Ap[error, string, E.Either[error, diag.Diagnostics]](dataE),
+		E.Ap[E.Either[error, diag.Diagnostics]](dataE),
 		E.Flatten[error, diag.Diagnostics],
 		E.GetOrElse(diag.FromErr),
 	)

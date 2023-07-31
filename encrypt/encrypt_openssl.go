@@ -14,7 +14,7 @@
 package encrypt
 
 import (
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
+	E "github.com/IBM/fp-go/either"
 )
 
 // OpenSSLEncryptBasic implements basic encryption using openSSL given the certificate

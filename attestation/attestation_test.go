@@ -22,10 +22,10 @@ import (
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/encrypt"
 	"github.com/stretchr/testify/assert"
 
-	B "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/bytes"
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
-	R "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/record"
+	B "github.com/IBM/fp-go/bytes"
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
+	R "github.com/IBM/fp-go/record"
 )
 
 //go:embed samples/encrypted/attestation.base64

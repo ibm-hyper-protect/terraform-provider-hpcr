@@ -18,8 +18,8 @@ import (
 	"math/rand"
 	"testing"
 
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -41,7 +41,7 @@ func testSymmetricDecrypt(
 	encE := F.Pipe3(
 		dataE,
 		E.Map[error](encrypt),
-		E.Ap[error, []byte, E.Either[error, string]](pwdE),
+		E.Ap[E.Either[error, string]](pwdE),
 		E.Flatten[error, string],
 	)
 
@@ -49,7 +49,7 @@ func testSymmetricDecrypt(
 	decE := F.Pipe3(
 		encE,
 		E.Map[error](decrypt),
-		E.Ap[error, []byte, E.Either[error, []byte]](pwdE),
+		E.Ap[E.Either[error, []byte]](pwdE),
 		E.Flatten[error, []byte],
 	)
 
@@ -80,7 +80,7 @@ func testAsymmetricDecrypt(
 	encE := F.Pipe3(
 		pubKeyE,
 		E.Map[error](encrypt),
-		E.Ap[error, []byte, E.Either[error, string]](dataE),
+		E.Ap[E.Either[error, string]](dataE),
 		E.Flatten[error, string],
 	)
 
@@ -88,7 +88,7 @@ func testAsymmetricDecrypt(
 	decE := F.Pipe3(
 		privKeyE,
 		E.Map[error](decrypt),
-		E.Ap[error, string, E.Either[error, []byte]](encE),
+		E.Ap[E.Either[error, []byte]](encE),
 		E.Flatten[error, []byte],
 	)
 

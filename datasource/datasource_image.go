@@ -24,16 +24,16 @@ import (
 	"github.com/Masterminds/semver"
 	"github.com/hashicorp/go-cty/cty"
 
+	A "github.com/IBM/fp-go/array"
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
+	I "github.com/IBM/fp-go/identity"
+	J "github.com/IBM/fp-go/json"
+	O "github.com/IBM/fp-go/option"
+	S "github.com/IBM/fp-go/string"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
-	A "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/array"
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
-	I "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/identity"
-	J "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/json"
-	O "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/option"
-	S "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/string"
 )
 
 type (
@@ -81,10 +81,9 @@ var (
 	}
 
 	// parses a list of images from a string
-	parseImages = F.Flow3(
+	parseImages = F.Flow2(
 		S.ToBytes,
-		J.Parse[[]Image],
-		E.Map[error](F.Deref[[]Image]),
+		J.Unmarshal[[]Image],
 	)
 
 	// reHyperProtectOS tests if this is a hyper protect image
@@ -174,7 +173,7 @@ func selectImage(data *schema.ResourceData, ctx any) error {
 
 	return F.Pipe7(
 		images,
-		common.ToTypeO[string],
+		O.ToType[string],
 		E.FromOption[error, string](cannotConvertToString),
 		E.Chain(parseImages),
 		E.Map[error](F.Flow2(

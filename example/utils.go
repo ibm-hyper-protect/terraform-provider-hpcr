@@ -16,15 +16,14 @@ package example
 import (
 	"fmt"
 
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
+	I "github.com/IBM/fp-go/identity"
+	O "github.com/IBM/fp-go/option"
+	S "github.com/IBM/fp-go/string"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
-	I "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/identity"
-	O "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/option"
-	S "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/string"
 	Y "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/yaml"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/provider"
 )
@@ -46,14 +45,14 @@ func getOutputO(s *terraform.State) func(string) O.Option[string] {
 		O.Map(func(os *terraform.OutputState) any {
 			return os.Value
 		}),
-		O.Chain(common.ToTypeO[string]),
+		O.Chain(O.ToType[string]),
 	)
 }
 
 func TestCheckOutput(name string, check func(value string) O.Option[error]) resource.TestCheckFunc {
 	return F.Flow5(
 		getOutputO,
-		I.Ap[string, O.Option[string]](name),
+		I.Ap[O.Option[string]](name),
 		E.FromOption[error, string](func() error {
 			return fmt.Errorf("output [%s] not found", name)
 		}),
@@ -62,9 +61,8 @@ func TestCheckOutput(name string, check func(value string) O.Option[error]) reso
 	)
 }
 
-var validateUserData = F.Flow4(
+var validateUserData = F.Flow3(
 	S.ToBytes,
 	Y.Parse[map[string]string],
-	E.Map[error](F.Deref[map[string]string]),
 	E.Fold(O.Of[error], F.Constant1[map[string]string](O.None[error]())),
 )

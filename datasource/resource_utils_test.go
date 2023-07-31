@@ -18,13 +18,13 @@ import (
 	"fmt"
 	"testing"
 
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
+	I "github.com/IBM/fp-go/identity"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/contract"
 	D "github.com/ibm-hyper-protect/terraform-provider-hpcr/data"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/encrypt"
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
-	I "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/identity"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -51,7 +51,7 @@ func TestHashWithCertAndKey(t *testing.T) {
 	hashE := F.Pipe2(
 		dataE,
 		E.Map[error](createHashWithCertAndPrivateKey(&defaultContext)),
-		E.Chain(I.Ap[[]byte, E.Either[error, string]](test)),
+		E.Chain(I.Ap[E.Either[error, string]](test)),
 	)
 
 	assert.True(t, E.IsRight(hashE))
@@ -81,7 +81,7 @@ func TestHashWithCertAndNoKey(t *testing.T) {
 	hashE := F.Pipe2(
 		dataE,
 		E.Map[error](createHashWithCertAndPrivateKey(&defaultContext)),
-		E.Chain(I.Ap[[]byte, E.Either[error, string]](test)),
+		E.Chain(I.Ap[E.Either[error, string]](test)),
 	)
 
 	assert.True(t, E.IsRight(hashE))
@@ -102,7 +102,7 @@ func TestHashWithCert(t *testing.T) {
 		data,
 		CreateResourceDataMock,
 		createHashWithCert(&defaultContext),
-		I.Ap[[]byte, E.Either[error, string]](test),
+		I.Ap[E.Either[error, string]](test),
 	)
 
 	assert.True(t, E.IsRight(hashE))

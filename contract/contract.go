@@ -17,14 +17,14 @@ package contract
 import (
 	"fmt"
 
+	B "github.com/IBM/fp-go/bytes"
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
+	I "github.com/IBM/fp-go/identity"
+	O "github.com/IBM/fp-go/option"
+	R "github.com/IBM/fp-go/record"
+	S "github.com/IBM/fp-go/string"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
-	B "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/bytes"
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
-	I "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/identity"
-	O "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/option"
-	R "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/record"
-	S "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/string"
 	Y "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/yaml"
 )
 
@@ -47,10 +47,7 @@ var (
 	MapRefRawMapE    = E.Map[error](F.Ref[RawMap])
 
 	// converts an arbitrary value to YAML
-	anyToYAML = F.Flow2(
-		F.Ref[any],
-		Y.Stringify[any],
-	)
+	anyToYAML = Y.Stringify[any]
 
 	// converts a string value to bytes
 	anyToString = F.Flow2(
@@ -170,7 +167,7 @@ func upsertSigningKey(pubKey func([]byte) E.Either[error, []byte]) func([]byte) 
 			return F.Pipe7(
 				contract,
 				getEnv,
-				O.Chain(common.ToTypeO[RawMap]),
+				O.Chain(O.ToType[RawMap]),
 				O.GetOrElse(F.Constant(make(RawMap))),
 				addKeyE,
 				E.Map[error](toAny[RawMap]),

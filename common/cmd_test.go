@@ -16,6 +16,7 @@ package common
 import (
 	"testing"
 
+	E "github.com/IBM/fp-go/either"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -23,12 +24,12 @@ func TestCommandOk(t *testing.T) {
 
 	cmdE := ExecCommand("openssl", "help")(make([]byte, 0))
 
-	assert.True(t, cmdE.IsRight())
+	assert.True(t, E.IsRight(cmdE))
 }
 
 func TestCommandFail(t *testing.T) {
 
 	cmdE := ExecCommand("openssl", "help1")(make([]byte, 0))
 
-	assert.True(t, cmdE.IsLeft())
+	assert.True(t, E.IsLeft(cmdE))
 }

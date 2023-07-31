@@ -14,8 +14,8 @@
 package encrypt
 
 import (
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
 )
 
 // Encryption captures the crypto functions required to implement the source providers
@@ -62,6 +62,6 @@ func cryptoEncryption() Encryption {
 func DefaultEncryption() Encryption {
 	return F.Pipe1(
 		validOpenSSL(),
-		E.Fold(F.Ignore1[error](cryptoEncryption), F.Ignore1[string](openSSLEncryption)),
+		E.Fold(F.Ignore1of1[error](cryptoEncryption), F.Ignore1of1[string](openSSLEncryption)),
 	)
 }

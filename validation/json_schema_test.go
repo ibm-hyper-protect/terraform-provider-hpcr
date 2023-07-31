@@ -18,9 +18,9 @@ import (
 
 	_ "embed"
 
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
-	I "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/identity"
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
+	I "github.com/IBM/fp-go/identity"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -35,7 +35,7 @@ func TestDiagContract(t *testing.T) {
 
 func TestJsonSchema(t *testing.T) {
 	schemaE := GetContractSchema()
-	assert.True(t, schemaE.IsRight())
+	assert.True(t, E.IsRight(schemaE))
 }
 
 func TestValidate(t *testing.T) {
@@ -50,8 +50,8 @@ func TestValidate(t *testing.T) {
 	// validate the data
 	resE := F.Pipe1(
 		validatorE,
-		E.Chain(I.Ap[string, E.Either[error, RawMap]](TrivialContract)),
+		E.Chain(I.Ap[E.Either[error, RawMap]](TrivialContract)),
 	)
 	// validate that we have some data
-	assert.True(t, resE.IsRight())
+	assert.True(t, E.IsRight(resE))
 }

@@ -21,11 +21,11 @@ import (
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/data"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/validation"
 
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
+	O "github.com/IBM/fp-go/option"
+	S "github.com/IBM/fp-go/string"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/fp"
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
-	O "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/option"
-	S "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/string"
 )
 
 var (
@@ -127,7 +127,7 @@ func handleAttestation(data *schema.ResourceData, ctx any) error {
 		ctx,
 		toContextE,
 		E.Map[error](handleAttestationWithContext),
-		E.Ap[error, fp.ResourceData, ResourceDataE](F.Pipe2(
+		E.Ap[ResourceDataE](F.Pipe2(
 			data,
 			fp.CreateResourceDataProxy,
 			setUniqueID,

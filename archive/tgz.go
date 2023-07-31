@@ -20,10 +20,10 @@ import (
 	"os"
 	"path/filepath"
 
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
-	I "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/identity"
-	T "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/tuple"
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
+	I "github.com/IBM/fp-go/identity"
+	T "github.com/IBM/fp-go/tuple"
 )
 
 var (
@@ -68,7 +68,7 @@ func copyFile(w io.Writer) func(string, os.FileInfo) E.Either[error, int64] {
 		// copy the file content
 		return F.Pipe1(
 			E.WithResource[error, *os.File, int64](onOpenFile(file), onClose[*os.File]),
-			I.Ap[func(*os.File) E.Either[error, int64], E.Either[error, int64]](F.Flow2(
+			I.Ap[E.Either[error, int64]](F.Flow2(
 				toReader[*os.File],
 				copyTo,
 			)),
@@ -116,8 +116,8 @@ func writeHeader(src string) func(*tar.Writer) func(file string, fi os.FileInfo)
 type tarStreams = T.Tuple2[*gzip.Writer, *tar.Writer]
 
 var (
-	gzipStream = T.FirstOf2[*gzip.Writer, *tar.Writer]
-	tarStream  = T.SecondOf2[*gzip.Writer, *tar.Writer]
+	gzipStream = T.First[*gzip.Writer, *tar.Writer]
+	tarStream  = T.Second[*gzip.Writer, *tar.Writer]
 )
 
 func onCreateStreams(buf io.Writer) func() E.Either[error, tarStreams] {
@@ -140,7 +140,7 @@ func onCloseStreams(streams tarStreams) E.Either[error, any] {
 		onClose[*gzip.Writer],
 	)
 	return F.Pipe1(
-		E.SequenceArray[error, any]()([]E.Either[error, any]{tar, gz}),
+		E.SequenceArray[error, any]([]E.Either[error, any]{tar, gz}),
 		E.MapTo[error, []any, any](nil),
 	)
 }

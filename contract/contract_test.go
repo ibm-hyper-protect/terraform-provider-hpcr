@@ -21,13 +21,13 @@ import (
 
 	_ "embed"
 
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
+	I "github.com/IBM/fp-go/identity"
+	R "github.com/IBM/fp-go/record"
+	S "github.com/IBM/fp-go/string"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/encrypt"
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
-	I "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/identity"
-	R "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/record"
-	S "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/string"
 	Y "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/yaml"
 	"github.com/stretchr/testify/assert"
 )
@@ -71,7 +71,7 @@ func TestAddSigningKey(t *testing.T) {
 
 	augE := F.Pipe3(
 		addKey,
-		E.Chain(I.Ap[RawMap, E.Either[error, RawMap]](env)),
+		E.Chain(I.Ap[E.Either[error, RawMap]](env)),
 		E.ChainOptionK[error, RawMap, any](func() error {
 			return fmt.Errorf("No key [%s]", KeySigningKey)
 		})(getSigningKey),
@@ -102,7 +102,7 @@ func TestUpsertEncrypted(t *testing.T) {
 	// encrypt env
 	encEnv := F.Pipe1(
 		upsertE,
-		E.Map[error](I.Ap[string, func(RawMap) E.Either[error, RawMap]](KeyEnv)),
+		E.Map[error](I.Ap[func(RawMap) E.Either[error, RawMap]](KeyEnv)),
 	)
 	// prepare some data
 	data := RawMap{
@@ -113,7 +113,7 @@ func TestUpsertEncrypted(t *testing.T) {
 	// encrypt the data
 	resE := F.Pipe1(
 		encEnv,
-		E.Chain(I.Ap[RawMap, E.Either[error, RawMap]](data)),
+		E.Chain(I.Ap[E.Either[error, RawMap]](data)),
 	)
 	// validate that the key exists and that it is a token
 	getKeyE := F.Flow2(
@@ -143,18 +143,16 @@ func TestUpsertSigningKey(t *testing.T) {
 		E.Map[error](upsertSigningKey(encrypt.OpenSSLPublicKey)),
 	)
 	// prepare some contract without a key
-	contractE := F.Pipe3(
+	contractE := F.Pipe2(
 		Contract1,
 		S.ToBytes,
 		Y.Parse[RawMap],
-		E.Map[error](F.Deref[RawMap]),
 	)
 	// actually upsert
-	resE := F.Pipe5(
+	resE := F.Pipe4(
 		upsertKeyE,
-		E.Ap[error, RawMap, E.Either[error, RawMap]](contractE),
+		E.Ap[E.Either[error, RawMap]](contractE),
 		E.Flatten[error, RawMap],
-		E.Map[error](F.Ref[RawMap]),
 		E.Chain(Y.Stringify[RawMap]),
 		common.MapBytesToStgE,
 	)
@@ -174,21 +172,19 @@ func TestEncryptAndSignContract(t *testing.T) {
 	signerE := F.Pipe2(
 		pubKey,
 		E.Map[error](openSSLEncryptAndSignContract),
-		E.Ap[error, []byte, func(RawMap) E.Either[error, RawMap]](privKeyE),
+		E.Ap[func(RawMap) E.Either[error, RawMap]](privKeyE),
 	)
 	// prepare some contract without a key
-	contractE := F.Pipe3(
+	contractE := F.Pipe2(
 		Contract1,
 		S.ToBytes,
 		Y.Parse[RawMap],
-		E.Map[error](F.Deref[RawMap]),
 	)
 	// add signature and encrypt the fields
-	resE := F.Pipe5(
+	resE := F.Pipe4(
 		signerE,
-		E.Ap[error, RawMap, E.Either[error, RawMap]](contractE),
+		E.Ap[E.Either[error, RawMap]](contractE),
 		E.Flatten[error, RawMap],
-		E.Map[error](F.Ref[RawMap]),
 		E.Chain(Y.Stringify[RawMap]),
 		common.MapBytesToStgE,
 	)
@@ -215,7 +211,7 @@ func TestEnvWorkloadSignature(t *testing.T) {
 	// compute the signature
 	signatureE := F.Pipe1(
 		signer,
-		E.Chain(I.Ap[RawMap, E.Either[error, string]](data)),
+		E.Chain(I.Ap[E.Either[error, string]](data)),
 	)
 
 	assert.True(t, E.IsRight(signatureE))
@@ -228,21 +224,19 @@ func TestEncryptAndSignContractWithAttestation(t *testing.T) {
 	signerE := F.Pipe2(
 		pubKey,
 		E.Map[error](openSSLEncryptAndSignContract),
-		E.Ap[error, []byte, func(RawMap) E.Either[error, RawMap]](privKeyE),
+		E.Ap[func(RawMap) E.Either[error, RawMap]](privKeyE),
 	)
 	// prepare some contract without a key
-	contractE := F.Pipe3(
+	contractE := F.Pipe2(
 		Contract2,
 		S.ToBytes,
 		Y.Parse[RawMap],
-		E.Map[error](F.Deref[RawMap]),
 	)
 	// add signature and encrypt the fields
-	resE := F.Pipe5(
+	resE := F.Pipe4(
 		signerE,
-		E.Ap[error, RawMap, E.Either[error, RawMap]](contractE),
+		E.Ap[E.Either[error, RawMap]](contractE),
 		E.Flatten[error, RawMap],
-		E.Map[error](F.Ref[RawMap]),
 		E.Chain(Y.Stringify[RawMap]),
 		common.MapBytesToStgE,
 	)

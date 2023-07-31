@@ -16,8 +16,8 @@ package file
 import (
 	"os"
 
+	E "github.com/IBM/fp-go/either"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
 )
 
 var (

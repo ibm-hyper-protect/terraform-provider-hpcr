@@ -16,12 +16,11 @@ package fp
 import (
 	"fmt"
 
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
+	I "github.com/IBM/fp-go/identity"
+	O "github.com/IBM/fp-go/option"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
-	I "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/identity"
-	O "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/option"
 )
 
 type ResourceData interface {
@@ -57,7 +56,7 @@ func typeError() error {
 func ToTypeE[A any](data any) E.Either[error, A] {
 	return F.Pipe2(
 		data,
-		common.ToTypeO[A],
+		O.ToType[A],
 		E.FromOption[error, A](typeError),
 	)
 }
@@ -67,7 +66,7 @@ func ResourceDataGetO[A any](key string) func(ResourceData) O.Option[A] {
 		return F.Pipe2(
 			key,
 			O.FromValidation(d.GetOk),
-			O.Chain(common.ToTypeO[A]),
+			O.Chain(O.ToType[A]),
 		)
 	}
 }
@@ -78,7 +77,7 @@ func ResourceDataGetE[A any](key string) func(ResourceData) E.Either[error, A] {
 		if ok {
 			return ToTypeE[A](data)
 		}
-		return E.Left[error, A](fmt.Errorf("key [%s] has not been declared", key))
+		return E.Left[A](fmt.Errorf("key [%s] has not been declared", key))
 	}
 }
 
@@ -86,7 +85,7 @@ func ResourceDataSet[A any](key string) func(A) func(ResourceData) E.Either[erro
 	return func(value A) func(ResourceData) E.Either[error, ResourceData] {
 		return func(d ResourceData) E.Either[error, ResourceData] {
 			if err := d.Set(key, value); err != nil {
-				return E.Left[error, ResourceData](err)
+				return E.Left[ResourceData](err)
 			}
 			return E.Of[error](d)
 		}
@@ -94,5 +93,5 @@ func ResourceDataSet[A any](key string) func(A) func(ResourceData) E.Either[erro
 }
 
 func ResourceDataAp[A any](d ResourceData) func(E.Either[error, func(ResourceData) E.Either[error, A]]) E.Either[error, A] {
-	return E.Chain(I.Ap[ResourceData, E.Either[error, A]](d))
+	return E.Chain(I.Ap[E.Either[error, A]](d))
 }

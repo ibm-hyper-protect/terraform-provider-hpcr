@@ -18,11 +18,11 @@ import (
 	"fmt"
 	"os"
 
-	B "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/bytes"
-	E "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/either"
-	F "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/function"
-	O "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/option"
-	S "github.com/ibm-hyper-protect/terraform-provider-hpcr/fp/string"
+	B "github.com/IBM/fp-go/bytes"
+	E "github.com/IBM/fp-go/either"
+	F "github.com/IBM/fp-go/function"
+	O "github.com/IBM/fp-go/option"
+	S "github.com/IBM/fp-go/string"
 )
 
 var (
@@ -52,18 +52,10 @@ func isError(err error) bool {
 	return err != nil
 }
 
-func ToTypeO[A any](data any) O.Option[A] {
-	value, ok := data.(A)
-	if ok {
-		return O.Some(value)
-	}
-	return O.None[A]()
-}
-
 func ToTypeE[A any](data any) E.Either[error, A] {
 	return F.Pipe2(
 		data,
-		ToTypeO[A],
+		O.ToType[A],
 		E.FromOption[error, A](func() error {
 			return fmt.Errorf("invalid type of input [%T]", data)
 		}),
