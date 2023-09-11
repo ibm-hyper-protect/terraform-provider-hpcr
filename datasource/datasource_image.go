@@ -180,7 +180,7 @@ func selectImage(data *schema.ResourceData, ctx any) error {
 			A.Filter(isCandidateImage),
 			A.Map(imageVersionFomImage),
 		)),
-		E.ChainOptionK[error, []ImageVersion, ImageVersion](noMatchingVersionFound)(selectBySpec(spec.(string))),
+		E.ChainOptionK[[]ImageVersion, ImageVersion](noMatchingVersionFound)(selectBySpec(spec.(string))),
 		E.Map[error](func(version ImageVersion) ImageVersion {
 			// update the data source
 			data.SetId(time.Now().UTC().String())

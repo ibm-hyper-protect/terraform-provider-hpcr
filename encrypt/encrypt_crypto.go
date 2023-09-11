@@ -153,7 +153,7 @@ func CryptoRandomPassword(count int) func() E.Either[error, []byte] {
 func pemDecodeE(data []byte) E.Either[error, []byte] {
 	block, _ := pem.Decode(data)
 	return F.Pipe1(
-		E.FromNillable[error, pem.Block](fmt.Errorf("enable to decode block from PEM"))(block),
+		E.FromNillable[pem.Block](fmt.Errorf("enable to decode block from PEM"))(block),
 		E.Map[error](func(b *pem.Block) []byte {
 			return b.Bytes
 		}),

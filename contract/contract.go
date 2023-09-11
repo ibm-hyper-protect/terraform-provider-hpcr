@@ -37,9 +37,9 @@ var (
 	KeySigningKey           = "signingKey"
 	KeyEnvWorkloadSignature = "envWorkloadSignature"
 
-	getEnv        = R.Lookup[string, any](KeyEnv)
-	getWorkload   = R.Lookup[string, any](KeyWorkload)
-	getSigningKey = R.Lookup[string, any](KeySigningKey)
+	getEnv        = R.Lookup[any](KeyEnv)
+	getWorkload   = R.Lookup[any](KeyWorkload)
+	getSigningKey = R.Lookup[any](KeySigningKey)
 
 	ParseRawMapE     = Y.Parse[RawMap]
 	StringifyRawMapE = Y.Stringify[RawMap]
@@ -185,7 +185,7 @@ func upsertEncrypted(serializer func(any) E.Either[error, []byte]) func(enc func
 		return func(key string) func(RawMap) E.Either[error, RawMap] {
 			// callback to insert the key into the target
 			setKey := F.Bind1st(R.UpsertAt[string, any], key)
-			getKey := R.Lookup[string, any](key)
+			getKey := R.Lookup[any](key)
 			// returns the actual upserter
 			return func(dst RawMap) E.Either[error, RawMap] {
 				// lookup the original key
