@@ -72,7 +72,7 @@ func TestAddSigningKey(t *testing.T) {
 	augE := F.Pipe3(
 		addKey,
 		E.Chain(I.Ap[E.Either[error, RawMap]](env)),
-		E.ChainOptionK[error, RawMap, any](func() error {
+		E.ChainOptionK[RawMap, any](func() error {
 			return fmt.Errorf("No key [%s]", KeySigningKey)
 		})(getSigningKey),
 		E.Chain(common.ToTypeE[string]),
@@ -117,7 +117,7 @@ func TestUpsertEncrypted(t *testing.T) {
 	)
 	// validate that the key exists and that it is a token
 	getKeyE := F.Flow2(
-		R.Lookup[string, any](KeyEnv),
+		R.Lookup[any](KeyEnv),
 		E.FromOption[error, any](func() error {
 			return fmt.Errorf("Key not found")
 		}),

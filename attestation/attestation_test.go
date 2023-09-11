@@ -38,8 +38,8 @@ var encPub string
 var encPriv []byte
 
 var (
-	getChecksums     = R.Lookup[string, []byte]("se-checksums.txt.enc")
-	getContract      = R.Lookup[string, string]("cidata/user-data")
+	getChecksums     = R.Lookup[[]byte]("se-checksums.txt.enc")
+	getContract      = R.Lookup[string]("cidata/user-data")
 	defaultDecryptor = encrypt.DefaultDecryption()
 )
 
@@ -48,7 +48,7 @@ func TestParseAndDecryptAttestation(t *testing.T) {
 	token := F.Pipe3(
 		encBase64,
 		untarBase64,
-		E.ChainOptionK[error, FileList, []byte](func() error { return fmt.Errorf("unable to read checksums") })(getChecksums),
+		E.ChainOptionK[FileList, []byte](func() error { return fmt.Errorf("unable to read checksums") })(getChecksums),
 		E.Map[error](B.ToString),
 	)
 
@@ -59,7 +59,7 @@ func TestParseAndDecryptAttestation(t *testing.T) {
 	checksum := F.Pipe2(
 		token,
 		E.Chain(dec),
-		E.ChainOptionK[error, ChecksumMap, string](func() error { return fmt.Errorf("unable to read checksum for contracz") })(getContract),
+		E.ChainOptionK[ChecksumMap, string](func() error { return fmt.Errorf("unable to read checksum for contracz") })(getContract),
 	)
 
 	assert.Equal(t, E.Of[error]("a6f6228bbf820e766ebe43c51e97332dda92e9744e719a646f611fe0681d2458"), checksum)

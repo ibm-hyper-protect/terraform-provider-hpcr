@@ -78,7 +78,7 @@ func TestSelectBySpec(t *testing.T) {
 			A.Filter(isCandidateImage),
 			A.Map(imageVersionFomImage),
 		)),
-		E.ChainOptionK[error, []ImageVersion, ImageVersion](noMatchingVersionFound)(selectBySpec("*")),
+		E.ChainOptionK[[]ImageVersion, ImageVersion](noMatchingVersionFound)(selectBySpec("*")),
 		E.Map[error](func(version ImageVersion) string {
 			return version.Version.String()
 		}),
