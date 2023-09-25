@@ -7436,6 +7436,26 @@
               }
             }
           }
+        },
+        {
+          "env": {
+            "volumes": {
+              "test": {
+                "seed": "new env phrase",
+                "previousSeed": "old env phrase"
+              }
+            }
+          },
+          "workload": {
+            "volumes": {
+              "test": {
+                "mount": "/mnt/data",
+                "filesystem": "ext4",
+                "seed": "new workload phrase",
+                "previousSeed": "old workload phrase"
+              }
+            }
+          }
         }
       ],
       "$defs": {
@@ -7468,12 +7488,33 @@
               "$ref": "#/allOf/3/$defs/workloadVolume"
             }
           },
-          "additionalProperties": false,
           "examples": [
             {
               "test": {
                 "mount": "/mnt/data",
                 "seed": "fancy phrase"
+              }
+            },
+            {
+              "test": {
+                "mount": "/mnt/data",
+                "filesystem": "ext4",
+                "seed": "fancy phrase"
+              }
+            },
+            {
+              "test": {
+                "mount": "/mnt/data",
+                "seed": "new fancy phrase",
+                "previousSeed": "old fancy phrase"
+              }
+            },
+            {
+              "test": {
+                "mount": "/mnt/data",
+                "seed": "new fancy phrase",
+                "previousSeed": "old fancy phrase",
+                "filesystem": "ext4"
               }
             }
           ]
@@ -7492,6 +7533,13 @@
             {
               "test": {
                 "seed": "fancy phrase"
+              }
+            },
+            {
+              "test": {
+                "mount": "/mnt/data",
+                "seed": "new fancy phrase",
+                "previousSeed": "old fancy phrase"
               }
             }
           ]
@@ -7514,6 +7562,9 @@
             "seed": {
               "$ref": "#/allOf/3/$defs/seed"
             },
+            "previousSeed": {
+              "$ref": "#/allOf/3/$defs/previousSeed"
+            },
             "kms": {
               "$ref": "#/allOf/3/$defs/kms"
             },
@@ -7534,6 +7585,9 @@
           "properties": {
             "seed": {
               "$ref": "#/allOf/3/$defs/seed"
+            },
+            "previousSeed": {
+              "$ref": "#/allOf/3/$defs/previousSeed"
             }
           },
           "required": [
@@ -7554,12 +7608,24 @@
             },
             "seed": {
               "$ref": "#/allOf/3/$defs/seed"
+            },
+            "previousSeed": {
+              "$ref": "#/allOf/3/$defs/previousSeed"
             }
           },
           "required": [
             "seed"
           ],
           "additionalProperties": false
+        },
+        "previousSeed": {
+          "type": "string",
+          "title": "previousSeed",
+          "description": "Part of the encryption seed rolling used to encrypt the device. Mention the old key",
+          "minLength": 3,
+          "examples": [
+            "Lorem Ipsum"
+          ]
         },
         "seed": {
           "type": "string",
