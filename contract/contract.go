@@ -93,7 +93,7 @@ func createEnvWorkloadSignature(signer func([]byte) func([]byte) E.Either[error,
 			// lookup the
 			return F.Pipe3(
 				seqE(getWorkloadO(contract), getEnvO(contract)),
-				E.FromOption[error, []byte](func() error {
+				E.FromOption[[]byte](func() error {
 					return fmt.Errorf("the contract is missing [%s] or [%s] or both", KeyEnv, KeyWorkload)
 				}),
 				E.Chain(sign),

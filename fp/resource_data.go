@@ -57,7 +57,7 @@ func ToTypeE[A any](data any) E.Either[error, A] {
 	return F.Pipe2(
 		data,
 		O.ToType[A],
-		E.FromOption[error, A](typeError),
+		E.FromOption[A](typeError),
 	)
 }
 

@@ -132,7 +132,7 @@ func validOpenSSL() E.Either[error, string] {
 				version,
 				O.FromPredicate(P.ContraMap(getVersion)(includesOpenSSL)),
 				O.Map(getPath),
-				E.FromOption[error, string](func() error {
+				E.FromOption[string](func() error {
 					return fmt.Errorf("openSSL Version [%s] is unsupported", version)
 				}),
 			)

@@ -17,8 +17,8 @@ import (
 	_ "embed"
 )
 
-//go:embed ibm-hyper-protect-container-runtime-1-0-s390x-11-encrypt.crt
+//go:embed ibm-hyper-protect-container-runtime-1-0-s390x-12-encrypt.crt
 var DefaultCertificate string
 
-//go:embed hpse-contract-schema-1.0.34.json
+//go:embed hpse-contract-schema-1.0.42.json
 var ContractSchema string
