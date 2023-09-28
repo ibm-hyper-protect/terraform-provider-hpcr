@@ -140,7 +140,7 @@ func handleCertificateWithContext(ctx *Context) func(data fp.ResourceData) Resou
 			E.Chain(parseConstraint),
 			E.Map[error](selectCertBySpec),
 			E.Ap[O.Option[T.Tuple2[*semver.Version, string]]](certsE),
-			E.Chain(E.FromOption[error, T.Tuple2[*semver.Version, string]](func() error { return fmt.Errorf("unable to select a version") })),
+			E.Chain(E.FromOption[T.Tuple2[*semver.Version, string]](func() error { return fmt.Errorf("unable to select a version") })),
 		)
 		// output records
 		certificateMapE := F.Pipe2(

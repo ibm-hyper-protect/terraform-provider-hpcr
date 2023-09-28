@@ -53,7 +53,7 @@ func TestCheckOutput(name string, check func(value string) O.Option[error]) reso
 	return F.Flow5(
 		getOutputO,
 		I.Ap[O.Option[string]](name),
-		E.FromOption[error, string](func() error {
+		E.FromOption[string](func() error {
 			return fmt.Errorf("output [%s] not found", name)
 		}),
 		E.Fold(O.Of[error], check),

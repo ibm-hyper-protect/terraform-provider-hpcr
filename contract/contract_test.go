@@ -118,7 +118,7 @@ func TestUpsertEncrypted(t *testing.T) {
 	// validate that the key exists and that it is a token
 	getKeyE := F.Flow2(
 		R.Lookup[any](KeyEnv),
-		E.FromOption[error, any](func() error {
+		E.FromOption[any](func() error {
 			return fmt.Errorf("Key not found")
 		}),
 	)

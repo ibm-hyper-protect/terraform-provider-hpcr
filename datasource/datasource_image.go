@@ -174,7 +174,7 @@ func selectImage(data *schema.ResourceData, ctx any) error {
 	return F.Pipe7(
 		images,
 		O.ToType[string],
-		E.FromOption[error, string](cannotConvertToString),
+		E.FromOption[string](cannotConvertToString),
 		E.Chain(parseImages),
 		E.Map[error](F.Flow2(
 			A.Filter(isCandidateImage),
