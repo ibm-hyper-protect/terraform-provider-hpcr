@@ -67,6 +67,10 @@ The result of the lookup can be accessed via the following attributes:
 
 [Apache 2.0](LICENSE)
 
+## How to Contribute
+
+The repository uses [semantic-release](https://github.com/semantic-release/semantic-release). Please author the commit messages accordingly.
+
 ## References
 
 - [How to Publish a Terraform Provider](https://learn.hashicorp.com/tutorials/terraform/provider-release-publish?in=terraform/providers)
