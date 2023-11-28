@@ -127,11 +127,9 @@ func parsePrivateKeyE(priv []byte) E.Either[error, *rsa.PrivateKey] {
 // cryptoRandomE returns a random sequence of bytes with the given length
 func cryptoRandomE(n int) func() E.Either[error, []byte] {
 	return func() E.Either[error, []byte] {
-		return E.TryCatchError(func() ([]byte, error) {
-			buf := make([]byte, n)
-			_, err := rand.Read(buf)
-			return buf, err
-		})
+		buf := make([]byte, n)
+		_, err := rand.Read(buf)
+		return E.TryCatchError(buf, err)
 	}
 }
 
@@ -163,18 +161,14 @@ func pemDecodeE(data []byte) E.Either[error, []byte] {
 // encryptPKCS1v15 creates a function that encrypts a piece of text using a public key
 func encryptPKCS1v15(pub *rsa.PublicKey) func([]byte) E.Either[error, []byte] {
 	return func(origData []byte) E.Either[error, []byte] {
-		return E.TryCatchError(func() ([]byte, error) {
-			return rsa.EncryptPKCS1v15(rand.Reader, pub, origData)
-		})
+		return E.TryCatchError(rsa.EncryptPKCS1v15(rand.Reader, pub, origData))
 	}
 }
 
 // decryptPKCS1v15 creates a function that decrypts a piece of text using a private key
 func decryptPKCS1v15(pub *rsa.PrivateKey) func([]byte) E.Either[error, []byte] {
 	return func(ciphertext []byte) E.Either[error, []byte] {
-		return E.TryCatchError(func() ([]byte, error) {
-			return rsa.DecryptPKCS1v15(rand.Reader, pub, ciphertext)
-		})
+		return E.TryCatchError(rsa.DecryptPKCS1v15(rand.Reader, pub, ciphertext))
 	}
 }
 
@@ -322,9 +316,7 @@ func privKeyToPem(privKey *rsa.PrivateKey) []byte {
 // CryptoPrivateKey generates a private key
 func CryptoPrivateKey() E.Either[error, []byte] {
 	return F.Pipe1(
-		E.TryCatchError(func() (*rsa.PrivateKey, error) {
-			return rsa.GenerateKey(rand.Reader, 4096)
-		}),
+		E.TryCatchError(rsa.GenerateKey(rand.Reader, 4096)),
 		E.Map[error](privKeyToPem),
 	)
 }
@@ -332,9 +324,7 @@ func CryptoPrivateKey() E.Either[error, []byte] {
 // implements the signing operation in a functional way
 func signPKCS1v15(privateKey *rsa.PrivateKey) func([]byte) E.Either[error, []byte] {
 	return func(digest []byte) E.Either[error, []byte] {
-		return E.TryCatchError(func() ([]byte, error) {
-			return rsa.SignPKCS1v15(rand.Reader, privateKey, crypto.SHA256, digest)
-		})
+		return E.TryCatchError(rsa.SignPKCS1v15(rand.Reader, privateKey, crypto.SHA256, digest))
 	}
 }
 

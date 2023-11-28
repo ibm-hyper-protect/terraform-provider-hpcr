@@ -39,10 +39,7 @@ func toReader[A io.Reader](a A) io.Reader {
 }
 
 func onClose[A io.Closer](a A) E.Either[error, any] {
-	err := a.Close()
-	return E.TryCatchError(func() (any, error) {
-		return nil, err
-	})
+	return E.TryCatchError[any](nil, a.Close())
 }
 
 func onOpenFile(file string) func() E.Either[error, *os.File] {
@@ -98,9 +95,7 @@ func writeHeader(src string) func(*tar.Writer) func(file string, fi os.FileInfo)
 
 		// callback to write the header
 		writeHeader := func(hdr *tar.Header) E.Either[error, *tar.Writer] {
-			return E.TryCatchError(func() (*tar.Writer, error) {
-				return w, w.WriteHeader(hdr)
-			})
+			return E.TryCatchError(w, w.WriteHeader(hdr))
 		}
 
 		return func(file string, fi os.FileInfo) E.Either[error, *tar.Writer] {
@@ -172,11 +167,7 @@ func TarFolder[W io.Writer](src string) func(W) E.Either[error, W] {
 				)
 			}
 
-			return E.TryCatchError(func() (W, error) {
-				// walk through every file in the folder
-				return buf, walk(walkFunc)
-
-			})
+			return E.TryCatchError(buf, walk(walkFunc))
 		})
 	}
 }

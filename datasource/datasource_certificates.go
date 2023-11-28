@@ -103,17 +103,16 @@ func resolveUrl(tmp *template.Template) func(version *semver.Version) E.Either[e
 			KeyMinor: version.Minor(),
 			KeyPatch: version.Patch(),
 		}
-		return E.TryCatchError(func() (string, error) {
-			var buffer bytes.Buffer
-			err := tmp.Execute(&buffer, ctx)
-			return buffer.String(), err
-		})
+		var buffer bytes.Buffer
+		err := tmp.Execute(&buffer, ctx)
+		return E.TryCatchError(buffer.String(), err)
 	}
 }
 
 func textFromResponse(url string) func(resp *http.Response) E.Either[error, string] {
 	return func(resp *http.Response) E.Either[error, string] {
 		defer resp.Body.Close()
+
 		return F.Pipe1(
 			E.TryCatchError(func() ([]byte, error) {
 				data, err := io.ReadAll(resp.Body)
@@ -124,7 +123,7 @@ func textFromResponse(url string) func(resp *http.Response) E.Either[error, stri
 					return data, fmt.Errorf("url: %s, status %d: cause: [%s]", url, resp.StatusCode, data)
 				}
 				return data, err
-			}),
+			}()),
 			E.Map[error](B.ToString),
 		)
 	}

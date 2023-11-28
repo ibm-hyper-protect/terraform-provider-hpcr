@@ -77,7 +77,7 @@ func toCertificateMap(data map[string]any) E.Either[error, map[string]string] {
 			dst[k] = s
 		}
 		return dst, nil
-	})
+	}())
 }
 
 // parses a constraint string into a constraint object
