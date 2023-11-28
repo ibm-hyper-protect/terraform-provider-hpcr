@@ -26,9 +26,7 @@ var (
 	}
 	onDelete = func(f *os.File) E.Either[error, any] {
 		f.Close() // #nosec
-		return E.TryCatchError(func() (any, error) {
-			return nil, os.Remove(f.Name())
-		})
+		return E.TryCatchError[any](nil, os.Remove(f.Name()))
 	}
 )
 

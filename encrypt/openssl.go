@@ -143,9 +143,7 @@ func validOpenSSL() E.Either[error, string] {
 // helper to safely write data into a file
 func writeData[W io.Writer](data []byte) func(w W) E.Either[error, int] {
 	return func(w W) E.Either[error, int] {
-		return E.TryCatchError(func() (int, error) {
-			return w.Write(data)
-		})
+		return E.TryCatchError(w.Write(data))
 	}
 }
 

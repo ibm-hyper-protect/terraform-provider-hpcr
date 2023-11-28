@@ -19,17 +19,11 @@ import (
 )
 
 func Parse[A any](data []byte) E.Either[error, A] {
-	return E.TryCatchError(func() (A, error) {
-		var result A
-		err := yaml.Unmarshal(data, &result)
-		return result, err
-	})
+	var result A
+	err := yaml.Unmarshal(data, &result)
+	return E.TryCatchError(result, err)
 }
 
 func Stringify[A any](a A) E.Either[error, []byte] {
-	return E.TryCatchError(func() ([]byte, error) {
-		b, err := yaml.Marshal(a)
-		return b, err
-	})
-
+	return E.TryCatchError(yaml.Marshal(a))
 }
