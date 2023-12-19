@@ -3,7 +3,7 @@ module github.com/ibm-hyper-protect/terraform-provider-hpcr
 go 1.20
 
 require (
-	github.com/IBM/fp-go v1.0.81
+	github.com/IBM/fp-go v1.0.82
 	github.com/Masterminds/semver v1.5.0
 	github.com/hashicorp/go-cty v1.4.1-0.20200723130312-85980079f637
 	github.com/hashicorp/go-uuid v1.0.3
@@ -75,6 +75,6 @@ require (
 	golang.org/x/text v0.14.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231212172506-995d672761c0 // indirect
-	google.golang.org/grpc v1.60.0 // indirect
+	google.golang.org/grpc v1.60.1 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 )
