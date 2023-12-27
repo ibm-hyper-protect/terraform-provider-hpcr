@@ -1,6 +1,6 @@
 dario.cat/mergo v1.0.0 h1:AGCNq9Evsj31mOgNPcLyXc+4PNABt905YmuqPYYpBWk=
-github.com/IBM/fp-go v1.0.89 h1:+7ENoQkulriZRVD+B1qd/sc/wLxo/3sPVnbGcR8EGPE=
-github.com/IBM/fp-go v1.0.89/go.mod h1:/BFhWzs0RG4zTORwAvQf8m503Sb5KbScKP/QG+KDJaA=
+github.com/IBM/fp-go v1.0.90 h1:HdWK+Yk8p2sZClXk6ATJNxu7oeyidbUK5+7qxJ5CbzU=
+github.com/IBM/fp-go v1.0.90/go.mod h1:SzCXphq0RsBDBJfcsSP6feEy7sr3IXwpQxheUFSju3s=
 github.com/Masterminds/goutils v1.1.1 h1:5nUrii3FMTL5diU80unEVvNevw1nH4+ZV4DSLVJLSYI=
 github.com/Masterminds/goutils v1.1.1/go.mod h1:8cTjp+g8YejhMuvIA5y2vz3BpJxksy863GQaJW2MFNU=
 github.com/Masterminds/semver v1.5.0 h1:H65muMkzWKEuNDnfl9d70GUjFniHKHRbFPGBuZ3QEww=
