@@ -141,7 +141,7 @@ var (
 		Type:             schema.TypeString,
 		Description:      "Path of CA Private Key. If omitted, Signing key will be public key",
 		Optional:         true,
-		ForceNew:         false,
+		ForceNew:         true,
 		Sensitive:        true,
 		ValidateDiagFunc: validation.DiagPrivateKey,
 	}
@@ -150,7 +150,7 @@ var (
 		Type:             schema.TypeString,
 		Description:      "Path of CA Certificate. If omitted, Signing key will be public key",
 		Optional:         true,
-		ForceNew:         false,
+		ForceNew:         true,
 		Sensitive:        true,
 		ValidateDiagFunc: validation.DiagCertificate,
 	}
