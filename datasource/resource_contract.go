@@ -38,9 +38,12 @@ func ResourceContractEncrypted() *schema.Resource {
 		Delete: contractEncrypted.F3,
 		Schema: map[string]*schema.Schema{
 			// input parameters
-			common.KeyContract: &schemaContractIn,
-			common.KeyCert:     &schemaCertIn,
-			common.KeyPrivKey:  &schemaPrivKeyIn,
+			common.KeyContract:       &schemaContractIn,
+			common.KeyCert:           &schemaCertIn,
+			common.KeyPrivKey:        &schemaPrivKeyIn,
+			common.KeyCertExpiryDays: &schemaCertExpiryIn,
+			common.KeyCaPrivKey:      &schemaCAPrivateKeyIn,
+			common.KeyCaCert:         &schemaCACertificateIn,
 			// output parameters
 			common.KeyRendered: &schemaRenderedOut,
 			common.KeySha256:   &schemaSha256Out,

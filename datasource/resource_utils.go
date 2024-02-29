@@ -130,6 +130,31 @@ var (
 		ValidateDiagFunc: validation.DiagPrivateKey,
 	}
 
+	schemaCertExpiryIn = schema.Schema{
+		Type:        schema.TypeInt,
+		Description: "Number of days for expiring the contract. If omitted, Signing key will be public key",
+		Optional:    true,
+		ForceNew:    true,
+	}
+
+	schemaCAPrivateKeyIn = schema.Schema{
+		Type:             schema.TypeString,
+		Description:      "Path of CA Private Key. If omitted, Signing key will be public key",
+		Optional:         true,
+		ForceNew:         false,
+		Sensitive:        true,
+		ValidateDiagFunc: validation.DiagPrivateKey,
+	}
+
+	schemaCACertificateIn = schema.Schema{
+		Type:             schema.TypeString,
+		Description:      "Path of CA Certificate. If omitted, Signing key will be public key",
+		Optional:         true,
+		ForceNew:         false,
+		Sensitive:        true,
+		ValidateDiagFunc: validation.DiagCertificate,
+	}
+
 	schemaRenderedOut = schema.Schema{
 		Type:        schema.TypeString,
 		Computed:    true,
