@@ -61,18 +61,21 @@ func createHash(data []byte) string {
 }
 
 var (
-	seqResourceData = E.SequenceArray[error, fp.ResourceData]
-	setRendered     = fp.ResourceDataSet[string](common.KeyRendered)
-	setSha256       = fp.ResourceDataSet[string](common.KeySha256)
-	setChecksum     = fp.ResourceDataSet[string](common.KeyChecksum)
-	setChecksums    = fp.ResourceDataSet[map[string]string](common.KeyChecksums)
-	getJsonE        = fp.ResourceDataGetE[any](common.KeyJSON)
-	getTextE        = fp.ResourceDataGetE[string](common.KeyText)
-	getContractE    = fp.ResourceDataGetE[string](common.KeyContract)
-	getPrivKeyE     = fp.ResourceDataGetE[string](common.KeyPrivKey)
-	getFolderE      = fp.ResourceDataGetE[string](common.KeyFolder)
-	getAttestationE = fp.ResourceDataGetE[string](common.KeyAttestation)
-	getCertificateE = fp.ResourceDataGetE[string](common.KeyCert)
+	seqResourceData   = E.SequenceArray[error, fp.ResourceData]
+	setRendered       = fp.ResourceDataSet[string](common.KeyRendered)
+	setSha256         = fp.ResourceDataSet[string](common.KeySha256)
+	setChecksum       = fp.ResourceDataSet[string](common.KeyChecksum)
+	setChecksums      = fp.ResourceDataSet[map[string]string](common.KeyChecksums)
+	getJsonE          = fp.ResourceDataGetE[any](common.KeyJSON)
+	getTextE          = fp.ResourceDataGetE[string](common.KeyText)
+	getContractE      = fp.ResourceDataGetE[string](common.KeyContract)
+	getPrivKeyE       = fp.ResourceDataGetE[string](common.KeyPrivKey)
+	getCertExpiryDays = fp.ResourceDataGetE[string](common.KeyCertExpiryDays)
+	getCaPrivKeyE     = fp.ResourceDataGetE[string](common.KeyCaPrivKey)
+	getCaCertE        = fp.ResourceDataGetE[string](common.KeyCaCert)
+	getFolderE        = fp.ResourceDataGetE[string](common.KeyFolder)
+	getAttestationE   = fp.ResourceDataGetE[string](common.KeyAttestation)
+	getCertificateE   = fp.ResourceDataGetE[string](common.KeyCert)
 
 	getSha256O  = fp.ResourceDataGetO[string](common.KeySha256)
 	getPrivKeyO = fp.ResourceDataGetO[string](common.KeyPrivKey)
@@ -135,9 +138,10 @@ var (
 		Description: "Number of days for expiring the contract. If omitted, Signing key will be public key",
 		Optional:    true,
 		ForceNew:    true,
+		Sensitive:   false,
 	}
 
-	schemaCAPrivateKeyIn = schema.Schema{
+	schemaCaPrivKeyIn = schema.Schema{
 		Type:             schema.TypeString,
 		Description:      "Path of CA Private Key. If omitted, Signing key will be public key",
 		Optional:         true,
@@ -146,7 +150,7 @@ var (
 		ValidateDiagFunc: validation.DiagPrivateKey,
 	}
 
-	schemaCACertificateIn = schema.Schema{
+	schemaCaCertIn = schema.Schema{
 		Type:             schema.TypeString,
 		Description:      "Path of CA Certificate. If omitted, Signing key will be public key",
 		Optional:         true,
@@ -370,6 +374,7 @@ func createHashWithCertAndPrivateKey(ctx *Context) func(d fp.ResourceData) func(
 			common.MapStgToBytesE,
 			E.Chain(ctx.CertFingerprint),
 		)
+
 		// get the fingerprint for the private key
 		privKeyE := F.Pipe4(
 			d,

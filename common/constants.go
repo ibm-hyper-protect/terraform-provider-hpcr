@@ -25,7 +25,7 @@ const (
 	KeyImages         = "images"
 	KeyJSON           = "json"
 	KeyPrivKey        = "privkey"
-	KeyCertExpiryDays = "cerrtexpirydays"
+	KeyCertExpiryDays = "certexpirydays"
 	KeyCaPrivKey      = "caprivkey"
 	KeyCaCert         = "cacert"
 	KeyRendered       = "rendered"

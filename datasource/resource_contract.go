@@ -42,8 +42,8 @@ func ResourceContractEncrypted() *schema.Resource {
 			common.KeyCert:           &schemaCertIn,
 			common.KeyPrivKey:        &schemaPrivKeyIn,
 			common.KeyCertExpiryDays: &schemaCertExpiryIn,
-			common.KeyCaPrivKey:      &schemaCAPrivateKeyIn,
-			common.KeyCaCert:         &schemaCACertificateIn,
+			common.KeyCaPrivKey:      &schemaCaPrivKeyIn,
+			common.KeyCaCert:         &schemaCaCertIn,
 			// output parameters
 			common.KeyRendered: &schemaRenderedOut,
 			common.KeySha256:   &schemaSha256Out,
