@@ -87,7 +87,7 @@ var (
 	)
 
 	// reHyperProtectOS tests if this is a hyper protect image
-	reHyperProtectOS = regexp.MustCompile(`^hyper-protect-[\w-]+-s390x$`)
+	reHyperProtectOS = regexp.MustCompile(`^hyper-protect-[\w-]+-s390x-hpcr$`)
 
 	// reHyperProtectVersion tests if the name references a valid hyper protect version
 	reHyperProtectName = regexp.MustCompile(`^ibm-hyper-protect-container-runtime-(\d+)-(\d+)-s390x-(\d+)$`)
