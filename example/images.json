@@ -14,7 +14,7 @@
         "encryption_key": "",
         "id": "r042-45544dce-eff3-42dc-b149-6a33c2764e2d",
         "name": "ibm-hyper-protect-container-runtime-1-0-s390x-8",
-        "os": "hyper-protect-1-0-s390x",
+        "os": "hyper-protect-1-0-s390x-hpcr",
         "source_volume": "",
         "status": "available",
         "visibility": "public"
@@ -34,7 +34,7 @@
         "encryption_key": "",
         "id": "r042-ce1852ed-6e1c-49f2-bf60-5822ac27501e",
         "name": "ibm-hyper-protect-container-runtime-1-0-s390x-7",
-        "os": "hyper-protect-1-0-s390x",
+        "os": "hyper-protect-1-0-s390x-hpcr",
         "source_volume": "",
         "status": "available",
         "visibility": "public"
