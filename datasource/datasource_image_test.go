@@ -38,7 +38,7 @@ func TestParseImages(t *testing.T) {
 }
 
 func TestReHyperProtectOS(t *testing.T) {
-	assert.True(t, reHyperProtectOS.MatchString("hyper-protect-1-0-s390x"))
+	assert.True(t, reHyperProtectOS.MatchString("hyper-protect-1-0-s390x-hpcr"))
 }
 
 func TestReHyperProtectName(t *testing.T) {
