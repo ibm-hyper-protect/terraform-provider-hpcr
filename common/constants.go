@@ -33,5 +33,10 @@ const (
 	KeyVersion     = "version"
 	KeyVersions    = "versions"
 
+	KeyExpiryDays = "expiry"
+	KeyCaCert     = "cacert"
+	KeyCaKey      = "cakey"
+	KeyCsrParams  = "csrparams"
+
 	PrefixBasicEncoding = "hyper-protect-basic"
 )

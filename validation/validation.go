@@ -78,3 +78,31 @@ func DiagFolder(data any, _ cty.Path) diag.Diagnostics {
 		toDiagnostics[fs.FileInfo],
 	)
 }
+
+// DiagCsrParams validates that paramters for CSR are present in the data
+func DiagCsrParams(data interface{}, path cty.Path) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	requiredKeys := []string{"country", "state", "location", "org", "unit", "domain", "mail"}
+
+	mapValue, ok := data.(map[string]interface{})
+	if !ok {
+		diags := append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Invalid type",
+			Detail:   "Expected a map of CSR parameters for generating signing certificate",
+		})
+		return diags
+	}
+
+	for _, key := range requiredKeys {
+		if _, exists := mapValue[key]; !exists {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Error,
+				Summary:  fmt.Sprintf("Missing '%s' key", key),
+				Detail:   fmt.Sprintf("The map must contain a '%s' key for successfully generating singing certificate.", key),
+			})
+		}
+	}
+	return diags
+}
