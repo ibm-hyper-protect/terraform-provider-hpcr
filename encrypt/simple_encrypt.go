@@ -76,9 +76,21 @@ func MapToYaml(m map[string]interface{}) (string, error) {
 	// Marshal the map into a YAML string.
 	yamlBytes, err := yaml.Marshal(m)
 	if err != nil {
-		return "", err // Return the error to the caller.
+		return "", err
 	}
 	return string(yamlBytes), nil
+}
+
+// KeyValueInjector - function to inject key value pair in YAML
+func KeyValueInjector(contract map[string]interface{}, key, value string) (string, error) {
+	contract[key] = value
+
+	modifiedYAMLBytes, err := yaml.Marshal(contract)
+	if err != nil {
+		return "", err
+	}
+
+	return string(modifiedYAMLBytes), nil
 }
 
 // OpensslCheck - function to check if openssl exists
@@ -93,13 +105,13 @@ func OpensslCheck() error {
 }
 
 // RandomPasswordGenerator - function to generate random password
-func RandomPasswordGenerator() (string, string, error) {
+func RandomPasswordGenerator() (string, error) {
 	randomPassword, err := SimpleExecCommand("openssl", "", "rand", fmt.Sprint(keylen))
 	if err != nil {
-		return "", "", err
+		return "", err
 	}
 
-	return randomPassword, EncodeToBase64(randomPassword), nil
+	return randomPassword, nil
 }
 
 // EncryptPassword - function to encrypt password
@@ -215,5 +227,26 @@ func SignContract(encryptedWorkload, encryptedEnv, privateKey string) (string, e
 		return "", err
 	}
 
+	err = os.Remove(privateKeyPath)
+	if err != nil {
+		return "", err
+	}
+
 	return EncodeToBase64(workloadEnvSignature), nil
+}
+
+// GenFinalSignedContract - function to generate the final contract
+func GenFinalSignedContract(workload, env, workloadEnvSig string) (string, error) {
+	contract := map[string]interface{}{
+		"workload":             workload,
+		"env":                  env,
+		"envWorkloadSignature": workloadEnvSig,
+	}
+
+	finalContract, err := MapToYaml(contract)
+	if err != nil {
+		return "", err
+	}
+
+	return finalContract, nil
 }

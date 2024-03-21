@@ -56,13 +56,13 @@ func TestOpensslCheck(t *testing.T) {
 }
 
 func TestRandomPasswordGenerator(t *testing.T) {
-	_, _, err := RandomPasswordGenerator()
+	_, err := RandomPasswordGenerator()
 
 	assert.NoError(t, err)
 }
 
 func TestEncryptPasswordSuccess(t *testing.T) {
-	passowrd, _, err := RandomPasswordGenerator()
+	passowrd, err := RandomPasswordGenerator()
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -104,6 +104,32 @@ func TestMapToYaml(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestKeyValueInjector(t *testing.T) {
+	var contractMap map[string]interface{}
+
+	file, err := os.Open("../samples/contracts/simple.yaml")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer file.Close()
+
+	contract, err := io.ReadAll(file)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	err = yaml.Unmarshal([]byte(contract), &contractMap)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	finalContract, err := KeyValueInjector(contractMap, "envWorkloadSignature", "testing123")
+
+	fmt.Println("Contract - \n", finalContract)
+
+	assert.NoError(t, err)
+}
+
 func TestEncryptContract(t *testing.T) {
 	var contractMap map[string]interface{}
 
@@ -123,7 +149,7 @@ func TestEncryptContract(t *testing.T) {
 		fmt.Println(err)
 	}
 
-	passowrd, _, err := RandomPasswordGenerator()
+	passowrd, err := RandomPasswordGenerator()
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -157,7 +183,12 @@ func TestEncryptFinalStr(t *testing.T) {
 		fmt.Println(err)
 	}
 
-	password, encodedPassword, err := RandomPasswordGenerator()
+	password, err := RandomPasswordGenerator()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	encryptedRandomPassword, err := EncryptPassword(password, data.DefaultCertificate)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -167,7 +198,7 @@ func TestEncryptFinalStr(t *testing.T) {
 		fmt.Println(err)
 	}
 
-	finalWorkload := EncryptFinalStr(encodedPassword, encryptedWorkload)
+	finalWorkload := EncryptFinalStr(encryptedRandomPassword, encryptedWorkload)
 
 	fmt.Println("workload: ", finalWorkload)
 
@@ -262,7 +293,12 @@ func TestSignContract(t *testing.T) {
 		fmt.Println(err)
 	}
 
-	password, encodedPassword, err := RandomPasswordGenerator()
+	password, err := RandomPasswordGenerator()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	encryptedPassword, err := EncryptPassword(password, data.DefaultCertificate)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -271,14 +307,14 @@ func TestSignContract(t *testing.T) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	finalWorkload := EncryptFinalStr(encodedPassword, encryptedWorkload)
+	finalWorkload := EncryptFinalStr(encryptedPassword, encryptedWorkload)
 
 	encryptedEnv, err := EncryptContract(password, contractMap["env"].(map[string]interface{}))
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	finalEnv := EncryptFinalStr(encodedPassword, encryptedEnv)
+	finalEnv := EncryptFinalStr(encryptedPassword, encryptedEnv)
 
 	workloadEnvSignature, err := SignContract(finalWorkload, finalEnv, string(privateKey))
 	if err != nil {
@@ -286,6 +322,12 @@ func TestSignContract(t *testing.T) {
 	}
 
 	fmt.Println("workloadEnvSignature - ", workloadEnvSignature)
+
+	assert.NoError(t, err)
+}
+
+func TestGenFinalSignedContract(t *testing.T) {
+	_, err := GenFinalSignedContract("test1", "test2", "test3")
 
 	assert.NoError(t, err)
 }
