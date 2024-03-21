@@ -246,6 +246,17 @@ func TestSignContract(t *testing.T) {
 		fmt.Println(err)
 	}
 
+	privateKeyPath, err := os.Open("../samples/contract-expiry/private.pem")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer privateKeyPath.Close()
+
+	privateKey, err := io.ReadAll(privateKeyPath)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	err = yaml.Unmarshal([]byte(contract), &contractMap)
 	if err != nil {
 		fmt.Println(err)
@@ -269,7 +280,7 @@ func TestSignContract(t *testing.T) {
 
 	finalEnv := EncryptFinalStr(encodedPassword, encryptedEnv)
 
-	workloadEnvSignature, err := SignContract(finalWorkload, finalEnv)
+	workloadEnvSignature, err := SignContract(finalWorkload, finalEnv, string(privateKey))
 	if err != nil {
 		fmt.Println(err)
 	}
