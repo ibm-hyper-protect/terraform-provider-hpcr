@@ -1,8 +1,10 @@
 package datasource
 
 import (
+	"encoding/json"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/encrypt"
@@ -36,25 +38,31 @@ func resourceContractEncryptedSigningCertCreate(d *schema.ResourceData, meta int
 	if err != nil {
 		return fmt.Errorf("OpenSSL not installed correctly %s", err.Error())
 	}
-	// contract := d.Get(common.KeyContract).(string)
-	// encryptCertificate := d.Get(common.KeyCert).(string)
-	// privateKey := d.Get(common.KeyPrivKey).(string)
-	// expiryDays := d.Get(common.KeyExpiryDays).(int)
-	// caCert := d.Get(common.KeyCaCert).(string)
-	// caKey := d.Get(common.KeyCaKey).(string)
-	// csrParams := d.Get(common.KeyCsrParams).(map[string]interface{})
+	contract := d.Get(common.KeyContract).(string)
+	encryptCertificate := d.Get(common.KeyCert).(string)
+	privateKey := d.Get(common.KeyPrivKey).(string)
+	expiryDays := d.Get(common.KeyExpiryDays).(int)
+	caCert := d.Get(common.KeyCaCert).(string)
+	caKey := d.Get(common.KeyCaKey).(string)
+	csrParams := d.Get(common.KeyCsrParams).(map[string]interface{})
 
-	// fmt.Println("contract - ", contract)
-	// fmt.Println("Encrypt Certificate - ", encryptCertificate)
-	// fmt.Println("Private Key - ", privateKey)
-	// fmt.Println("expiryDays - ", expiryDays)
-	// fmt.Println("CA Cert - ", caCert)
-	// fmt.Println("CA Key - ", caKey)
+	csrJsonStr, err := json.Marshal(csrParams)
+	if err != nil {
+		return fmt.Errorf("error working on CSR data %s", err.Error())
+	}
 
-	// for key, val := range csrParams {
-	// 	fmt.Println(key, val)
-	// }
-	// encryptWorkload(contractMap)
+	finalContract, err := EncryptAndSign(contract, encryptCertificate, privateKey, caCert, caKey, string(csrJsonStr), expiryDays)
+	if err != nil {
+		return fmt.Errorf("error generating contract %s", err.Error())
+	}
+
+	newUUID := uuid.New()
+	d.SetId(newUUID.String())
+
+	err = d.Set(common.KeyRendered, finalContract)
+	if err != nil {
+		return fmt.Errorf("error saving contract %s", err.Error())
+	}
 
 	return resourceContractEncryptedSigningCertRead(d, meta)
 }
@@ -68,7 +76,7 @@ func resourceContractEncryptedSigningCertDelete(d *schema.ResourceData, meta int
 	return nil
 }
 
-func EncryptAndSign(contract, encryptCert string) (string, error) {
+func EncryptAndSign(contract, encryptCert, privateKey, cacert, caKey, csrDataStr string, expiryDays int) (string, error) {
 	var contractMap map[string]interface{}
 
 	err := yaml.Unmarshal([]byte(contract), &contractMap)
@@ -76,7 +84,7 @@ func EncryptAndSign(contract, encryptCert string) (string, error) {
 		return "", err
 	}
 
-	randomPassword, encodedRandomPassword, err := encrypt.RandomPasswordGenerator()
+	randomPassword, err := encrypt.RandomPasswordGenerator()
 	if err != nil {
 		return "", err
 	}
@@ -86,4 +94,46 @@ func EncryptAndSign(contract, encryptCert string) (string, error) {
 		return "", err
 	}
 
+	encryptedWorkload, err := encrypt.EncryptContract(randomPassword, contractMap["workload"].(map[string]interface{}))
+	if err != nil {
+		return "", err
+	}
+
+	finalWorkload := encrypt.EncryptFinalStr(encryptedRandomPassword, encryptedWorkload)
+
+	signingCert, err := encrypt.CreateSigningCert(privateKey, cacert, caKey, csrDataStr, expiryDays)
+	if err != nil {
+		return "", err
+	}
+
+	signingKeyInjectedEnv, err := encrypt.KeyValueInjector(contractMap["env"].(map[string]interface{}), "signingKey", signingCert)
+	if err != nil {
+		return "", err
+	}
+
+	var envMap map[string]interface{}
+
+	err = yaml.Unmarshal([]byte(signingKeyInjectedEnv), &envMap)
+	if err != nil {
+		return "", err
+	}
+
+	encryptedEnv, err := encrypt.EncryptContract(randomPassword, envMap)
+	if err != nil {
+		return "", err
+	}
+
+	finalEnv := encrypt.EncryptFinalStr(encryptedRandomPassword, encryptedEnv)
+
+	workloadEnvSignature, err := encrypt.SignContract(finalWorkload, finalEnv, privateKey)
+	if err != nil {
+		return "", err
+	}
+
+	finalContract, err := encrypt.GenFinalSignedContract(finalWorkload, finalEnv, workloadEnvSignature)
+	if err != nil {
+		return "", err
+	}
+
+	return finalContract, nil
 }
