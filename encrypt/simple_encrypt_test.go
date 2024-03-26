@@ -253,7 +253,7 @@ func TestCreateSigningCert(t *testing.T) {
 		fmt.Println(err)
 	}
 
-	signingCert, err := CreateSigningCert(string(privateKey), string(cacert), string(caKey), string(csrDataStr), 365)
+	signingCert, err := CreateSigningCert(string(privateKey), string(cacert), string(caKey), string(csrDataStr), "", 365)
 	if err != nil {
 		fmt.Println(err)
 	}

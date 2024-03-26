@@ -16,8 +16,6 @@ import (
 func SimpleExecCommand(name string, stdinInput string, args ...string) (string, error) {
 	cmd := exec.Command(name, args...)
 
-	fmt.Println("CMD -", cmd)
-
 	// Check for standard input
 	if stdinInput != "" {
 		stdinPipe, err := cmd.StdinPipe()
@@ -165,23 +163,34 @@ func EncryptFinalStr(encryptedPassword, encryptedContract string) string {
 }
 
 // CreateSigningCert - function to generate Signing Certificate
-func CreateSigningCert(privateKey, cacert, cakey, csrData string, expiryDays int) (string, error) {
-	privateKeyPath, err := CreateTempFile(privateKey)
-	if err != nil {
-		return "", err
-	}
+func CreateSigningCert(privateKey, cacert, cakey, csrData, csrPemData string, expiryDays int) (string, error) {
+	var csr string
+	if csrPemData == "" {
+		privateKeyPath, err := CreateTempFile(privateKey)
+		if err != nil {
+			return "", err
+		}
 
-	var csrDataMap map[string]interface{}
-	err = json.Unmarshal([]byte(csrData), &csrDataMap)
-	if err != nil {
-		return "", err
-	}
+		var csrDataMap map[string]interface{}
+		err = json.Unmarshal([]byte(csrData), &csrDataMap)
+		if err != nil {
+			return "", err
+		}
 
-	csrParam := fmt.Sprintf("/C=%s/ST=%s/L=%s/O=%s/OU=%s/CN=%sC/emailAddress=%s", csrDataMap["country"], csrDataMap["state"], csrDataMap["location"], csrDataMap["org"], csrDataMap["unit"], csrDataMap["domain"], csrDataMap["mail"])
+		csrParam := fmt.Sprintf("/C=%s/ST=%s/L=%s/O=%s/OU=%s/CN=%sC/emailAddress=%s", csrDataMap["country"], csrDataMap["state"], csrDataMap["location"], csrDataMap["org"], csrDataMap["unit"], csrDataMap["domain"], csrDataMap["mail"])
 
-	csr, err := SimpleExecCommand("openssl", "", "req", "-new", "-key", privateKeyPath, "-subj", csrParam)
-	if err != nil {
-		return "", err
+		csr, err = SimpleExecCommand("openssl", "", "req", "-new", "-key", privateKeyPath, "-subj", csrParam)
+		if err != nil {
+			return "", err
+		}
+
+		err = os.Remove(privateKeyPath)
+		if err != nil {
+			return "", err
+		}
+
+	} else {
+		csr = csrPemData
 	}
 
 	csrPath, err := CreateTempFile(csr)
@@ -198,12 +207,12 @@ func CreateSigningCert(privateKey, cacert, cakey, csrData string, expiryDays int
 		return "", err
 	}
 
-	signingCert, err := SimpleExecCommand("openssl", "", "x509", "-req", "-in", csrPath, "-CA", caCertPath, "-CAkey", caKeyPath, "-CAcreateserial", "-days", fmt.Sprintf("%d", expiryDays))
+	signingCert, err := CreateCert(csrPath, caCertPath, caKeyPath, expiryDays)
 	if err != nil {
 		return "", err
 	}
 
-	for _, path := range []string{privateKeyPath, csrPath, caCertPath, caKeyPath} {
+	for _, path := range []string{csrPath, caCertPath, caKeyPath} {
 		err := os.Remove(path)
 		if err != nil {
 			return "", err
@@ -211,6 +220,15 @@ func CreateSigningCert(privateKey, cacert, cakey, csrData string, expiryDays int
 	}
 
 	return EncodeToBase64(signingCert), nil
+}
+
+func CreateCert(csrPath, caCertPath, caKeyPath string, expiryDays int) (string, error) {
+	signingCert, err := SimpleExecCommand("openssl", "", "x509", "-req", "-in", csrPath, "-CA", caCertPath, "-CAkey", caKeyPath, "-CAcreateserial", "-days", fmt.Sprintf("%d", expiryDays))
+	if err != nil {
+		return "", err
+	}
+
+	return signingCert, nil
 }
 
 // SignContract - function to sign encrypted contract

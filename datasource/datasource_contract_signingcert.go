@@ -24,7 +24,8 @@ func ResourceContractEncryptedSigningCert() *schema.Resource {
 			common.KeyExpiryDays: &schemaExpiryDaysIn,
 			common.KeyCaCert:     &schemaCaCertIn,
 			common.KeyCaKey:      &schemaCaKeyIn,
-			common.KeyCsrParams:  &schemaCsrParams,
+			common.KeyCsrParams:  &schemaCsrParamsIn,
+			common.KeyCsrfile:    &schemaCsrFileIn,
 			// output parameters
 			common.KeyRendered: &schemaRenderedOut,
 		},
@@ -38,6 +39,7 @@ func resourceContractEncryptedSigningCertCreate(d *schema.ResourceData, meta int
 	if err != nil {
 		return fmt.Errorf("OpenSSL not installed correctly %s", err.Error())
 	}
+
 	contract := d.Get(common.KeyContract).(string)
 	encryptCertificate := d.Get(common.KeyCert).(string)
 	privateKey := d.Get(common.KeyPrivKey).(string)
@@ -45,24 +47,31 @@ func resourceContractEncryptedSigningCertCreate(d *schema.ResourceData, meta int
 	caCert := d.Get(common.KeyCaCert).(string)
 	caKey := d.Get(common.KeyCaKey).(string)
 	csrParams := d.Get(common.KeyCsrParams).(map[string]interface{})
+	csrData := d.Get(common.KeyCsrfile).(string)
+
+	if privateKey == "" {
+		return fmt.Errorf("private key missing")
+	}
+
+	if csrParams != nil && csrData != "" {
+		return fmt.Errorf("private key, CSR parameters and csr.pem has been parsed together")
+	}
 
 	csrJsonStr, err := json.Marshal(csrParams)
 	if err != nil {
 		return fmt.Errorf("error working on CSR data %s", err.Error())
 	}
-
-	finalContract, err := EncryptAndSign(contract, encryptCertificate, privateKey, caCert, caKey, string(csrJsonStr), expiryDays)
+	finalContract, err := EncryptAndSign(contract, encryptCertificate, privateKey, caCert, caKey, string(csrJsonStr), csrData, expiryDays)
 	if err != nil {
 		return fmt.Errorf("error generating contract %s", err.Error())
 	}
-
-	newUUID := uuid.New()
-	d.SetId(newUUID.String())
-
 	err = d.Set(common.KeyRendered, finalContract)
 	if err != nil {
 		return fmt.Errorf("error saving contract %s", err.Error())
 	}
+
+	newUUID := uuid.New()
+	d.SetId(newUUID.String())
 
 	return resourceContractEncryptedSigningCertRead(d, meta)
 }
@@ -76,7 +85,7 @@ func resourceContractEncryptedSigningCertDelete(d *schema.ResourceData, meta int
 	return nil
 }
 
-func EncryptAndSign(contract, encryptCert, privateKey, cacert, caKey, csrDataStr string, expiryDays int) (string, error) {
+func EncryptAndSign(contract, encryptCert, privateKey, cacert, caKey, csrDataStr, csrPemData string, expiryDays int) (string, error) {
 	var contractMap map[string]interface{}
 
 	err := yaml.Unmarshal([]byte(contract), &contractMap)
@@ -101,7 +110,7 @@ func EncryptAndSign(contract, encryptCert, privateKey, cacert, caKey, csrDataStr
 
 	finalWorkload := encrypt.EncryptFinalStr(encryptedRandomPassword, encryptedWorkload)
 
-	signingCert, err := encrypt.CreateSigningCert(privateKey, cacert, caKey, csrDataStr, expiryDays)
+	signingCert, err := encrypt.CreateSigningCert(privateKey, cacert, caKey, csrDataStr, csrPemData, expiryDays)
 	if err != nil {
 		return "", err
 	}

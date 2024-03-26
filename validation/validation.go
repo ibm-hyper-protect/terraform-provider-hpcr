@@ -15,6 +15,8 @@ package validation
 
 import (
 	"crypto/rsa"
+	"crypto/x509"
+	"encoding/pem"
 	"fmt"
 	"io/fs"
 	"os"
@@ -104,5 +106,42 @@ func DiagCsrParams(data interface{}, path cty.Path) diag.Diagnostics {
 			})
 		}
 	}
+	return diags
+}
+
+func DiagCsrFile(data interface{}, path cty.Path) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	csrString, err := data.(string)
+	if !err {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Expected string",
+			Detail:   "The data is not CSR",
+		})
+		return diags
+	}
+
+	// Decode the PEM encoded CSR.
+	block, _ := pem.Decode([]byte(csrString))
+	if block == nil || block.Type != "CERTIFICATE REQUEST" {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Invalid CSR format",
+			Detail:   "The provided string is not a valid PEM-encoded CSR",
+		})
+		return diags
+	}
+
+	// Parse the CSR to further validate its structure.
+	_, err1 := x509.ParseCertificateRequest(block.Bytes)
+	if err1 != nil {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Invalid CSR",
+			Detail:   fmt.Sprintf("The provided CSR cannot be parsed: %v", err),
+		})
+	}
+
 	return diags
 }

@@ -144,12 +144,20 @@ var (
 		ValidateDiagFunc: validation.DiagPrivateKey,
 	}
 
-	schemaCsrParams = schema.Schema{
+	schemaCsrParamsIn = schema.Schema{
 		Type:             schema.TypeMap,
 		Description:      "CSR Parameters to generate signing certificate",
-		Required:         true,
+		Required:         false,
 		ForceNew:         true,
 		ValidateDiagFunc: validation.DiagCsrParams,
+	}
+
+	schemaCsrFileIn = schema.Schema{
+		Type:             schema.TypeString,
+		Description:      "CSR File to generate signing certificate",
+		Optional:         true,
+		ForceNew:         true,
+		ValidateDiagFunc: validation.DiagCsrFile,
 	}
 
 	schemaPrivKeyIn = schema.Schema{
