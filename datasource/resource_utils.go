@@ -147,7 +147,7 @@ var (
 	schemaCsrParamsIn = schema.Schema{
 		Type:             schema.TypeMap,
 		Description:      "CSR Parameters to generate signing certificate",
-		Required:         false,
+		Optional:         true,
 		ForceNew:         true,
 		ValidateDiagFunc: validation.DiagCsrParams,
 	}
