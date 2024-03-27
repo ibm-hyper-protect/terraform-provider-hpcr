@@ -53,8 +53,8 @@ func resourceContractEncryptedSigningCertCreate(d *schema.ResourceData, meta int
 		return fmt.Errorf("private key missing")
 	}
 
-	if csrParams != nil && csrData != "" {
-		return fmt.Errorf("private key, CSR parameters and csr.pem has been parsed together")
+	if len(csrParams) != 0 && csrData != "" {
+		return fmt.Errorf("CSR parameters and csr.pem has been parsed together")
 	}
 
 	csrJsonStr, err := json.Marshal(csrParams)
