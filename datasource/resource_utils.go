@@ -121,6 +121,45 @@ var (
 		ValidateDiagFunc: validation.DiagCertificate,
 	}
 
+	schemaExpiryDaysIn = schema.Schema{
+		Type:        schema.TypeInt,
+		Description: "Number of days for contract to expire",
+		Required:    true,
+		ForceNew:    true,
+	}
+
+	schemaCaCertIn = schema.Schema{
+		Type:             schema.TypeString,
+		Description:      "CA Certificate used to generate signing certificate",
+		Required:         true,
+		ForceNew:         true,
+		ValidateDiagFunc: validation.DiagCertificate,
+	}
+
+	schemaCaKeyIn = schema.Schema{
+		Type:             schema.TypeString,
+		Description:      "CA Key used to generate singing certificate",
+		Required:         true,
+		ForceNew:         true,
+		ValidateDiagFunc: validation.DiagPrivateKey,
+	}
+
+	schemaCsrParamsIn = schema.Schema{
+		Type:             schema.TypeMap,
+		Description:      "CSR Parameters to generate signing certificate",
+		Optional:         true,
+		ForceNew:         true,
+		ValidateDiagFunc: validation.DiagCsrParams,
+	}
+
+	schemaCsrFileIn = schema.Schema{
+		Type:             schema.TypeString,
+		Description:      "CSR File to generate signing certificate",
+		Optional:         true,
+		ForceNew:         true,
+		ValidateDiagFunc: validation.DiagCsrFile,
+	}
+
 	schemaPrivKeyIn = schema.Schema{
 		Type:             schema.TypeString,
 		Description:      "Private key used to sign the contract. If omitted, a temporally signing key is created.",

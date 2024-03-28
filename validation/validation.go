@@ -15,6 +15,8 @@ package validation
 
 import (
 	"crypto/rsa"
+	"crypto/x509"
+	"encoding/pem"
 	"fmt"
 	"io/fs"
 	"os"
@@ -77,4 +79,69 @@ func DiagFolder(data any, _ cty.Path) diag.Diagnostics {
 		})),
 		toDiagnostics[fs.FileInfo],
 	)
+}
+
+// DiagCsrParams validates that paramters for CSR are present in the data
+func DiagCsrParams(data interface{}, path cty.Path) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	requiredKeys := []string{"country", "state", "location", "org", "unit", "domain", "mail"}
+
+	mapValue, ok := data.(map[string]interface{})
+	if !ok {
+		diags := append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Invalid type",
+			Detail:   "Expected a map of CSR parameters for generating signing certificate",
+		})
+		return diags
+	}
+
+	for _, key := range requiredKeys {
+		if _, exists := mapValue[key]; !exists {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Error,
+				Summary:  fmt.Sprintf("Missing '%s' key", key),
+				Detail:   fmt.Sprintf("The map must contain a '%s' key for successfully generating singing certificate.", key),
+			})
+		}
+	}
+	return diags
+}
+
+func DiagCsrFile(data interface{}, path cty.Path) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	csrString, err := data.(string)
+	if !err {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Expected string",
+			Detail:   "The data is not CSR",
+		})
+		return diags
+	}
+
+	// Decode the PEM encoded CSR.
+	block, _ := pem.Decode([]byte(csrString))
+	if block == nil || block.Type != "CERTIFICATE REQUEST" {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Invalid CSR format",
+			Detail:   "The provided string is not a valid PEM-encoded CSR",
+		})
+		return diags
+	}
+
+	// Parse the CSR to further validate its structure.
+	_, err1 := x509.ParseCertificateRequest(block.Bytes)
+	if err1 != nil {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Invalid CSR",
+			Detail:   fmt.Sprintf("The provided CSR cannot be parsed: %v", err),
+		})
+	}
+
+	return diags
 }
