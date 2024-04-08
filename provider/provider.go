@@ -22,14 +22,14 @@ func Provider(version, commit string) func() *schema.Provider {
 	return func() *schema.Provider {
 		return &schema.Provider{
 			ResourcesMap: map[string]*schema.Resource{
-				"hpcr_tgz":                   datasource.ResourceTgz(),
-				"hpcr_tgz_encrypted":         datasource.ResourceTgzEncrypted(),
-				"hpcr_text":                  datasource.ResourceText(),
-				"hpcr_text_encrypted":        datasource.ResourceTextEncrypted(),
-				"hpcr_json":                  datasource.ResourceJSON(),
-				"hpcr_json_encrypted":        datasource.ResourceJSONEncrypted(),
-				"hpcr_contract_encrypted":    datasource.ResourceContractEncrypted(),
-				"hpcr_contract_encrypted_ce": datasource.ResourceContractEncryptedSigningCert(),
+				"hpcr_tgz":                datasource.ResourceTgz(),
+				"hpcr_tgz_encrypted":      datasource.ResourceTgzEncrypted(),
+				"hpcr_text":               datasource.ResourceText(),
+				"hpcr_text_encrypted":     datasource.ResourceTextEncrypted(),
+				"hpcr_json":               datasource.ResourceJSON(),
+				"hpcr_json_encrypted":     datasource.ResourceJSONEncrypted(),
+				"hpcr_contract_encrypted": datasource.ResourceContractEncrypted(),
+				"hpcr_contract_encrypted_contract_expiry": datasource.ResourceContractEncryptedSigningCert(),
 			},
 			DataSourcesMap: map[string]*schema.Resource{
 				"hpcr_image":            datasource.DatasourceImage(),
