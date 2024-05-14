@@ -1,0 +1,5 @@
+env:
+  type: env
+  logging:
+workload:
+  type: workload
