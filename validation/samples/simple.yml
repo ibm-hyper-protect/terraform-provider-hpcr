@@ -14,7 +14,11 @@
 ---
 env:
   type: env
-  logging: {}
+  logging:
+    logRouter:
+      hostname: "test"
+      iamApiKey: "test"
+      port: 443
 workload:
   type: workload
   confidential-containers: {}
