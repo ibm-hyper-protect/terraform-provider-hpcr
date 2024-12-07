@@ -22,7 +22,7 @@ require (
 	github.com/Masterminds/sprig/v3 v3.2.3 // indirect
 	github.com/ProtonMail/go-crypto v0.0.0-20230923063757-afb1ddc0824c // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
-	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
+	github.com/apparentlymart/go-textseg/v16 v16.0.0 // indirect
 	github.com/armon/go-radix v1.0.0 // indirect
 	github.com/bgentry/speakeasy v0.1.0 // indirect
 	github.com/cloudflare/circl v1.3.7 // indirect
@@ -48,7 +48,7 @@ require (
 	github.com/hashicorp/terraform-svchost v0.1.1 // indirect
 	github.com/hashicorp/yamux v0.1.1 // indirect
 	github.com/huandu/xstrings v1.4.0 // indirect
-	github.com/imdario/mergo v0.3.16 // indirect
+	github.com/imdario/mergo v1.0.1 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mitchellh/cli v1.1.5 // indirect
@@ -59,9 +59,9 @@ require (
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/oklog/run v1.1.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/posener/complete v1.2.3 // indirect
+	github.com/posener/complete/v2 v2.1.0 // indirect
 	github.com/qri-io/jsonpointer v0.1.1 // indirect
-	github.com/russross/blackfriday v1.6.0 // indirect
+	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/shopspring/decimal v1.3.1 // indirect
 	github.com/spf13/cast v1.6.0 // indirect
 	github.com/vmihailenco/msgpack v4.0.4+incompatible // indirect
@@ -73,7 +73,7 @@ require (
 	golang.org/x/net v0.23.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
-	google.golang.org/appengine v1.6.8 // indirect
+	google.golang.org/appengine/v2 v2.0.6 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240108191215-35c7eff3a6b1 // indirect
 	google.golang.org/grpc v1.60.1 // indirect
 	google.golang.org/protobuf v1.33.0 // indirect
