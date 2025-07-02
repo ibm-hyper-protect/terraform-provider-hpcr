@@ -1,3 +1,0 @@
-@echo off
-mkdir build 2> NUL
-go test -v -coverprofile build/cover.out -coverpkg=./... -covermode=atomic .\...
