@@ -1,4 +1,0 @@
-env:
-  type: env
-workload:
-  type: workload
