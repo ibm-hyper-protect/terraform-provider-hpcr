@@ -1,5 +1,8 @@
 default: fmt lint install generate
 
+tidy:
+	go mod tidy
+
 build:
 	go build -v ./...
 
