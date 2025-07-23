@@ -1,20 +1,31 @@
-# Contributing
+# Contributing to terraform-provider-hpcr
 
-This is an open source project, and we appreciate your help!
+Thanks for considering contributing to this project! Here's how to get started:
 
-We use the GitHub issue tracker to discuss new features and non-trivial bugs.
+## Open an Issue First
 
-If you have questions about contributing, PRs, or bugs, you can:
-- Create a new issue and tag @your-github-username
-- Use the GitHub Discussions (if enabled)
-- Reach out via [preferred method, e.g., email or Discord]
+Before submitting a pull request, please open an issue describing:
 
-To contribute code, documentation, or tests, please submit a pull request to
-the GitHub repository. Please make sure to tag @Sashwat-K and add @Sashwat-K
-as reviewers.
+- What the bug or feature is
+- Why it should be fixed or added
+- How you plan to implement it
 
-Generally, we expect two maintainers to review your pull request before it is 
-approved for merging. For more details, see the
-[MAINTAINERS](MAINTAINERS.md) page.
+This helps us discuss it early and avoid duplicated or unnecessary work.
 
-Contributions are subject to the [Developer Certificate of Origin, Version 1.1](https://developercertificate.org/) and the [Apache License, Version 2](https://www.apache.org/licenses/LICENSE-2.0.txt).
+Pull requests without a linked issue **may be closed**.
+
+## Getting Started
+
+1. Fork this repository.
+2. Create a new feature branch.
+3. Make your changes.
+4. Run `make tidy` and `make test`.
+5. Submit a pull request.
+
+## Guidelines
+
+- Use [Conventional Commits](https://www.conventionalcommits.org/).
+- Keep PRs focused and small.
+- Add tests for new features and bug fixes.
+- CI must pass before review.
+- Tag and add @Sashwat-K as one of PR's reviewers.
