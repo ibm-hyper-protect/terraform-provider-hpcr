@@ -40,6 +40,7 @@ var testAccProtoV6ProviderFactoriesWithEcho = map[string]func() (tfprotov6.Provi
 	"echo":        echoprovider.NewProviderServer(),
 }
 
+// Basic provider test
 func TestProvider(t *testing.T) {
 	provider := New("test")()
 	if provider == nil {

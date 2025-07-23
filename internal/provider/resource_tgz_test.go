@@ -17,19 +17,34 @@ package provider
 
 import (
 	"context"
+	"fmt"
+	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	testresource "github.com/hashicorp/terraform-plugin-testing/helper/resource"
+
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/internal/common"
 )
 
 const (
+	hpcrTgzTestName          = "hpcr_tgz.test"
 	sampleValidComposePath   = "../../samples/tgz"
 	sampleInvalidComposePath = "../test"
 	sampleBase64Tgz          = "H4sIAAAAAAAA/+zSTU7DMBAFYK85hS/QdsZx/JMVV7EnYxLVkZFdqHp7VECoCxCbSAg13+bJ8lvYoxkLHbnuqCzPpfH+EpYs1gYAYLS+JtoebvOdQhTYQ2ctoAIUgKazRkhY/SXfeGmnUAVAC206h9Pxp95v959/+cp/onF9nYnb8CDlxDmX3bnUPF6PUs5LeOJBfuzIfi6HPMca6uVw03xsU1C9GbwGMuhTHDW65KOKGE3Hqh+dM5g8EUZtuEvkIqAjSuyidQl9dEQ6/fUgNpvN5s68BQAA//8w9QWTAAgAAA=="
+
+	sampleTgzTerraformConfig = `
+provider "hpcr" {}
+
+resource "hpcr_tgz" "test" {
+	folder = "%s"
+}
+`
 )
 
+// Testcase to validate schema of hpcr_tgz
 func TestTgzResourceSchema(t *testing.T) {
 	r := HpcrTgzResource()
 
@@ -56,6 +71,7 @@ func TestTgzResourceSchema(t *testing.T) {
 	}
 }
 
+// Testcase to check generateTgz() is able to generate base64 of TGZed files
 func TestTgzResourceGenerateTgz(t *testing.T) {
 	r := &TgzResource{}
 	ctx := context.Background()
@@ -104,4 +120,43 @@ func TestTgzResourceGenerateTgz(t *testing.T) {
 			}
 		})
 	}
+}
+
+// Testcase to check if create, update and read are working as expected
+func TestTgzResourceSuccess(t *testing.T) {
+	testresource.Test(t, testresource.TestCase{
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []testresource.TestStep{
+			// Create and Read testing
+			{
+				Config: testTgzResourceConfig(sampleValidComposePath),
+				Check: testresource.ComposeAggregateTestCheckFunc(
+					testresource.TestCheckResourceAttr(hpcrTgzTestName, common.AttributeTgzFolderName, sampleValidComposePath),
+					testresource.TestCheckResourceAttr(hpcrTgzTestName, common.AttributeRenderedName, sampleBase64Tgz),
+					testresource.TestCheckResourceAttrSet(hpcrTgzTestName, common.AttributeIdName),
+				),
+			},
+			// Update and Read testing
+			{
+				Config: testTgzResourceConfig(sampleValidComposePath),
+				Check: testresource.ComposeAggregateTestCheckFunc(
+					testresource.TestCheckResourceAttr(hpcrTgzTestName, common.AttributeTgzFolderName, sampleValidComposePath),
+					testresource.TestCheckResourceAttr(hpcrTgzTestName, common.AttributeRenderedName, sampleBase64Tgz),
+					testresource.TestCheckResourceAttrSet(hpcrTgzTestName, common.AttributeIdName),
+				),
+			},
+			// ImportState testing
+			{
+				ResourceName:      hpcrTgzTestName,
+				ImportState:       true,
+				ImportStateVerify: false,
+				ExpectError:       regexp.MustCompile("Import Not Implemented"),
+			},
+		},
+	})
+}
+
+// common function to provide sample tf syntax
+func testTgzResourceConfig(folderPath string) string {
+	return fmt.Sprintf(sampleTgzTerraformConfig, folderPath)
 }

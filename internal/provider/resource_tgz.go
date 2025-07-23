@@ -47,6 +47,7 @@ func (r *TgzResource) Metadata(ctx context.Context, req resource.MetadataRequest
 	resp.TypeName = req.ProviderTypeName + common.ResourceTgzName
 }
 
+// Function to define schema of hpcr_tgz
 func (r *TgzResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: common.ResourceTgzDescription,
