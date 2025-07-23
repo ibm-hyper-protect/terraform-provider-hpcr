@@ -15,7 +15,9 @@
 
 package common
 
-import "github.com/hashicorp/go-uuid"
+import (
+	"github.com/hashicorp/go-uuid"
+)
 
 // Function to generate UUID
 func GenerateUuid() (string, error) {

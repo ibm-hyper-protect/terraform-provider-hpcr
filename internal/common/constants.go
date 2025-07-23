@@ -21,7 +21,7 @@ const (
 
 	// common attributes
 	AttributeIdName        = "id"
-	AttributeIdDescription = "ID generated while executing resource"
+	AttributeIdDescription = "ID generated while executing resource / datasource"
 
 	AttributeRenderedName = "rendered"
 
@@ -31,15 +31,27 @@ const (
 	AttributeSha256OutName        = "sha256_out"
 	AttributeSha256OutDescription = "SHA256 of output"
 
+	AttributePrivKeyName        = "privkey"
+	AttributePrivKeyDescription = "Private key"
+
 	// common error messages
 	UuidGenerateFailureShortDescription = "Failed to generate ID"
 	UUidGenerateFailureLongDescription  = "Failed to generate UUID using Terraform inbuilt function"
 
-	// tgz resource
+	// hpcr_tgz resource
 	ResourceTgzName                    = "_tgz"
 	ResourceTgzDescription             = "Generates a base64 encoded string from the TGZed files in the folder"
 	AttributeTgzFolderName             = "folder"
 	AttributeTgzFolderDescription      = "Path to folder"
 	AttributeTgzRenderedDescription    = "Encoded string of TGZed files"
 	ResourceTgzFailureShortDescription = "Failed to generate encoded TGZ"
+
+	// hpcr_attestation data source
+	DataSourceAttestationName                    = "_attestation"
+	DataSourceAttestationDescription             = "Decrypts encrypted attestation records"
+	DataSourceAttestationInputName               = "attestation"
+	DataSourceAttestationInputDescription        = "Encrypted attestation records"
+	DataSourceAttestationChecksumsName           = "checksums"
+	DataSourceAttestationChecksumsDescription    = "Decrypted attestation records"
+	DataSourceAttestationFailureShortDescription = "Failed to decrypt encrypted attestation records"
 )

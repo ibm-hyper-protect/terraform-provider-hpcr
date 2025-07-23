@@ -55,7 +55,9 @@ func (p *HpcrProvider) Resources(ctx context.Context) []func() resource.Resource
 }
 
 func (p *HpcrProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
-	return []func() datasource.DataSource{}
+	return []func() datasource.DataSource{
+		HpcrAttestationDataSource,
+	}
 }
 
 func New(version string) func() provider.Provider {

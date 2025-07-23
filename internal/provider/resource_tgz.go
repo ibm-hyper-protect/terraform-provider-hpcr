@@ -24,6 +24,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	"github.com/ibm-hyper-protect/contract-go/contract"
+
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/internal/common"
 )
 
@@ -118,7 +119,7 @@ func (r *TgzResource) handleGenerateTgz(ctx context.Context, data *TgzResourceMo
 	return diags
 }
 
-// function to create resource - terraform apply
+// Function to create resource - terraform apply
 func (r *TgzResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data TgzResourceModel
 
@@ -135,7 +136,7 @@ func (r *TgzResource) Create(ctx context.Context, req resource.CreateRequest, re
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-// function to read resource - terraform plan/apply/destroy
+// Function to read resource - terraform plan/apply/destroy
 func (r *TgzResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data TgzResourceModel
 
@@ -152,7 +153,7 @@ func (r *TgzResource) Read(ctx context.Context, req resource.ReadRequest, resp *
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-// function to update resource - terraform apply
+// Function to update resource - terraform apply
 func (r *TgzResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data TgzResourceModel
 
@@ -169,6 +170,6 @@ func (r *TgzResource) Update(ctx context.Context, req resource.UpdateRequest, re
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-// function to delete resource - terraform destroy
+// Function to delete resource - terraform destroy
 func (r *TgzResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 }
