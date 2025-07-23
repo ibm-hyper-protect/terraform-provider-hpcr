@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
 	"github.com/ibm-hyper-protect/contract-go/contract"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/internal/common"
 )
@@ -50,7 +51,7 @@ func (r *TgzResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				Description: "SHA256 of input",
 				Computed:    true,
 			},
-			"sha256_out": schema.SetAttribute{
+			"sha256_out": schema.StringAttribute{
 				Description: "SHA256 of output",
 				Computed:    true,
 			},
@@ -92,6 +93,7 @@ func (r *TgzResource) generateTgz(ctx context.Context, data *TgzResourceModel) d
 	return diags
 }
 
+// Handler function to create, update, read
 func (r *TgzResource) handleGenerateTgz(ctx context.Context, data *TgzResourceModel) diag.Diagnostics {
 	var diags diag.Diagnostics
 
@@ -99,6 +101,7 @@ func (r *TgzResource) handleGenerateTgz(ctx context.Context, data *TgzResourceMo
 	return diags
 }
 
+// function to create resource - terraform apply
 func (r *TgzResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data TgzResourceModel
 
@@ -115,6 +118,7 @@ func (r *TgzResource) Create(ctx context.Context, req resource.CreateRequest, re
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
+// function to read resource - terraform plan/apply/destroy
 func (r *TgzResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data TgzResourceModel
 
@@ -131,6 +135,7 @@ func (r *TgzResource) Read(ctx context.Context, req resource.ReadRequest, resp *
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
+// function to update resource - terraform apply
 func (r *TgzResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data TgzResourceModel
 
@@ -147,5 +152,6 @@ func (r *TgzResource) Update(ctx context.Context, req resource.UpdateRequest, re
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
+// function to delete resource - terraform destroy
 func (r *TgzResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 }

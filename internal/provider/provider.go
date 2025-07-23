@@ -33,7 +33,9 @@ func (p *HpcrProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 }
 
 func (p *HpcrProvider) Resources(ctx context.Context) []func() resource.Resource {
-	return []func() resource.Resource{}
+	return []func() resource.Resource{
+		HpcrTgzResource,
+	}
 }
 
 func (p *HpcrProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
