@@ -29,30 +29,31 @@ type TgzResourceModel struct {
 }
 
 func (r *TgzResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_tgz"
+	resp.TypeName = req.ProviderTypeName + common.ResourceTgzName
 }
 
 func (r *TgzResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Generates a base64 encoded string from the TGZed files in the folder",
+		Description: common.ResourceTgzDescription,
 		Attributes: map[string]schema.Attribute{
-			"folder": schema.StringAttribute{
-				Description: "Path to folder",
+			common.AttributeTgzFolderName: schema.StringAttribute{
+				Description: common.AttributeTgzFolderDescription,
 				Required:    true,
 			},
-			"id": schema.StringAttribute{
-				Computed: true,
-			},
-			"rendered": schema.StringAttribute{
-				Description: "Generated encoded string",
+			common.AttributeIdName: schema.StringAttribute{
+				Description: common.AttributeIdDescription,
 				Computed:    true,
 			},
-			"sha256_in": schema.StringAttribute{
-				Description: "SHA256 of input",
+			common.AttributeRenderedName: schema.StringAttribute{
+				Description: common.AttributeTgzRenderedDescription,
 				Computed:    true,
 			},
-			"sha256_out": schema.StringAttribute{
-				Description: "SHA256 of output",
+			common.AttributeSha256InName: schema.StringAttribute{
+				Description: common.AttributeSha256InDescription,
+				Computed:    true,
+			},
+			common.AttributeSha256OutName: schema.StringAttribute{
+				Description: common.AttributeSha256OutDescription,
 				Computed:    true,
 			},
 		},
@@ -68,8 +69,8 @@ func (r *TgzResource) generateTgz(ctx context.Context, data *TgzResourceModel) d
 	id, err := common.GenerateUuid()
 	if err != nil {
 		diags.AddError(
-			"Failed to generate ID",
-			"Failed to generate UUID using Terraform inbuilt function",
+			common.UuidGenerateFailureShortDescription,
+			common.UUidGenerateFailureLongDescription,
 		)
 
 		return diags
@@ -78,7 +79,7 @@ func (r *TgzResource) generateTgz(ctx context.Context, data *TgzResourceModel) d
 	encodedTgz, inputSha256, outputSha256, err := contract.HpcrTgz(folderPath)
 	if err != nil {
 		diags.AddError(
-			"Failed to generate encoded TGZ",
+			common.ResourceTgzFailureShortDescription,
 			err.Error(),
 		)
 

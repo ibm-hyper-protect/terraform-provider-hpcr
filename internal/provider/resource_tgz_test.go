@@ -6,6 +6,13 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/internal/common"
+)
+
+const (
+	sampleValidComposePath   = "../../samples/tgz"
+	sampleInvalidComposePath = "../test"
+	sampleBase64Tgz          = "H4sIAAAAAAAA/+zSTU7DMBAFYK85hS/QdsZx/JMVV7EnYxLVkZFdqHp7VECoCxCbSAg13+bJ8lvYoxkLHbnuqCzPpfH+EpYs1gYAYLS+JtoebvOdQhTYQ2ctoAIUgKazRkhY/SXfeGmnUAVAC206h9Pxp95v959/+cp/onF9nYnb8CDlxDmX3bnUPF6PUs5LeOJBfuzIfi6HPMca6uVw03xsU1C9GbwGMuhTHDW65KOKGE3Hqh+dM5g8EUZtuEvkIqAjSuyidQl9dEQ6/fUgNpvN5s68BQAA//8w9QWTAAgAAA=="
 )
 
 func TestTgzResourceSchema(t *testing.T) {
@@ -24,7 +31,7 @@ func TestTgzResourceSchema(t *testing.T) {
 		t.Fatal("schema attributes should not be nil")
 	}
 
-	attrs := []string{"folder", "id", "rendered", "sha256_in", "sha256_out"}
+	attrs := []string{common.AttributeTgzFolderName, common.AttributeIdName, common.AttributeRenderedName, common.AttributeSha256InName, common.AttributeSha256OutName}
 	for _, attr := range attrs {
 		_, exists := resp.Schema.Attributes[attr]
 
@@ -47,11 +54,11 @@ func TestTgzResourceGenerateTgz(t *testing.T) {
 	}{
 		{
 			name:         "Positive testcase",
-			folder:       "../../samples/tgz",
-			expectResult: "H4sIAAAAAAAA/+zSTU7DMBAFYK85hS/QdsZx/JMVV7EnYxLVkZFdqHp7VECoCxCbSAg13+bJ8lvYoxkLHbnuqCzPpfH+EpYs1gYAYLS+JtoebvOdQhTYQ2ctoAIUgKazRkhY/SXfeGmnUAVAC206h9Pxp95v959/+cp/onF9nYnb8CDlxDmX3bnUPF6PUs5LeOJBfuzIfi6HPMca6uVw03xsU1C9GbwGMuhTHDW65KOKGE3Hqh+dM5g8EUZtuEvkIqAjSuyidQl9dEQ6/fUgNpvN5s68BQAA//8w9QWTAAgAAA==",
+			folder:       sampleValidComposePath,
+			expectResult: sampleBase64Tgz,
 		}, {
 			name:      "Negative testcase",
-			folder:    "../test",
+			folder:    sampleInvalidComposePath,
 			expectErr: true,
 		},
 	}

@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/internal/common"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/internal/provider"
 )
 
@@ -28,7 +29,7 @@ func main() {
 		// TODO: Update this string with the published name of your provider.
 		// Also update the tfplugindocs generate command to either remove the
 		// -provider-name flag or set its value to the updated provider name.
-		Address: "registry.terraform.io/ibm-hyper-protect/hpcr",
+		Address: common.TerraformProviderLink,
 		Debug:   debug,
 	}
 

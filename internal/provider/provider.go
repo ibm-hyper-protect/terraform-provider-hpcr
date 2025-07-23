@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/internal/common"
 )
 
 var _ provider.Provider = &HpcrProvider{}
@@ -19,7 +20,7 @@ type HpcrProvider struct {
 }
 
 func (p *HpcrProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
-	resp.TypeName = "hpcr"
+	resp.TypeName = common.TerraformProviderName
 	resp.Version = p.version
 }
 

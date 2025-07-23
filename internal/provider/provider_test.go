@@ -6,13 +6,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	"github.com/hashicorp/terraform-plugin-testing/echoprovider"
+	"github.com/ibm-hyper-protect/terraform-provider-hpcr/internal/common"
 )
 
 // testAccProtoV6ProviderFactories is used to instantiate a provider during acceptance testing.
 // The factory function is called for each Terraform CLI command to create a provider
 // server that the CLI can connect to and interact with.
 var testAccProtoV6ProviderFactories = map[string]func() (tfprotov6.ProviderServer, error){
-	"hpcr": providerserver.NewProtocol6WithError(New("test")()),
+	common.TerraformProviderName: providerserver.NewProtocol6WithError(New("test")()),
 }
 
 // testAccProtoV6ProviderFactoriesWithEcho includes the echo provider alongside the scaffolding provider.
