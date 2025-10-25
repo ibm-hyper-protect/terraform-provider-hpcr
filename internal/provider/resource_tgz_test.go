@@ -33,7 +33,7 @@ const (
 	hpcrTgzTestName          = "hpcr_tgz.test"
 	sampleValidComposePath   = "../../samples/tgz"
 	sampleInvalidComposePath = "../test"
-	sampleBase64Tgz          = "H4sIAAAAAAAA/+zSTU7DMBAFYK85hS/QdsZx/JMVV7EnYxLVkZFdqHp7VECoCxCbSAg13+bJ8lvYoxkLHbnuqCzPpfH+EpYs1gYAYLS+JtoebvOdQhTYQ2ctoAIUgKazRkhY/SXfeGmnUAVAC206h9Pxp95v959/+cp/onF9nYnb8CDlxDmX3bnUPF6PUs5LeOJBfuzIfi6HPMca6uVw03xsU1C9GbwGMuhTHDW65KOKGE3Hqh+dM5g8EUZtuEvkIqAjSuyidQl9dEQ6/fUgNpvN5s68BQAA//8w9QWTAAgAAA=="
+	sampleBase64Tgz          = "H4sIAAAAAAAA/+zSwU7DMAwG4Jx5irzANrtN06QnXiV2HVotVVAymPb2aIDQDiAulRBav8uvKP8hsTxmPkrZcV6ec5X9JSxJrQ0AwBpzTew7uM13DaLCDnqLpkVABWgNgNKw+ku+8VJPoSiAGup0DqfjT73f7j//8pX/RJXyOrPU4UHrSVLKu3MuabwetZ6X8CSD/tiR/ZwPaaYSyuVw03ysU2g6O3gDbNFHGg266KkhJNtK043OWYyeGclYaSM7AnTMURz1LqInx2ziXw9is9ls7sxbAAAA//9BV11AAAgAAA=="
 
 	sampleTgzTerraformConfig = `
 provider "hpcr" {}
