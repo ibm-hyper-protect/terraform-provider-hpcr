@@ -28,5 +28,7 @@ project {
     "**/*_generated.go",
     # Vendor directory
     "vendor/**",
+    # Samples
+    "samples/**",
   ]
 }
