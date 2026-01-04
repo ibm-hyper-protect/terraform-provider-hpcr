@@ -3,13 +3,13 @@ module github.com/ibm-hyper-protect/terraform-provider-hpcr
 go 1.24.7
 
 require (
+	github.com/Masterminds/semver/v3 v3.4.0
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/hashicorp/terraform-plugin-framework v1.15.0
 	github.com/ibm-hyper-protect/contract-go/v2 v2.5.1
 )
 
 require (
-	github.com/Masterminds/semver/v3 v3.4.0 // indirect
 	github.com/fatih/color v1.16.0 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/hashicorp/go-hclog v1.6.3 // indirect
