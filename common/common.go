@@ -15,10 +15,39 @@
 package common
 
 import (
+	"bytes"
+	"fmt"
+	"os"
+	"os/exec"
+
 	"github.com/hashicorp/go-uuid"
 )
 
 // GenerateID generates a random UUID to be used as a Terraform resource or data source ID
 func GenerateID() (string, error) {
 	return uuid.GenerateUUID()
+}
+
+// GeneratePrivateKey generates a 4096-bit RSA private key using OpenSSL
+// It respects the OPENSSL_BIN environment variable for the OpenSSL binary path
+func GeneratePrivateKey() (string, error) {
+	// Get OpenSSL binary path from environment variable or use default
+	opensslBin := os.Getenv("OPENSSL_BIN")
+	if opensslBin == "" {
+		opensslBin = "openssl"
+	}
+
+	// Generate 4096-bit RSA private key
+	cmd := exec.Command(opensslBin, "genrsa", "4096")
+
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+
+	err := cmd.Run()
+	if err != nil {
+		return "", fmt.Errorf("failed to generate private key: %v, stderr: %s", err, stderr.String())
+	}
+
+	return stdout.String(), nil
 }
