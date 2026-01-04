@@ -37,13 +37,13 @@ func NewTextEncryptedResource() resource.Resource {
 type TextEncryptedResource struct{}
 
 type TextEncryptedResourceModel struct {
-	ID         types.String `tfsdk:"id"`
-	Text       types.String `tfsdk:"text"`
-	Cert       types.String `tfsdk:"cert"`
-	Platform   types.String `tfsdk:"platform"`
-	Rendered   types.String `tfsdk:"rendered"`
-	Sha256_in  types.String `tfsdk:"sha256_in"`
-	Sha256_out types.String `tfsdk:"sha256_out"`
+	ID        types.String `tfsdk:"id"`
+	Text      types.String `tfsdk:"text"`
+	Cert      types.String `tfsdk:"cert"`
+	Platform  types.String `tfsdk:"platform"`
+	Rendered  types.String `tfsdk:"rendered"`
+	Sha256In  types.String `tfsdk:"sha256_in"`
+	Sha256Out types.String `tfsdk:"sha256_out"`
 }
 
 func (r *TextEncryptedResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -143,8 +143,8 @@ func (r *TextEncryptedResource) Create(ctx context.Context, req resource.CreateR
 	// Set the computed fields
 	data.ID = types.StringValue(id)
 	data.Rendered = types.StringValue(encrypted)
-	data.Sha256_in = types.StringValue(inputHash)
-	data.Sha256_out = types.StringValue(outputHash)
+	data.Sha256In = types.StringValue(inputHash)
+	data.Sha256Out = types.StringValue(outputHash)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -192,8 +192,8 @@ func (r *TextEncryptedResource) Update(ctx context.Context, req resource.UpdateR
 
 	// Set the computed fields (keep the existing ID)
 	data.Rendered = types.StringValue(encrypted)
-	data.Sha256_in = types.StringValue(inputHash)
-	data.Sha256_out = types.StringValue(outputHash)
+	data.Sha256In = types.StringValue(inputHash)
+	data.Sha256Out = types.StringValue(outputHash)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

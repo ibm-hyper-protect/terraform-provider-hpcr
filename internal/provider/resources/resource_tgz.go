@@ -28,44 +28,47 @@ import (
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
 )
 
-var _ resource.Resource = &JSONResource{}
+// Ensure provider defined types fully satisfy framework interfaces.
+var _ resource.Resource = &TgzResource{}
 
-func NewJSONResource() resource.Resource {
-	return &JSONResource{}
+func NewTgzResource() resource.Resource {
+	return &TgzResource{}
 }
 
-type JSONResource struct{}
+// TgzResource defines the resource implementation.
+type TgzResource struct{}
 
-type JSONResourceModel struct {
+// TgzResourceModel describes the resource data model.
+type TgzResourceModel struct {
 	ID        types.String `tfsdk:"id"`
-	JSON      types.String `tfsdk:"json"`
+	Folder    types.String `tfsdk:"folder"`
 	Rendered  types.String `tfsdk:"rendered"`
 	Sha256In  types.String `tfsdk:"sha256_in"`
 	Sha256Out types.String `tfsdk:"sha256_out"`
 }
 
-func (r *JSONResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_json"
+func (r *TgzResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_tgz"
 }
 
-func (r *JSONResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *TgzResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		MarkdownDescription: "Generates a base64 encoded token from the JSON serialization of the input.",
-		Description:         "Generates a base64 encoded token from the JSON serialization of the input.",
+		MarkdownDescription: "Generates a base64 encoded string from the TGZed files in the folder.",
+		Description:         "Generates a base64 encoded string from the TGZed files in the folder.",
 
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "Resource identifier",
+				Description:         "Resource identifier",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
-			"json": schema.StringAttribute{
-				MarkdownDescription: "JSON Document to archive",
-				Description:         "JSON Document to archive",
+			"folder": schema.StringAttribute{
+				MarkdownDescription: "Path to the folder to archive",
+				Description:         "Path to the folder to archive",
 				Required:            true,
-				Sensitive:           true,
 			},
 			"rendered": schema.StringAttribute{
 				MarkdownDescription: "Rendered output of the resource",
@@ -78,7 +81,7 @@ func (r *JSONResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				Computed:            true,
 			},
 			"sha256_out": schema.StringAttribute{
-				MarkdownDescription: "SHA256 of the ouput",
+				MarkdownDescription: "SHA256 of the output",
 				Description:         "SHA256 of the output",
 				Computed:            true,
 			},
@@ -86,22 +89,25 @@ func (r *JSONResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 	}
 }
 
-func (r *JSONResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data JSONResourceModel
+func (r *TgzResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data TgzResourceModel
+
+	// Read Terraform plan data into the model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Get the input JSON
-	plainJson := data.JSON.ValueString()
+	// Get the folder path
+	folderPath := data.Folder.ValueString()
 
-	// Encode JSON using the contract-go library
-	encoded, inputHash, outputHash, err := contract.HpcrJson(plainJson)
+	// Create TGZ archive using the contract-go library
+	tgzBase64, inputHash, outputHash, err := contract.HpcrTgz(folderPath)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Failed to encode JSON",
-			fmt.Sprintf("Error encoding JSON: %s", err.Error()),
+			"Failed to create TGZ archive",
+			fmt.Sprintf("Error creating TGZ archive from folder '%s': %s", folderPath, err.Error()),
 		)
 		return
 	}
@@ -118,50 +124,63 @@ func (r *JSONResource) Create(ctx context.Context, req resource.CreateRequest, r
 
 	// Set the computed fields
 	data.ID = types.StringValue(id)
-	data.Rendered = types.StringValue(encoded)
+	data.Rendered = types.StringValue(tgzBase64)
 	data.Sha256In = types.StringValue(inputHash)
 	data.Sha256Out = types.StringValue(outputHash)
 
+	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *JSONResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data JSONResourceModel
+func (r *TgzResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data TgzResourceModel
+
+	// Read Terraform prior state data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	// TODO: Integrate your business logic here if needed
+	// For most use cases, no action is needed in Read
+
+	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *JSONResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data JSONResourceModel
+func (r *TgzResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data TgzResourceModel
+
+	// Read Terraform plan data into the model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Get the input JSON
-	plainJson := data.JSON.ValueString()
+	// Get the folder path
+	folderPath := data.Folder.ValueString()
 
-	// Encode JSON using the contract-go library
-	encoded, inputHash, outputHash, err := contract.HpcrJson(plainJson)
+	// Create TGZ archive using the contract-go library
+	tgzBase64, inputHash, outputHash, err := contract.HpcrTgz(folderPath)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Failed to encode JSON",
-			fmt.Sprintf("Error encoding JSON: %s", err.Error()),
+			"Failed to create TGZ archive",
+			fmt.Sprintf("Error creating TGZ archive from folder '%s': %s", folderPath, err.Error()),
 		)
 		return
 	}
 
 	// Set the computed fields (keep the existing ID)
-	data.Rendered = types.StringValue(encoded)
+	data.Rendered = types.StringValue(tgzBase64)
 	data.Sha256In = types.StringValue(inputHash)
 	data.Sha256Out = types.StringValue(outputHash)
 
+	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *JSONResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	// No-op
+func (r *TgzResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	// No-op for this resource type
 }
