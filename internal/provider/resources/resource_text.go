@@ -37,11 +37,11 @@ func NewTextResource() resource.Resource {
 type TextResource struct{}
 
 type TextResourceModel struct {
-	ID       types.String `tfsdk:"id"`
-	Text     types.String `tfsdk:"text"`
-	Rendered types.String `tfsdk:"rendered"`
-	Sha256   types.String `tfsdk:"sha256_in"`
-	Checksum types.String `tfsdk:"sha256_out"`
+	ID         types.String `tfsdk:"id"`
+	Text       types.String `tfsdk:"text"`
+	Rendered   types.String `tfsdk:"rendered"`
+	Sha256_in  types.String `tfsdk:"sha256_in"`
+	Sha256_out types.String `tfsdk:"sha256_out"`
 }
 
 func (r *TextResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -119,8 +119,8 @@ func (r *TextResource) Create(ctx context.Context, req resource.CreateRequest, r
 	// Set the computed fields
 	data.ID = types.StringValue(id)
 	data.Rendered = types.StringValue(encoded)
-	data.Sha256 = types.StringValue(inputHash)
-	data.Checksum = types.StringValue(outputHash)
+	data.Sha256_in = types.StringValue(inputHash)
+	data.Sha256_out = types.StringValue(outputHash)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -156,8 +156,8 @@ func (r *TextResource) Update(ctx context.Context, req resource.UpdateRequest, r
 
 	// Set the computed fields (keep the existing ID)
 	data.Rendered = types.StringValue(encoded)
-	data.Sha256 = types.StringValue(inputHash)
-	data.Checksum = types.StringValue(outputHash)
+	data.Sha256_in = types.StringValue(inputHash)
+	data.Sha256_out = types.StringValue(outputHash)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
