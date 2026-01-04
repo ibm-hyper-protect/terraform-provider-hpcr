@@ -51,3 +51,20 @@ func GeneratePrivateKey() (string, error) {
 
 	return stdout.String(), nil
 }
+
+// ReadFileContents reads the contents of a file and returns it as a string
+// Returns an error if the file does not exist or cannot be read
+func ReadFileData(filePath string) (string, error) {
+	// Check if file exists
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		return "", fmt.Errorf("file does not exist: %s", filePath)
+	}
+
+	// Read file contents
+	content, err := os.ReadFile(filePath)
+	if err != nil {
+		return "", fmt.Errorf("failed to read file %s: %v", filePath, err)
+	}
+
+	return string(content), nil
+}
