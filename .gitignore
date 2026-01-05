@@ -38,6 +38,7 @@ website/node_modules
 *.iml
 *.test
 *.iml
+*.hcl
 
 website/vendor
 

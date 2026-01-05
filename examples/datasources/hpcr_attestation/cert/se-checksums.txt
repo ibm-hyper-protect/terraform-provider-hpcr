@@ -1,0 +1,20 @@
+25.11.0
+Machine Type/Plant/Serial: 9175/02/C25B8
+Image age: 3 days since creation.
+Ultravisor CUID: 0x3e0531460c9bf87a442736a5e2c2d10c
+Host HKD: HKD-9175-02C25B8.crt (HKD-9175-02C25B8.crt)
+HKD is valid until: Apr 1 15:03:09 2027 GMT
+AP device present: true
+Number of configured APs: 1
+42766688f5ff825316e1c21f7f181017feac63f0e418038f9b4739b62b7f95e4 AP(1):secret
+d11f8df836e876d68ff39a4ee57a886ca20f5874a04cd638b388ea393c3b9273 uv_firmware.state
+b15f712f9164f8c246fa68973881055efec9f1001ef41c66f5eb928ed6119e0a root.tar.gz
+ec56a5903ecf4823c4e7b076c30d4cdf62e88d0dd87efb0762f4d445f383d8b6 baseimage
+9958cb29efcb0d86a0beab6be3f475ccd6e2d56caa49971ea9fb81c76b3e24f2 sbom
+43c72217fd65439196ae6e989511f8f6ec2cc715da98d2bdb901df00500c3079 /dev/disk/by-label/cidata
+2a89d70af28b095c767ebcf9b0654ca59a328377519988c11da5d4e0de17b7c4 cidata/meta-data
+c5d20c46d921fde43d7d4106ff92cafd104331250ff382d48f42f31c033accc4 cidata/user-data
+1cffcfefd1c8d758f2c285275714ed040c39945f80fb52638ac630fcb7b52e1c cidata/vendor-data
+97b38579c16f0f3c0e25d5cc6582f958d867eab77d082a91576d1beacbda11e4 contract:workload
+268d6c045b2d8a5e1a67d9e88ff101a04af1bc11cdd35067a80291fb8dca8f84 contract:env
+97285dd941e3f1a321b1ac914d7a29ba4492e9203b6284c0d4c92f5f0d61dbfb contract:attestationPublicKey
