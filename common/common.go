@@ -15,10 +15,13 @@
 package common
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
 	"os"
 	"os/exec"
+	"regexp"
+	"strings"
 
 	"github.com/hashicorp/go-uuid"
 )
@@ -67,4 +70,28 @@ func ReadFileData(filePath string) (string, error) {
 	}
 
 	return string(content), nil
+}
+
+func FilterChecksum(input string) map[string]string {
+	// SHA-256: 64 hex chars
+	re := regexp.MustCompile(`^([a-fA-F0-9]{64})\s+(.+)$`)
+
+	scanner := bufio.NewScanner(strings.NewReader(input))
+	checksumMap := make(map[string]string)
+
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" {
+			continue
+		}
+
+		matches := re.FindStringSubmatch(line)
+		if len(matches) != 3 {
+			continue
+		}
+
+		checksumMap[matches[1]] = matches[2]
+	}
+
+	return checksumMap
 }

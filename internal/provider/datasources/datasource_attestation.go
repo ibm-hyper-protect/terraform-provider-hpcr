@@ -16,12 +16,12 @@ package datasources
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	"github.com/ibm-hyper-protect/contract-go/v2/attestation"
 
@@ -110,14 +110,14 @@ func (d *AttestationDataSource) Read(ctx context.Context, req datasource.ReadReq
 			)
 			return
 		}
+
+		tflog.Debug(ctx, fmt.Sprintf("Decrypted attestation records - %s", attestationRecords))
 	} else {
 		// If no private key, assume attestation is already decrypted
 		attestationRecords = attestationData
 	}
 
-	// Parse attestation records as JSON map
-	var checksumMap map[string]interface{}
-	err = json.Unmarshal([]byte(attestationRecords), &checksumMap)
+	filteredAttestation := common.FilterChecksum(attestationRecords)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to parse attestation records",
@@ -125,10 +125,11 @@ func (d *AttestationDataSource) Read(ctx context.Context, req datasource.ReadReq
 		)
 		return
 	}
+	tflog.Debug(ctx, fmt.Sprintf("Filtered attestation records - %s", filteredAttestation))
 
 	// Convert map[string]interface{} to map[string]string for Terraform
 	checksumStrMap := make(map[string]string)
-	for key, value := range checksumMap {
+	for key, value := range filteredAttestation {
 		checksumStrMap[key] = fmt.Sprintf("%v", value)
 	}
 
