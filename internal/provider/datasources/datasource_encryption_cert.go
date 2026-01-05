@@ -62,8 +62,10 @@ func (d *EncryptionCertDataSource) Schema(ctx context.Context, req datasource.Sc
 			"certs": schema.MapAttribute{
 				MarkdownDescription: "Map of certificates from version to certificate content",
 				Description:         "Map of certificates from version to certificate",
-				ElementType:         types.StringType,
 				Required:            true,
+				ElementType: types.MapType{
+					ElemType: types.StringType,
+				},
 			},
 			"spec": schema.StringAttribute{
 				MarkdownDescription: "Semantic version range defining the HPCR certificate. Defaults to '*' (latest).",
@@ -95,7 +97,7 @@ func (d *EncryptionCertDataSource) Read(ctx context.Context, req datasource.Read
 	}
 
 	// Extract certificates map from Terraform config
-	var certsMap map[string]string
+	certsMap := make(map[string]map[string]string)
 	resp.Diagnostics.Append(data.Certs.ElementsAs(ctx, &certsMap, false)...)
 	if resp.Diagnostics.HasError() {
 		return
