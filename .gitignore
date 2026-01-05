@@ -52,3 +52,5 @@ website/vendor
 terraform-provider-hpcr.exe
 build
 terraform-provider-hpcr
+
+set_prod_env
