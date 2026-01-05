@@ -130,7 +130,7 @@ func (d *AttestationDataSource) Read(ctx context.Context, req datasource.ReadReq
 	// Convert map[string]interface{} to map[string]string for Terraform
 	checksumStrMap := make(map[string]string)
 	for key, value := range filteredAttestation {
-		checksumStrMap[key] = fmt.Sprintf("%v", value)
+		checksumStrMap[value] = fmt.Sprintf("%v", key)
 	}
 
 	// Convert to Terraform types.Map
