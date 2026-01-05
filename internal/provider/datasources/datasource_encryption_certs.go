@@ -22,6 +22,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	"github.com/ibm-hyper-protect/contract-go/v2/certificate"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
@@ -72,8 +73,10 @@ func (d *EncryptionCertsDataSource) Schema(ctx context.Context, req datasource.S
 			"certs": schema.MapAttribute{
 				MarkdownDescription: "Map of certificates from version to certificate content",
 				Description:         "Map of certificates from version to certificate",
-				ElementType:         types.StringType,
 				Computed:            true,
+				ElementType: types.MapType{
+					ElemType: types.StringType,
+				},
 			},
 		},
 	}
@@ -112,8 +115,10 @@ func (d *EncryptionCertsDataSource) Read(ctx context.Context, req datasource.Rea
 		return
 	}
 
+	tflog.Debug(ctx, fmt.Sprintf("Certificates JSON - %s", certsJSON))
+
 	// Parse JSON response into a Go map
-	var certsMap map[string]string
+	certsMap := make(map[string]map[string]string)
 	if err := json.Unmarshal([]byte(certsJSON), &certsMap); err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to parse certificates JSON",
@@ -123,7 +128,11 @@ func (d *EncryptionCertsDataSource) Read(ctx context.Context, req datasource.Rea
 	}
 
 	// Convert Go map to types.Map
-	certsTypeMap, diags := types.MapValueFrom(ctx, types.StringType, certsMap)
+	innerMapType := types.MapType{
+		ElemType: types.StringType,
+	}
+
+	certsTypeMap, diags := types.MapValueFrom(ctx, innerMapType, certsMap)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
