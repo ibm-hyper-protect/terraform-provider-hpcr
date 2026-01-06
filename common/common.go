@@ -24,6 +24,7 @@ import (
 	"strings"
 
 	"github.com/hashicorp/go-uuid"
+	"gopkg.in/yaml.v3"
 )
 
 // GenerateID generates a random UUID to be used as a Terraform resource or data source ID
@@ -94,4 +95,50 @@ func FilterChecksum(input string) map[string]string {
 	}
 
 	return checksumMap
+}
+
+func RefineContract(yamlStr string) (string, error) {
+	var data map[string]interface{}
+	if err := yaml.Unmarshal([]byte(yamlStr), &data); err != nil {
+		return "", fmt.Errorf("failed to unmarshal input YAML: %v", err)
+	}
+
+	output := make(map[string]*yaml.Node)
+
+	for key, val := range data {
+		// Marshal the value of this top-level key back to YAML
+		contentBytes, err := yaml.Marshal(val)
+		if err != nil {
+			return "", fmt.Errorf("failed to marshal key %s: %v", key, err)
+		}
+
+		// Wrap it in a block literal style node (|)
+		node := &yaml.Node{
+			Kind:  yaml.ScalarNode,
+			Style: yaml.LiteralStyle,
+			Value: string(contentBytes),
+		}
+		output[key] = node
+	}
+
+	finalNode := &yaml.Node{
+		Kind:    yaml.MappingNode,
+		Content: []*yaml.Node{},
+	}
+
+	for key, val := range output {
+		keyNode := &yaml.Node{
+			Kind:  yaml.ScalarNode,
+			Value: key,
+		}
+		finalNode.Content = append(finalNode.Content, keyNode, val)
+	}
+
+	// Step 4: Marshal final YAML
+	resultBytes, err := yaml.Marshal(finalNode)
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal final YAML: %v", err)
+	}
+
+	return string(resultBytes), nil
 }

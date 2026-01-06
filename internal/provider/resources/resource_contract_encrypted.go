@@ -23,6 +23,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	"github.com/ibm-hyper-protect/contract-go/v2/contract"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
@@ -78,7 +79,7 @@ func (r *ContractEncryptedResource) Schema(ctx context.Context, req resource.Sch
 			"cert": schema.StringAttribute{
 				MarkdownDescription: "Certificate used to encrypt the contract, in PEM format. Defaults to the latest HPCR image certificate if not specified.",
 				Description:         "Certificate used to encrypt the contract, in PEM format",
-				Required:            true,
+				Optional:            true,
 			},
 			"privkey": schema.StringAttribute{
 				MarkdownDescription: "Private key used to sign the contract. If omitted, a temporary signing key is created.",
@@ -131,8 +132,19 @@ func (r *ContractEncryptedResource) Create(ctx context.Context, req resource.Cre
 		privKey = generatedKey
 	}
 
+	refinedContract, err := common.RefineContract(contractYAML)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Failed to refine contract",
+			fmt.Sprintf("Error refining contract: %s", err.Error()),
+		)
+		return
+	}
+
+	tflog.Debug(ctx, fmt.Sprintf("Contract YAML:- \n%s", refinedContract))
+
 	// Generate signed and encrypted contract using the contract-go library
-	signedContract, inputHash, outputHash, err := contract.HpcrContractSignedEncrypted(contractYAML, platform, cert, privKey)
+	signedContract, inputHash, outputHash, err := contract.HpcrContractSignedEncrypted(refinedContract, platform, cert, privKey)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to create signed encrypted contract",
