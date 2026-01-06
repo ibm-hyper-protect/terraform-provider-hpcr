@@ -10,6 +10,7 @@ require (
 	github.com/hashicorp/terraform-plugin-framework v1.17.0
 	github.com/hashicorp/terraform-plugin-log v0.10.0
 	github.com/ibm-hyper-protect/contract-go/v2 v2.5.1
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -36,5 +37,4 @@ require (
 	google.golang.org/grpc v1.75.1 // indirect
 	google.golang.org/protobuf v1.36.9 // indirect
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
