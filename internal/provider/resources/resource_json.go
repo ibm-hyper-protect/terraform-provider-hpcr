@@ -16,6 +16,7 @@ package resources
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -94,10 +95,26 @@ func (r *JSONResource) Create(ctx context.Context, req resource.CreateRequest, r
 	}
 
 	// Get the input JSON
-	plainJson := data.JSON.ValueString()
+	var jsonData map[string]interface{}
+	if err := json.Unmarshal([]byte(data.JSON.ValueString()), &jsonData); err != nil {
+		resp.Diagnostics.AddError(
+			"Failed to decode JSON",
+			fmt.Sprintf("Error decoding JSON: %s", err.Error()),
+		)
+		return
+	}
+
+	jsonBytes, err := json.Marshal(jsonData)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Failed to marshal JSON",
+			fmt.Sprintf("Error marshaling JSON: %s", err.Error()),
+		)
+		return
+	}
 
 	// Encode JSON using the contract-go library
-	encoded, inputHash, outputHash, err := contract.HpcrJson(plainJson)
+	encoded, inputHash, outputHash, err := contract.HpcrJson(string(jsonBytes))
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to encode JSON",
@@ -142,10 +159,26 @@ func (r *JSONResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	}
 
 	// Get the input JSON
-	plainJson := data.JSON.ValueString()
+	var jsonData map[string]interface{}
+	if err := json.Unmarshal([]byte(data.JSON.ValueString()), &jsonData); err != nil {
+		resp.Diagnostics.AddError(
+			"Failed to decode JSON",
+			fmt.Sprintf("Error decoding JSON: %s", err.Error()),
+		)
+		return
+	}
+
+	jsonBytes, err := json.Marshal(jsonData)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Failed to marshal JSON",
+			fmt.Sprintf("Error marshaling JSON: %s", err.Error()),
+		)
+		return
+	}
 
 	// Encode JSON using the contract-go library
-	encoded, inputHash, outputHash, err := contract.HpcrJson(plainJson)
+	encoded, inputHash, outputHash, err := contract.HpcrJson(string(jsonBytes))
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to encode JSON",
