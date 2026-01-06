@@ -16,6 +16,7 @@ package resources
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -106,7 +107,23 @@ func (r *JSONEncryptedResource) Create(ctx context.Context, req resource.CreateR
 	}
 
 	// Get the input JSON
-	plainJson := data.JSON.ValueString()
+	var jsonData map[string]interface{}
+	if err := json.Unmarshal([]byte(data.JSON.ValueString()), &jsonData); err != nil {
+		resp.Diagnostics.AddError(
+			"Failed to decode JSON",
+			fmt.Sprintf("Error decoding JSON: %s", err.Error()),
+		)
+		return
+	}
+
+	jsonBytes, err := json.Marshal(jsonData)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Failed to marshal JSON",
+			fmt.Sprintf("Error marshaling JSON: %s", err.Error()),
+		)
+		return
+	}
 
 	// Get the certificate (empty string will use default)
 	cert := ""
@@ -121,7 +138,7 @@ func (r *JSONEncryptedResource) Create(ctx context.Context, req resource.CreateR
 	}
 
 	// Encrypt JSON using the contract-go library
-	encrypted, inputHash, outputHash, err := contract.HpcrJsonEncrypted(plainJson, platform, cert)
+	encrypted, inputHash, outputHash, err := contract.HpcrJsonEncrypted(string(jsonBytes), platform, cert)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to encrypt JSON",
@@ -166,7 +183,23 @@ func (r *JSONEncryptedResource) Update(ctx context.Context, req resource.UpdateR
 	}
 
 	// Get the input JSON
-	plainJson := data.JSON.ValueString()
+	var jsonData map[string]interface{}
+	if err := json.Unmarshal([]byte(data.JSON.ValueString()), &jsonData); err != nil {
+		resp.Diagnostics.AddError(
+			"Failed to decode JSON",
+			fmt.Sprintf("Error decoding JSON: %s", err.Error()),
+		)
+		return
+	}
+
+	jsonBytes, err := json.Marshal(jsonData)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Failed to marshal JSON",
+			fmt.Sprintf("Error marshaling JSON: %s", err.Error()),
+		)
+		return
+	}
 
 	// Get the certificate (empty string will use default)
 	cert := ""
@@ -181,7 +214,7 @@ func (r *JSONEncryptedResource) Update(ctx context.Context, req resource.UpdateR
 	}
 
 	// Encrypt JSON using the contract-go library
-	encrypted, inputHash, outputHash, err := contract.HpcrJsonEncrypted(plainJson, platform, cert)
+	encrypted, inputHash, outputHash, err := contract.HpcrJsonEncrypted(string(jsonBytes), platform, cert)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to encrypt JSON",
