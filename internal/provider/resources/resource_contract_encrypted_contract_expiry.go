@@ -24,6 +24,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	"github.com/ibm-hyper-protect/contract-go/v2/contract"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
@@ -47,7 +48,7 @@ type ContractEncryptedContractExpiryResourceModel struct {
 	CaCert     types.String `tfsdk:"cacert"`
 	CaKey      types.String `tfsdk:"cakey"`
 	CsrParams  types.Map    `tfsdk:"csrparams"`
-	CsrFile    types.String `tfsdk:"csrfile"`
+	Csr        types.String `tfsdk:"csr"`
 	Rendered   types.String `tfsdk:"rendered"`
 	Sha256In   types.String `tfsdk:"sha256_in"`
 	Sha256Out  types.String `tfsdk:"sha256_out"`
@@ -79,7 +80,7 @@ func (r *ContractEncryptedContractExpiryResource) Schema(ctx context.Context, re
 			"cert": schema.StringAttribute{
 				MarkdownDescription: "Certificate used to encrypt the contract, in PEM format",
 				Description:         "Certificate used to encrypt the contract, in PEM format",
-				Required:            true,
+				Optional:            true,
 			},
 			"platform": schema.StringAttribute{
 				MarkdownDescription: "Hyper Protect platform where this contract will be deployed. Defaults to hpvs",
@@ -113,9 +114,9 @@ func (r *ContractEncryptedContractExpiryResource) Schema(ctx context.Context, re
 				ElementType:         types.StringType,
 				Optional:            true,
 			},
-			"csrfile": schema.StringAttribute{
-				MarkdownDescription: "CSR File to generate signing certificate",
-				Description:         "CSR File to generate signing certificate",
+			"csr": schema.StringAttribute{
+				MarkdownDescription: "CSR to generate signing certificate",
+				Description:         "CSR to generate signing certificate",
 				Optional:            true,
 			},
 			"rendered": schema.StringAttribute{
@@ -152,7 +153,7 @@ func (r *ContractEncryptedContractExpiryResource) Create(ctx context.Context, re
 	expiryDays := int(data.ExpiryDays.ValueInt64())
 	caCert := data.CaCert.ValueString()
 	caKey := data.CaKey.ValueString()
-	csrFilePath := data.CsrFile.ValueString()
+	csr := data.Csr.ValueString()
 
 	// Generate private key if not provided
 	if privKey == "" {
@@ -166,6 +167,17 @@ func (r *ContractEncryptedContractExpiryResource) Create(ctx context.Context, re
 		}
 		privKey = generatedKey
 	}
+
+	refinedContract, err := common.RefineContract(contractYAML)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Failed to refine contract",
+			fmt.Sprintf("Error refining contract: %s", err.Error()),
+		)
+		return
+	}
+
+	tflog.Debug(ctx, fmt.Sprintf("Contract YAML:- \n%s", refinedContract))
 
 	// Convert CSR params map to JSON string if provided
 	var csrDataStr string
@@ -188,31 +200,17 @@ func (r *ContractEncryptedContractExpiryResource) Create(ctx context.Context, re
 		csrDataStr = string(csrDataBytes)
 	}
 
-	// Read CSR file contents if provided
-	var csrPemData string
-	if csrFilePath != "" {
-		contents, err := common.ReadFileData(csrFilePath)
-		if err != nil {
-			resp.Diagnostics.AddError(
-				"Failed to read CSR file",
-				fmt.Sprintf("Error reading CSR file: %s", err.Error()),
-			)
-			return
-		}
-		csrPemData = contents
-	}
-
-	// Validate that only one of csrparams or csrfile is provided
-	if csrDataStr != "" && csrPemData != "" {
+	// Validate that only one of csrparams or csr is provided
+	if csrDataStr != "" && csr != "" {
 		resp.Diagnostics.AddError(
 			"Invalid configuration",
-			"Only one of csrparams or csrfile can be provided, not both",
+			"Only one of csrparams or csr can be provided, not both",
 		)
 		return
 	}
 
 	// Generate signed and encrypted contract with expiry using the contract-go library
-	signedContract, inputHash, outputHash, err := contract.HpcrContractSignedEncryptedContractExpiry(contractYAML, platform, cert, privKey, caCert, caKey, csrDataStr, csrPemData, expiryDays)
+	signedContract, inputHash, outputHash, err := contract.HpcrContractSignedEncryptedContractExpiry(refinedContract, platform, cert, privKey, caCert, caKey, csrDataStr, csr, expiryDays)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to create signed encrypted contract with expiry",
@@ -268,7 +266,7 @@ func (r *ContractEncryptedContractExpiryResource) Update(ctx context.Context, re
 	expiryDays := int(data.ExpiryDays.ValueInt64())
 	caCert := data.CaCert.ValueString()
 	caKey := data.CaKey.ValueString()
-	csrFilePath := data.CsrFile.ValueString()
+	csr := data.Csr.ValueString()
 
 	// Generate private key if not provided
 	if privKey == "" {
@@ -282,6 +280,17 @@ func (r *ContractEncryptedContractExpiryResource) Update(ctx context.Context, re
 		}
 		privKey = generatedKey
 	}
+
+	refinedContract, err := common.RefineContract(contractYAML)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Failed to refine contract",
+			fmt.Sprintf("Error refining contract: %s", err.Error()),
+		)
+		return
+	}
+
+	tflog.Debug(ctx, fmt.Sprintf("Contract YAML:- \n%s", refinedContract))
 
 	// Convert CSR params map to JSON string if provided
 	var csrDataStr string
@@ -304,22 +313,8 @@ func (r *ContractEncryptedContractExpiryResource) Update(ctx context.Context, re
 		csrDataStr = string(csrDataBytes)
 	}
 
-	// Read CSR file contents if provided
-	var csrPemData string
-	if csrFilePath != "" {
-		contents, err := common.ReadFileData(csrFilePath)
-		if err != nil {
-			resp.Diagnostics.AddError(
-				"Failed to read CSR file",
-				fmt.Sprintf("Error reading CSR file: %s", err.Error()),
-			)
-			return
-		}
-		csrPemData = contents
-	}
-
-	// Validate that only one of csrparams or csrfile is provided
-	if csrDataStr != "" && csrPemData != "" {
+	// Validate that only one of csrparams or csr is provided
+	if csrDataStr != "" && csr != "" {
 		resp.Diagnostics.AddError(
 			"Invalid configuration",
 			"Only one of csrparams or csrfile can be provided, not both",
@@ -328,7 +323,7 @@ func (r *ContractEncryptedContractExpiryResource) Update(ctx context.Context, re
 	}
 
 	// Generate signed and encrypted contract with expiry using the contract-go library
-	signedContract, inputHash, outputHash, err := contract.HpcrContractSignedEncryptedContractExpiry(contractYAML, platform, cert, privKey, caCert, caKey, csrDataStr, csrPemData, expiryDays)
+	signedContract, inputHash, outputHash, err := contract.HpcrContractSignedEncryptedContractExpiry(refinedContract, platform, cert, privKey, caCert, caKey, csrDataStr, csr, expiryDays)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to create signed encrypted contract with expiry",

@@ -49,7 +49,7 @@ func TestContractEncryptedContractExpiryResource_Schema(t *testing.T) {
 		t.Fatal("Schema attributes should not be nil")
 	}
 
-	requiredAttrs := []string{"id", "contract", "platform", "cert", "privkey", "expiry", "cacert", "cakey", "csrparams", "csrfile", "rendered", "sha256_in", "sha256_out"}
+	requiredAttrs := []string{"id", "contract", "platform", "cert", "privkey", "expiry", "cacert", "cakey", "csrparams", "csr", "rendered", "sha256_in", "sha256_out"}
 	for _, attr := range requiredAttrs {
 		if _, ok := resp.Schema.Attributes[attr]; !ok {
 			t.Errorf("Expected schema to have attribute '%s'", attr)
@@ -62,10 +62,10 @@ func TestContractEncryptedContractExpiryResource_Schema(t *testing.T) {
 		t.Error("Expected 'contract' attribute to be required")
 	}
 
-	// Verify cert is required
+	// Verify cert is optional
 	certAttr := resp.Schema.Attributes["cert"]
-	if certAttr.IsRequired() == false {
-		t.Error("Expected 'cert' attribute to be required")
+	if certAttr.IsOptional() == false {
+		t.Error("Expected 'cert' attribute to be optional")
 	}
 
 	// Verify expiry is required
@@ -87,7 +87,7 @@ func TestContractEncryptedContractExpiryResource_Schema(t *testing.T) {
 	}
 
 	// Verify optional attributes
-	optionalAttrs := []string{"platform", "privkey", "csrparams", "csrfile"}
+	optionalAttrs := []string{"platform", "privkey", "csrparams", "csr"}
 	for _, attr := range optionalAttrs {
 		if resp.Schema.Attributes[attr].IsOptional() == false {
 			t.Errorf("Expected '%s' attribute to be optional", attr)
