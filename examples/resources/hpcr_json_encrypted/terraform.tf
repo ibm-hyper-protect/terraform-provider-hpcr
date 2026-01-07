@@ -17,7 +17,7 @@ resource "hpcr_json_encrypted" "json_data" {
 }
 
 resource "hpcr_json_encrypted" "json_data_platform" {
-  json     = <<JSON
+  json = <<JSON
   {
     "workload": {
         "compose": {
@@ -45,37 +45,37 @@ resource "hpcr_json_encrypted" "json_data_cert" {
 }
 
 output "json_data_rendered" {
-    value = hpcr_json_encrypted.json_data.rendered
+  value = hpcr_json_encrypted.json_data.rendered
 }
 
 output "json_data_sha256_in" {
-    value = hpcr_json_encrypted.json_data.sha256_in
+  value = hpcr_json_encrypted.json_data.sha256_in
 }
 
 output "json_data_sha256_out" {
-    value = hpcr_json_encrypted.json_data.sha256_out
+  value = hpcr_json_encrypted.json_data.sha256_out
 }
 
 output "json_data_platform_rendered" {
-    value = hpcr_json_encrypted.json_data_platform.rendered
+  value = hpcr_json_encrypted.json_data_platform.rendered
 }
 
 output "json_data_platform_sha256_in" {
-    value = hpcr_json_encrypted.json_data_platform.sha256_in
+  value = hpcr_json_encrypted.json_data_platform.sha256_in
 }
 
 output "json_data_platform_sha256_out" {
-    value = hpcr_json_encrypted.json_data_platform.sha256_out
+  value = hpcr_json_encrypted.json_data_platform.sha256_out
 }
 
 output "json_data_cert_rendered" {
-    value = hpcr_json_encrypted.json_data_cert.rendered
+  value = hpcr_json_encrypted.json_data_cert.rendered
 }
 
 output "json_data_cert_sha256_in" {
-    value = hpcr_json_encrypted.json_data_cert.sha256_in
+  value = hpcr_json_encrypted.json_data_cert.sha256_in
 }
 
 output "json_data_cert_sha256_out" {
-    value = hpcr_json_encrypted.json_data_cert.sha256_out
+  value = hpcr_json_encrypted.json_data_cert.sha256_out
 }

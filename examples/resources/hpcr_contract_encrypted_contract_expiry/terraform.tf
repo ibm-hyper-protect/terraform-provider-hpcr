@@ -43,37 +43,37 @@ locals {
 }
 
 resource "hpcr_contract_encrypted_contract_expiry" "contract" {
-  contract = local.contract
-  expiry = 30
-  cakey = file("./cert/personal_ca.pem")
-  cacert = file("./cert/personal_ca.crt")
+  contract  = local.contract
+  expiry    = 30
+  cakey     = file("./cert/personal_ca.pem")
+  cacert    = file("./cert/personal_ca.crt")
   csrparams = local.csrParams
 }
 
 resource "hpcr_contract_encrypted_contract_expiry" "contract_csr" {
   contract = local.contract
-  expiry = 30
-  cakey = file("./cert/personal_ca.pem")
-  cacert = file("./cert/personal_ca.crt")
-  csr = file("./cert/csr.pem")
+  expiry   = 30
+  cakey    = file("./cert/personal_ca.pem")
+  cacert   = file("./cert/personal_ca.crt")
+  csr      = file("./cert/csr.pem")
 }
 
 resource "hpcr_contract_encrypted_contract_expiry" "contract_cert" {
- contract = local.contract
- cert = file("./cert/encrypt.crt")
- expiry = 30
-    cakey = file("./cert/personal_ca.pem")
-  cacert = file("./cert/personal_ca.crt")
+  contract  = local.contract
+  cert      = file("./cert/encrypt.crt")
+  expiry    = 30
+  cakey     = file("./cert/personal_ca.pem")
+  cacert    = file("./cert/personal_ca.crt")
   csrparams = local.csrParams
 }
 
 resource "hpcr_contract_encrypted_contract_expiry" "contract_privkey" {
   contract = local.contract
-  privkey = file("./cert/private.pem")
-  expiry = 30
-  cakey = file("./cert/personal_ca.pem")
-  cacert = file("./cert/personal_ca.crt")
-  csr = file("./cert/csr.pem")
+  privkey  = file("./cert/private.pem")
+  expiry   = 30
+  cakey    = file("./cert/personal_ca.pem")
+  cacert   = file("./cert/personal_ca.crt")
+  csr      = file("./cert/csr.pem")
 }
 
 output "contract_rendered" {

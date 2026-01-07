@@ -25,7 +25,7 @@ locals {
     },
     "workload" : {
       "type" : "workload",
-      "compose" : {
+      "play" : {
         "archive" : hpcr_tgz.contract.rendered
       }
     },
@@ -33,17 +33,17 @@ locals {
 }
 
 resource "hpcr_contract_encrypted" "contract" {
-    contract = local.contract
+  contract = local.contract
 }
 
 resource "hpcr_contract_encrypted" "contract_cert" {
-    contract = local.contract
-    cert = file("./cert/encrypt.crt")
+  contract = local.contract
+  cert     = file("./cert/encrypt.crt")
 }
 
 resource "hpcr_contract_encrypted" "contract_privkey" {
   contract = local.contract
-  privkey = file("./cert/private.pem")
+  privkey  = file("./cert/private.pem")
 }
 
 resource "hpcr_contract_encrypted" "contract_platform" {
@@ -88,13 +88,13 @@ output "contract_privkey_sha256_out" {
 }
 
 output "contract_platform_rendered" {
-    value =  hpcr_contract_encrypted.contract_platform.rendered
+  value = hpcr_contract_encrypted.contract_platform.rendered
 }
 
 output "contract_platform_sha256_in" {
-    value =  hpcr_contract_encrypted.contract_platform.sha256_in
+  value = hpcr_contract_encrypted.contract_platform.sha256_in
 }
 
 output "contract_platform_sha256_out" {
-    value =  hpcr_contract_encrypted.contract_platform.sha256_out
+  value = hpcr_contract_encrypted.contract_platform.sha256_out
 }

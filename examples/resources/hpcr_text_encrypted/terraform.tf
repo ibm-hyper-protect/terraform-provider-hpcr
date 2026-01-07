@@ -12,7 +12,7 @@ resource "hpcr_text_encrypted" "text" {
 }
 
 resource "hpcr_text_encrypted" "text_platform" {
-  text = "hello world"
+  text     = "hello world"
   platform = "hpvs"
 }
 

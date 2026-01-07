@@ -12,13 +12,13 @@ resource "hpcr_tgz_encrypted" "compose_b64_enc" {
 }
 
 resource "hpcr_tgz_encrypted" "compose_b64_enc_platform" {
-  folder = "compose"
+  folder   = "compose"
   platform = "hpvs"
 }
 
 resource "hpcr_tgz_encrypted" "compose_b64_enc_cert" {
   folder = "compose"
-  cert = file("./cert/encrypt.crt")
+  cert   = file("./cert/encrypt.crt")
 }
 
 output "b64_enc_rendered" {
