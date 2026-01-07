@@ -62,10 +62,10 @@ func TestContractEncryptedResource_Schema(t *testing.T) {
 		t.Error("Expected 'contract' attribute to be required")
 	}
 
-	// Verify cert is required
+	// Verify cert is optional
 	certAttr := resp.Schema.Attributes["cert"]
-	if certAttr.IsRequired() == false {
-		t.Error("Expected 'cert' attribute to be required")
+	if certAttr.IsOptional() == false {
+		t.Error("Expected 'cert' attribute to be optional")
 	}
 
 	// Verify platform and privkey are optional
