@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: demoflaskapp
+spec:
+  containers:
+  - name: demoflaskapp
+    image: quay.io/sashwatk/demo-flask-app@sha256:bafa207e0d6a4b4cda1c76b8f191cb091eeeb7792b21115e2aa281808a53cf87
+    volumeMounts:
+    - name: hyperprotect-volume
+      mountPath: /var/hyperprotect/
+    ports:
+    - containerPort: 5000
+      hostPort: 80
+  volumes:
+  - name: hyperprotect-volume
+    hostPath:
+      path: /var/hyperprotect/
+  restartpolicy: Always

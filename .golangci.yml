@@ -1,0 +1,53 @@
+# golangci-lint configuration for terraform-provider-hpcr
+# Based on HashiCorp terraform-provider-scaffolding-framework
+
+linters:
+  disable-all: true
+  enable:
+    - copyloopvar
+    - durationcheck
+    - errcheck
+    - gofmt
+    - goimports
+    - gosimple
+    - govet
+    - ineffassign
+    - misspell
+    - staticcheck
+    - typecheck
+    - unconvert
+    - unused
+
+issues:
+  exclude-generated: lenient
+  exclude-dirs-use-default: false
+  exclude-dirs:
+    - "^.+_generated\\.go$"
+    - "vendor$"
+    - "builtin$"
+    - "examples"
+  exclude-rules:
+    - linters:
+        - all
+      path: "_generated\\.go$"
+    - linters:
+        - errcheck
+      path: "_test\\.go$"
+  max-issues-per-linter: 0
+  max-same-issues: 0
+
+linters-settings:
+  goimports:
+    local-prefixes: github.com/ibm-hyper-protect/terraform-provider-hpcr
+
+formatters:
+  enable:
+    - gofmt
+  disable-all: false
+  exclude-generated: lenient
+  exclude-dirs-use-default: false
+  exclude-dirs:
+    - "^.+_generated\\.go$"
+    - "vendor$"
+    - "builtin$"
+    - "examples"
