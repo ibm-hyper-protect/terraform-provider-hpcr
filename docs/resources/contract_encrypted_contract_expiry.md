@@ -19,13 +19,13 @@ Generates an encrypted and signed user data field with contract expiry enabled u
 
 - `cacert` (String) CA Certificate used to generate signing certificate
 - `cakey` (String) CA Key used to generate signing certificate
-- `cert` (String) Certificate used to encrypt the contract, in PEM format
 - `contract` (String, Sensitive) YAML serialization of the contract
 - `expiry` (Number) Number of days for contract to expire
 
 ### Optional
 
-- `csrfile` (String) CSR File to generate signing certificate
+- `cert` (String) Certificate used to encrypt the contract, in PEM format
+- `csr` (String) CSR to generate signing certificate
 - `csrparams` (Map of String) CSR Parameters to generate signing certificate
 - `platform` (String) Hyper Protect platform where this contract will be deployed. Defaults to hpvs
 - `privkey` (String, Sensitive) Private key used to sign the contract. If omitted, a temporary signing key is created.
