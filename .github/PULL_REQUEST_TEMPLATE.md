@@ -71,6 +71,16 @@ terraform {
 # Test output here
 ```
 
+### Acceptance Tests
+
+<!-- Only check this if your PR changes data source logic, encryption functionality, or IBM Cloud integrations -->
+
+- [ ] **This PR requires acceptance tests** (changes to data sources, encryption, or IBM Cloud interactions)
+  - [ ] I have added the `run-acceptance-tests` label to trigger CI acceptance tests
+  - [ ] OR I have run `make testacc` locally and all tests pass
+
+**Note**: Acceptance tests interact with real IBM Cloud infrastructure and cost money. Only use the `run-acceptance-tests` label when necessary.
+
 ## Checklist
 
 Before submitting this PR, please make sure:

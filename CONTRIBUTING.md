@@ -285,18 +285,52 @@ make test-coverage
 
 ### Acceptance Tests
 
-For Terraform provider acceptance tests:
+Acceptance tests verify the provider works with **real IBM Cloud infrastructure**. They require an IBM Cloud API key and may incur costs.
 
 ```bash
-# Set required environment variables
-export TF_ACC=1
+# Get API key from IBM Cloud Console (Manage > Access (IAM) > API keys)
 export IBM_CLOUD_API_KEY=your_api_key
+
+# Enable acceptance test mode
+export TF_ACC=1
 
 # Run acceptance tests
 make testacc
 ```
 
-**Note**: Acceptance tests interact with real infrastructure and may incur costs.
+**Why is IBM_CLOUD_API_KEY Required?**
+
+The provider's data sources interact with IBM Cloud APIs:
+- `hpcr_encryption_certs` - Downloads encryption certificates from IBM Cloud
+- `hpcr_encryption_cert` - Gets specific certificate versions from IBM Cloud
+- `hpcr_image` - Queries IBM Cloud VPC for available HPCR images
+
+Without the API key, these tests will fail immediately with authentication errors.
+
+**Cost & Time Considerations:**
+- **Costs**: May incur small charges for API calls
+- **Time**: Much slower than unit tests (~10-15 minutes)
+- **External Dependencies**: Requires internet and IBM Cloud availability
+
+**When Acceptance Tests Run in CI:**
+- **Pull Requests**: Skipped by default (to save time and costs)
+  - To run on a PR: Add the `run-acceptance-tests` label to the PR
+- **Main Branch**: Run automatically after merge
+- **Manual Trigger**: Can be triggered via workflow_dispatch
+
+**Triggering Acceptance Tests on PRs:**
+
+If your PR changes data source logic or requires full integration testing:
+
+1. Go to your PR on GitHub
+2. Click "Labels" on the right sidebar
+3. Add the `run-acceptance-tests` label
+4. Tests will automatically trigger on the next push
+
+**Important**: Only use this label when necessary, as each run costs money and takes ~90 minutes.
+
+**Local Development:**
+Most development can be done with unit tests only. Run acceptance tests locally before submitting PRs that change data source logic.
 
 ### Test Provider Locally
 
