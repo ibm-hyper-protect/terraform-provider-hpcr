@@ -226,7 +226,7 @@ Complete examples for all resources and data sources are available in the [`exam
 
 Here's a complete workflow for creating and deploying an HPCR contract:
 
-```terraform
+```terraform 
 terraform {
   required_providers {
     hpcr = {
