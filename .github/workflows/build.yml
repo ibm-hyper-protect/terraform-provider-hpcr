@@ -148,7 +148,7 @@ jobs:
   # Semantic release - generates changelog and creates GitHub releases
   release:
     name: Semantic Release
-    needs: [build, unit-tests, generate]
+    needs: [build, unit-tests]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     # Only run on main branch, not on PRs
@@ -190,7 +190,7 @@ jobs:
   # GoReleaser builds and publishes provider binaries to GitHub releases
   goreleaser:
     name: GoReleaser
-    needs: [build, unit-tests, generate]
+    needs: [build, unit-tests]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     # Only run on version tags created by semantic-release (e.g., v1.0.0)
