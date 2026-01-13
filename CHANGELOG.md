@@ -1,3 +1,7 @@
+## 1.1.0 (2026-01-13)
+
+* feat: fix CI/CD error ([b75ea3d](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/b75ea3d))
+
 ## [1.0.1](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/compare/v1.0.0...v1.0.1) (2026-01-13)
 
 ### Bug Fixes
