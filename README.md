@@ -202,72 +202,76 @@ data "hpcr_image" "selected_image" {
 
 ## Examples
 
-### Resource: hpcr_tgz
+Complete examples for all resources and data sources are available in the [`examples/`](./examples) directory:
 
-Creates a Base64-encoded tgz archive from a folder containing docker-compose or podman play configuration.
+### Resources
 
-**Arguments:**
-- `folder` (Required) - Path to the folder containing docker-compose or podman play files
+- **[hpcr_tgz](./examples/resources/hpcr_tgz)** - Create Base64-encoded tar.gz archives from docker-compose or podman folders
+- **[hpcr_tgz_encrypted](./examples/resources/hpcr_tgz_encrypted)** - Create encrypted archives with platform and certificate options
+- **[hpcr_text](./examples/resources/hpcr_text)** - Encode text as Base64 for contract inclusion
+- **[hpcr_text_encrypted](./examples/resources/hpcr_text_encrypted)** - Encrypt text content for secure contracts
+- **[hpcr_json](./examples/resources/hpcr_json)** - Encode JSON data as Base64
+- **[hpcr_json_encrypted](./examples/resources/hpcr_json_encrypted)** - Encrypt JSON configuration data
+- **[hpcr_contract_encrypted](./examples/resources/hpcr_contract_encrypted)** - Generate encrypted and signed HPCR contracts
+- **[hpcr_contract_encrypted_contract_expiry](./examples/resources/hpcr_contract_encrypted_contract_expiry)** - Generate contracts with automatic expiry using CSR
 
-**Attributes:**
-- `rendered` - Base64-encoded tgz archive content
+### Data Sources
 
-**Example:**
+- **[hpcr_image](./examples/datasources/hpcr_image)** - Select HPCR images from IBM Cloud VPC with semantic versioning
+- **[hpcr_attestation](./examples/datasources/hpcr_attestation)** - Decrypt and parse attestation records
+- **[hpcr_encryption_certs](./examples/datasources/hpcr_encryption_certs)** - Download encryption certificates from IBM Cloud
+- **[hpcr_encryption_cert](./examples/datasources/hpcr_encryption_cert)** - Select specific certificate versions
+
+### Quick Start Example
+
+Here's a complete workflow for creating and deploying an HPCR contract:
+
 ```terraform
-resource "hpcr_tgz" "compose" {
+terraform {
+  required_providers {
+    hpcr = {
+      source  = "ibm-hyper-protect/hpcr"
+      version = "~> 0.16.2"
+    }
+    ibm = {
+      source  = "IBM-Cloud/ibm"
+      version = ">= 1.37.1"
+    }
+  }
+}
+
+# Create TGZ archive from docker-compose folder
+resource "hpcr_tgz" "workload" {
   folder = "./docker-compose"
 }
 
-output "archive" {
-  value = resource.hpcr_tgz.compose.rendered
-}
-```
-
-### Resource: hpcr_text_encrypted
-
-Encrypts text content using HPVS encryption certificates.
-
-**Arguments:**
-- `text` (Required) - Plain text content to encrypt
-- `cert` (Optional) - Specific encryption certificate to use (defaults to latest)
-
-**Attributes:**
-- `rendered` - Encrypted and Base64-encoded text
-
-**Example:**
-```terraform
-resource "hpcr_text_encrypted" "workload" {
-  text = yamlencode({
-    "compose" : {
-      "archive" : resource.hpcr_tgz.compose.rendered
-    }
-  })
-}
-
-resource "hpcr_text_encrypted" "env" {
-  text = yamlencode({
-    "type" : "env",
+# Define contract
+locals {
+  contract = yamlencode({
     "env" : {
-      "MY_SECRET" : "sensitive_value"
+      "type" : "env",
+      "logging" : {
+        "logDNA" : {
+          "hostname" : "logs.example.com",
+          "ingestionKey" : var.logging_key
+        }
+      }
+    },
+    "workload" : {
+      "type" : "workload",
+      "compose" : {
+        "archive" : resource.hpcr_tgz.workload.rendered
+      }
     }
   })
 }
-```
 
-### Data Source: hpcr_image
+# Generate encrypted contract
+resource "hpcr_contract_encrypted" "contract" {
+  contract = local.contract
+}
 
-Selects the appropriate HPCR stock image from IBM Cloud VPC.
-
-**Arguments:**
-- `images` (Required) - JSON-encoded list of available VPC images
-- `spec` (Optional) - [Semantic version constraint](https://github.com/Masterminds/semver#checking-version-constraints) (e.g., `>=1.1.0`, `~>1.0`)
-
-**Attributes:**
-- `image` - ID of the selected image
-- `version` - Semantic version string of the selected image (e.g., `1.0.8`)
-
-**Example:**
-```terraform
+# Select HPCR image
 data "ibm_is_images" "hyper_protect_images" {
   visibility = "public"
   status     = "available"
@@ -278,14 +282,34 @@ data "hpcr_image" "selected_image" {
   spec   = ">=1.1.0"
 }
 
-output "selected_image_id" {
-  value = data.hpcr_image.selected_image.image
+# Deploy to IBM Cloud VPC
+resource "ibm_is_instance" "hpcr_instance" {
+  name    = "my-hpcr-workload"
+  image   = data.hpcr_image.selected_image.image
+  profile = var.profile
+  keys    = [var.key_id]
+  vpc     = var.vpc_id
+  zone    = var.zone
+
+  primary_network_interface {
+    name            = "eth0"
+    subnet          = var.subnet_id
+    security_groups = [var.security_group_id]
+  }
+
+  user_data = resource.hpcr_contract_encrypted.contract.rendered
 }
 
-output "selected_image_version" {
-  value = data.hpcr_image.selected_image.version
+output "instance_id" {
+  value = ibm_is_instance.hpcr_instance.id
+}
+
+output "contract_sha256" {
+  value = resource.hpcr_contract_encrypted.contract.sha256_out
 }
 ```
+
+For more detailed examples and specific use cases, explore the [`examples/`](./examples) directory.
 
 ## Related Projects
 
@@ -317,3 +341,7 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 - **Issues**: Report bugs or request features via [GitHub Issues](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues)
 - **Security**: Report vulnerabilities via [GitHub Security Advisories](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/security/advisories) (never public issues)
 - **Discussions**: Community discussions available on the [repository discussions page](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/discussions)
+
+## Contributors
+
+![Contributors](https://contrib.rocks/image?repo=ibm-hyper-protect/terraform-provider-hpcr)
