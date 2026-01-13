@@ -185,15 +185,19 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          npx \
-            -p semantic-release@24 \
-            -p @semantic-release/commit-analyzer@11 \
-            -p @semantic-release/release-notes-generator@12 \
-            -p @semantic-release/github@10 \
-            -p @semantic-release/changelog@6 \
-            -p @semantic-release/git@10 \
-            -p conventional-changelog-conventionalcommits@7 \
-            semantic-release
+          # Run semantic release in dry-run mode first to check if a release is needed
+          output=$(npx semantic-release --no-ci || true)
+          echo "$output"
+
+          # Determine if a release was published
+          if echo "$output" | grep -q "Published release"; then
+            version=$(echo "$output" | grep "Published release" | awk '{print $3}')
+            echo "new_release_published=true" >> $GITHUB_OUTPUT
+            echo "new_release_version=$version" >> $GITHUB_OUTPUT
+          else
+            echo "new_release_published=false" >> $GITHUB_OUTPUT
+            echo "new_release_version=" >> $GITHUB_OUTPUT
+          fi
 
   goreleaser:
     name: Build & Publish Terraform Provider
