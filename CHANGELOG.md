@@ -1,3 +1,8 @@
+## <small>1.1.1 (2026-01-13)</small>
+
+* Merge pull request #147 from Sashwat-K/fix-cii ([10bb1dc](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/10bb1dc)), closes [#147](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/147)
+* fix: CI/CD again ([dfefaeb](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/dfefaeb))
+
 ## 1.1.0 (2026-01-13)
 
 * feat: fix CI/CD error ([b75ea3d](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/b75ea3d))
