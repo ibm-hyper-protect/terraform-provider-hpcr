@@ -1,3 +1,17 @@
+## [1.0.0](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/compare/v0.17.0...v1.0.0) (2026-01-13)
+
+### ⚠ BREAKING CHANGES
+
+* update README.md
+
+### Features
+
+* update README.md ([6eb8c75](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/6eb8c75dacdbf788b740a51e06ec1f174dd414e9))
+
+### Miscellaneous Chores
+
+* **deps:** update go dependencies ([#142](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/142)) ([2d25ada](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/2d25ada68ac66cb279a4b53fa6287f550e76966f))
+
 ## [0.17.0](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/compare/v0.16.2...v0.17.0) (2026-01-13)
 
 ### Features
