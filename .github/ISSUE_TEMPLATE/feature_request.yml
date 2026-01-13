@@ -1,0 +1,150 @@
+name: Feature Request
+description: Suggest a new feature or enhancement
+title: "[Feature]: "
+labels: ["enhancement", "triage"]
+assignees:
+  - Sashwat-K
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new feature! Please provide as much detail as possible.
+
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Prerequisites
+      description: Please confirm the following before submitting
+      options:
+        - label: I have searched for existing feature requests
+          required: true
+        - label: I have reviewed the [documentation](https://registry.terraform.io/providers/ibm-hyper-protect/hpcr/latest/docs)
+          required: true
+        - label: This feature is not already available in the latest version
+          required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: Describe the problem or frustration that motivates this feature request
+      placeholder: I'm trying to..., but I can't because...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the solution you'd like to see
+      placeholder: I would like to have a new resource/data source/argument that...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Describe any alternative solutions or workarounds you've considered
+      placeholder: I tried..., but it doesn't work because...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Feature Category
+      description: What type of feature is this?
+      options:
+        - New Resource
+        - New Data Source
+        - Resource Enhancement
+        - Data Source Enhancement
+        - Provider Configuration
+        - Performance Improvement
+        - Documentation
+        - Testing
+        - Developer Experience
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Target Platform
+      description: Which Hyper Protect platform(s) would this feature support?
+      multiple: true
+      options:
+        - HPVS (Hyper Protect Virtual Servers)
+        - HPCR-RHVS (Hyper Protect Container Runtime for RedHat Virtualization)
+        - HPCC-PeerPod (Hyper Protect Confidential Container Peer Pods)
+        - All platforms
+        - Not applicable
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use Case
+      description: Describe a real-world use case for this feature
+      placeholder: This would help users who need to...
+    validations:
+      required: true
+
+  - type: textarea
+    id: example
+    attributes:
+      label: Example Usage
+      description: Provide an example of how this feature would be used (optional)
+      placeholder: |
+        resource "hpcr_new_feature" "example" {
+          # Your example configuration
+        }
+      render: hcl
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature to you?
+      options:
+        - Critical - Blocking my work
+        - High - Important for my use case
+        - Medium - Would be nice to have
+        - Low - Minor improvement
+    validations:
+      required: true
+
+  - type: dropdown
+    id: breaking
+    attributes:
+      label: Breaking Change
+      description: Would this feature require breaking changes?
+      options:
+        - "No - Fully backward compatible"
+        - "Yes - Would require breaking changes"
+        - "Unsure"
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Add any other context, mockups, related issues, or references
+      placeholder: |
+        - Related to issue #123
+        - Similar to feature X in provider Y
+        - Documentation reference: https://...
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      description: Would you like to help implement this feature?
+      options:
+        - label: I am willing to submit a pull request to implement this feature
+        - label: I am willing to help test this feature
+        - label: I am willing to help write documentation for this feature
