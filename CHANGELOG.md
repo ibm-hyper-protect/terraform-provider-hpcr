@@ -1,3 +1,11 @@
+## [1.0.1](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/compare/v1.0.0...v1.0.1) (2026-01-13)
+
+### Bug Fixes
+
+* CI release error ([e0ed7d2](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/e0ed7d2a6a27d9f7351aed99d5d779ccedef0052))
+* CI/CD ([867d5b6](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/867d5b6b64b831fcd598a61aeafe648a60c5d1d8))
+* CI/CD error ([e98625a](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/e98625a7fdc39bf92fb554c86db89a286738d38b))
+
 ## [1.0.0](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/compare/v0.17.0...v1.0.0) (2026-01-13)
 
 ### ⚠ BREAKING CHANGES
