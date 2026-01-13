@@ -1,68 +1,120 @@
-# Maintainers Guide
+# Maintainers
 
-This guide is intended for maintainers.
+This document lists the maintainers of the terraform-provider-hpcr project.
 
-## Methodology
+## Current Maintainers
 
-This repository does not have a traditional release management cycle, but
-should instead be maintained as a useful, working, and polished reference at
-all times. While all work can therefore be focused on the master branch, the
-quality of this branch should never be compromised.
+| Name | GitHub Handle | Role | Email | Focus Areas |
+|------|---------------|------|-------|-------------|
+| Sashwat K | [@Sashwat-K](https://github.com/Sashwat-K) | Lead Maintainer | Sashwat.K@ibm.com | Overall project direction, releases, core features |
+| Vikas Sharma | [@vikas-sharma24](https://github.com/vikas-sharma24) | Maintainer | Vikas.Sharma24@ibm.com | Releases and core features |
 
-The remainder of this document details how to merge pull requests to the
-repositories.
+## Responsibilities
 
-## Merge approval
+### Lead Maintainer
 
-The project maintainers use LGTM (Looks Good To Me) in comments on the pull
-request to indicate acceptance prior to merging. A change requires LGTMs from
-two project maintainers. If the code is written by a maintainer, the change
-only requires one additional LGTM.
+The Lead Maintainer has the following responsibilities:
 
-## Reviewing Pull Requests
+- Set the technical direction for the project
+- Manage releases and versioning
+- Review and merge pull requests
+- Manage community interactions
+- Coordinate security responses
+- Make final decisions when consensus cannot be reached
 
-We recommend reviewing pull requests directly within GitHub. This allows a
-public commentary on changes, providing transparency for all users. When
-providing feedback be civil, courteous, and kind. Disagreement is fine, so long
-as the discourse is carried out politely. If we see a record of uncivil or
-abusive comments, we will revoke your commit privileges and invite you to leave
-the project.
+### All Maintainers
 
-During your review, consider the following points:
+All maintainers are expected to:
 
-### Does the change have positive impact?
+- Be responsive to issues and pull requests
+  - Acknowledge new issues within 3 business days
+  - Provide initial feedback on pull requests within 3 business days
+  - Respond to security reports within 3 business days
+- Maintain high code quality standards
+- Support contributors and provide constructive feedback
+- Uphold the [Code of Conduct](CODE_OF_CONDUCT.md)
+- Stay informed about developments in the Terraform ecosystem and IBM Hyper Protect technologies
 
-Some proposed changes may not represent a positive impact to the project. Ask
-whether or not the change will make understanding the code easier, or if it
-could simply be a personal preference on the part of the author (see
-[bikeshedding](https://en.wiktionary.org/wiki/bikeshedding)).
+## Becoming a Maintainer
 
-Pull requests that do not have a clear positive impact should be closed without
-merging.
+We welcome new maintainers who have demonstrated:
 
-### Do the changes make sense?
+- Consistent, high-quality contributions to the project
+- Active engagement with the community (issues, discussions, reviews)
+- Understanding of the project's goals and architecture
+- Alignment with the project's values and Code of Conduct
 
-If you do not understand what the changes are or what they accomplish, ask the
-author for clarification. Ask the author to add comments and/or clarify test
-case names to make the intentions clear.
+### Process
 
-At times, such clarification will reveal that the author may not be using the
-code correctly, or is unaware of features that accommodate their needs. If you
-feel this is the case, work up a code sample that would address the pull
-request for them, and feel free to close the pull request once they confirm.
+1. An existing maintainer nominates a candidate
+2. Current maintainers discuss the nomination
+3. If consensus is reached, the nominee is invited to become a maintainer
+4. Upon acceptance, the new maintainer is added to this document and granted appropriate permissions
 
-### Does the change introduce a new feature?
+## Decision-Making Process
 
-For any given pull request, ask yourself "is this a new feature?" If so, does
-the pull request (or associated issue) contain narrative indicating the need
-for the feature? If not, ask them to provide that information.
+### Regular Decisions
 
-Are new unit tests in place that test all new behaviors introduced? If not, do
-not merge the feature until they are! Is documentation in place for the new
-feature? (See the documentation guidelines). If not do not merge the feature
-until it is! Is the feature necessary for general use cases? Try and keep the
-scope of any given component narrow. If a proposed feature does not fit that
-scope, recommend to the user that they maintain the feature on their own, and
-close the request. You may also recommend that they see if the feature gains
-traction among other users, and suggest they re-submit when they can show such
-support.
+For most decisions (bug fixes, minor features, documentation):
+
+- Decisions are made through normal GitHub issues and pull requests
+- Maintainers review and provide feedback
+- Changes can be merged with approval from at least one maintainer
+- If the code is written by a maintainer, it requires one additional maintainer's approval
+
+### Major Decisions
+
+For significant changes (new features, architectural changes, breaking changes):
+
+1. Create an RFC (Request for Comments) as a GitHub issue
+2. Allow at least one week for discussion
+3. Maintainers work towards consensus
+4. If consensus cannot be reached, the Lead Maintainer makes the final decision
+
+## Code Review and Merging
+
+### Review Guidelines
+
+When reviewing pull requests, maintainers should:
+
+- Be **constructive** - Focus on helping the contributor improve their work
+- Be **timely** - Provide feedback within 3 business days when possible
+- Be **thorough** - Check code quality, tests, documentation, and adherence to standards
+- Be **respectful** - Disagreement is fine, but keep discourse civil and professional
+
+### Merging Criteria
+
+Pull requests should only be merged when:
+
+- All CI checks pass
+- At least one maintainer has approved (two for maintainer PRs)
+- All review comments are resolved
+- The commit messages follow [Conventional Commits](https://www.conventionalcommits.org/)
+- Documentation is updated (if applicable)
+- Tests are included for new functionality
+
+## Communication Channels
+
+- **General questions and discussions**: [GitHub Discussions](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/discussions)
+- **Bug reports and feature requests**: [GitHub Issues](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues)
+- **Security issues**: [GitHub Security Advisories](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/security/advisories) (never public issues)
+- **Code of Conduct violations**: Direct contact with maintainers via email
+
+## Stepping Down
+
+Maintainers may step down at any time by:
+
+1. Notifying other maintainers
+2. Submitting a pull request to remove themselves from this document
+3. Coordinating the transition of any ongoing responsibilities
+
+We appreciate all contributions from past maintainers and thank them for their service to the project.
+
+## Emeritus Maintainers
+
+We recognize and thank former maintainers for their contributions:
+
+<!-- This section will list maintainers who have stepped down -->
+<!-- Currently empty -->
+
+---
