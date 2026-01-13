@@ -29,19 +29,50 @@ jobs:
 
       - name: Validate commit message
         run: |
+          # Conventional commit regex pattern
+          # Matches: type(optional-scope): description
+          # Valid types from .releaserc: feat, fix, docs, perf, revert, chore, refactor, test, build, ci
           pattern='^(feat|fix|docs|perf|revert|chore|refactor|test|build|ci)(\([a-z0-9-]+\))?!?: .{1,}'
+
+          # Get the latest commit message (HEAD)
           commit_sha="${{ github.event.pull_request.head.sha }}"
           commit_message=$(git log --format=%B -n 1 $commit_sha | head -n 1)
+          short_sha=$(echo $commit_sha | cut -c1-7)
+
+          echo "Checking commit: $short_sha"
+          echo "Message: $commit_message"
+          echo ""
 
           if ! echo "$commit_message" | grep -qE "$pattern"; then
             echo "Invalid commit message format!"
+            echo ""
+            echo "Commit: $short_sha"
+            echo "Message: $commit_message"
+            echo ""
+            echo "────────────────────────────────────────"
+            echo "Valid format: <type>(<optional-scope>): <description>"
+            echo ""
+            echo "Allowed types: feat, fix, docs, perf, revert, chore, refactor, test, build, ci"
+            echo ""
+            echo "Examples:"
+            echo "  feat: add new feature"
+            echo "  fix(api): resolve null pointer exception"
+            echo "  docs: update README"
+            echo "  chore!: breaking change in build process"
             exit 1
           fi
+
+          echo "Commit message is valid!"
 
   build:
     name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    # Skip on labeled events unless it's the run-acceptance-tests label
+    if: |
+      github.event_name != 'pull_request' ||
+      github.event.action != 'labeled' ||
+      contains(github.event.pull_request.labels.*.name, 'run-acceptance-tests')
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -60,21 +91,57 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # Skip on labeled events unless it's the run-acceptance-tests label
+    if: |
+      github.event_name != 'pull_request' ||
+      github.event.action != 'labeled' ||
+      contains(github.event.pull_request.labels.*.name, 'run-acceptance-tests')
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
           cache: true
+      - name: Install OpenSSL
+        run: sudo apt-get update && sudo apt-get install -y openssl
       - run: go mod download
-      - run: go test -v -cover ./...
+      - name: Run unit tests
+        run: go test -v -cover -timeout=120s -parallel=10 ./...
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v5
+        if: always()
+        with:
+          files: ./coverage.out
+          flags: unittests
+        continue-on-error: true
 
+  # Run acceptance tests in a matrix with Terraform CLI versions
+  # NOTE: Acceptance tests are expensive and slow (interact with real IBM Cloud infrastructure)
+  # They run automatically on main branch, or on PRs with the "run-acceptance-tests" label
   acceptance-tests:
     name: Acceptance Tests
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    # Run acceptance tests when:
+    # 1. Pushing to main branch (after PR merge)
+    # 2. Manually triggered via workflow_dispatch
+    # 3. PR has the "run-acceptance-tests" label (triggers on labeled event OR subsequent pushes)
+    if: |
+      github.ref == 'refs/heads/main' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'run-acceptance-tests'))
     timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        # Test against multiple Terraform versions to ensure compatibility
+        terraform:
+          - '1.0.*'   # Minimum supported version
+          - '1.3.*'   # Widely used stable version
+          - '1.6.*'   # Recent LTS-like version
+          - '1.9.*'   # Recent stable version
+          - '1.13.*'  # Second latest
+          - '1.14.*'  # Latest stable
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -114,4 +181,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          npx semantic-release
+          npx -p @semantic-release/changelog \
+              -p @semantic-release/git \
+              -p @semantic-release/exec \
+              -p conventional-changelog-conventionalcommits \
+              -p semantic-release \
+              semantic-release
