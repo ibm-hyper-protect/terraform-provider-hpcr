@@ -1,20 +1,404 @@
-# Contributing
+# Contributing to terraform-provider-hpcr
 
-This is an open source project, and we appreciate your help!
+Thank you for your interest in contributing to the IBM Hyper Protect Container Runtime Terraform Provider! This document provides guidelines for contributing to the project.
 
-We use the GitHub issue tracker to discuss new features and non-trivial bugs.
+## Code of Conduct
 
-If you have questions about contributing, PRs, or bugs, you can:
-- Create a new issue and tag @your-github-username
-- Use the GitHub Discussions (if enabled)
-- Reach out via [preferred method, e.g., email or Discord]
+This project adheres to our [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to the maintainers listed in [MAINTAINERS.md](MAINTAINERS.md).
 
-To contribute code, documentation, or tests, please submit a pull request to
-the GitHub repository. Please make sure to tag @Sashwat-K and add @Sashwat-K
-as reviewers.
+## How Can I Contribute?
 
-Generally, we expect two maintainers to review your pull request before it is 
-approved for merging. For more details, see the
-[MAINTAINERS](MAINTAINERS.md) page.
+### Reporting Bugs
 
-Contributions are subject to the [Developer Certificate of Origin, Version 1.1](https://developercertificate.org/) and the [Apache License, Version 2](https://www.apache.org/licenses/LICENSE-2.0.txt).
+Before creating a bug report, please check existing issues to avoid duplicates. When creating a bug report, use the issue template and include as much detail as possible:
+
+- **Clear title**: Describe the problem concisely
+- **Steps to reproduce**: Provide detailed steps to reproduce the issue
+- **Expected behavior**: What you expected to happen
+- **Actual behavior**: What actually happened
+- **Environment**: Terraform version, provider version, OS, etc.
+- **Configuration**: Relevant Terraform configuration (sanitize sensitive data)
+- **Logs**: Error messages and relevant log output
+
+**Security vulnerabilities** should **never** be reported as public issues. Use [GitHub Security Advisories](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/security/advisories) instead.
+
+### Suggesting Features
+
+We welcome feature suggestions! Before creating a feature request:
+
+1. Check existing issues and discussions to see if it's already been suggested
+2. Consider if the feature aligns with the project's goals
+3. Use the feature request template and include:
+   - **Problem statement**: What problem does this solve?
+   - **Proposed solution**: How would you like to see it implemented?
+   - **Alternatives**: What alternatives have you considered?
+   - **Use case**: Describe your specific use case
+
+### Asking Questions
+
+Before asking a question:
+
+1. Check the [documentation](README.md) and existing examples
+2. Search existing issues and discussions
+
+For general questions:
+- Use [GitHub Discussions](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/discussions)
+- Tag your discussion appropriately
+
+### Contributing Code
+
+We appreciate code contributions! To ensure a smooth process:
+
+1. **Open an issue first**: Discuss your approach before investing time in implementation
+2. **Avoid duplicate work**: Check if someone else is already working on it
+3. **Follow conventions**: Adhere to our coding standards and commit message format
+4. **Include tests**: All code changes should include appropriate tests
+5. **Update documentation**: Update relevant documentation for user-facing changes
+
+## Getting Started
+
+
+### Prerequisites
+
+- **Go**: Version 1.24 or later
+- **Terraform**: Version 1.0 or later (for testing)
+- **Make**: For running build tasks
+- **Git**: For version control
+
+### Development Setup
+
+1. **Fork the repository** on GitHub
+
+2. **Clone your fork**:
+   ```bash
+   git clone https://github.com/YOUR-USERNAME/terraform-provider-hpcr.git
+   cd terraform-provider-hpcr
+   ```
+
+3. **Add upstream remote**:
+   ```bash
+   git remote add upstream https://github.com/ibm-hyper-protect/terraform-provider-hpcr.git
+   ```
+
+4. **Install dependencies**:
+   ```bash
+   make install-deps
+   ```
+
+5. **Verify your setup**:
+   ```bash
+   # Build the provider
+   make build
+
+   # Run tests
+   make test
+
+   # Run linting
+   make lint
+   ```
+
+## Development Workflow
+
+1. **Create a feature branch** from `main`:
+   ```bash
+   git checkout main
+   git pull upstream main
+   git checkout -b feature/your-feature-name
+   ```
+
+2. **Make your changes** following our [coding standards](#coding-standards)
+
+3. **Run tests** frequently during development:
+   ```bash
+   make test
+   ```
+
+4. **Tidy dependencies**:
+   ```bash
+   make tidy
+   ```
+
+5. **Format your code** as per standards:
+   ```bash
+   make lint
+   ```
+
+6. **Commit your changes** with [proper commit messages](#commit-messages)
+
+7. **Push to your fork**:
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+
+8. **Open a Pull Request** from your fork to the main repository
+
+## Coding Standards
+
+This project follows standard Go coding conventions:
+
+- Follow [Effective Go](https://golang.org/doc/effective_go.html) principles
+- Follow [Go Code Review Comments](https://github.com/golang/go/wiki/CodeReviewComments)
+- Use `gofmt` for formatting (enforced by CI)
+- Use `golangci-lint` for linting
+
+### Key Practices
+
+1. **Small, focused functions**: Each function should do one thing well
+2. **Meaningful names**: Use clear, descriptive names for variables and functions
+3. **Error handling**: Always handle errors explicitly, never ignore them
+4. **Documentation**: Add godoc comments for exported functions and types
+5. **Minimal exports**: Only export what needs to be public
+6. **Testing**: Write table-driven tests, test edge cases and error conditions
+
+### Terraform Provider Best Practices
+
+- Follow [Terraform Plugin Development](https://developer.hashicorp.com/terraform/plugin) guidelines
+- Use the [Terraform Plugin Framework](https://developer.hashicorp.com/terraform/plugin/framework)
+- Validate inputs early and provide helpful error messages
+- Support both simple and complex use cases
+- Maintain backwards compatibility whenever possible
+
+## Commit Message Convention
+
+This project uses [Conventional Commits](https://www.conventionalcommits.org/) with **automated semantic-release**.
+
+**Important:** Commit messages directly impact versioning and changelog generation.
+
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+### Commit Types and Version Impact
+
+- **feat**: A new feature (triggers **minor** version bump: 1.0.0 → 1.1.0)
+- **fix**: A bug fix (triggers **patch** version bump: 1.0.0 → 1.0.1)
+- **perf**: Performance improvements (triggers **patch** version bump)
+- **build**: Build system changes (triggers **patch** version bump)
+- **docs**: Documentation changes only (no version bump)
+- **refactor**: Code changes that neither fix bugs nor add features (no version bump)
+- **test**: Adding or updating tests (no version bump)
+- **chore**: Maintenance tasks, dependency updates (no version bump)
+- **ci**: Changes to CI/CD configuration (no version bump)
+- **BREAKING CHANGE**: Breaking changes in footer (triggers **major** version bump: 1.0.0 → 2.0.0)
+
+### Examples
+
+```
+feat(contract): add support for contract expiry validation
+
+fix(encryption): handle malformed certificates gracefully
+
+docs: update README with new resource examples
+
+test(contract): add edge case tests for empty workload
+
+feat!: redesign contract API
+
+BREAKING CHANGE: Contract struct signature changed
+```
+
+### CHANGELOG.md
+
+**DO NOT manually edit CHANGELOG.md**. It is automatically generated by semantic-release based on conventional commits when code is merged to `main`.
+
+The release workflow:
+1. Push to `main` → semantic-release analyzes commits
+2. CHANGELOG.md is generated and committed automatically
+3. A git tag is created (e.g., `v1.2.0`)
+4. GoReleaser publishes the release to GitHub and Terraform Registry
+
+## Pull Request Process
+
+1. **Fork and create a branch**:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+2. **Make your changes**:
+   - Write clear, focused commits
+   - Follow coding standards
+   - Add or update tests
+   - Update documentation
+
+3. **Ensure quality**:
+   ```bash
+   make fmt      # Format code
+   make lint     # Run linters
+   make test     # Run tests
+   make tidy     # Tidy dependencies
+   ```
+
+4. **Push and create PR**:
+   - Push to your fork
+   - Create a pull request against `main`
+   - Link to related issues
+   - Fill out the PR template completely
+
+5. **Code review**:
+   - Address review comments promptly
+   - Keep the discussion focused and professional
+   - Be open to feedback and suggestions
+
+6. **Merging**:
+   - All CI checks must pass
+   - At least one maintainer approval required
+   - All review comments must be resolved
+
+### PR Checklist
+
+Before submitting your PR, ensure:
+
+- [ ] Code follows project conventions and style
+- [ ] Tests pass locally (`make test`)
+- [ ] New tests added for new functionality
+- [ ] Documentation updated (README, examples, etc.)
+- [ ] Commit messages follow Conventional Commits
+- [ ] PR is linked to related issue(s)
+- [ ] No sensitive data (credentials, keys) in code or commits
+
+## Testing
+
+### Running Tests
+
+```bash
+# Run all tests
+make test
+
+# Run specific test
+go test -v -run TestResourceContract ./...
+
+# Run with coverage
+make test-coverage
+```
+
+### Writing Tests
+
+- Use **table-driven tests** for multiple test cases
+- Test both **success and failure** paths
+- Test **edge cases** and **boundary conditions**
+- Use **descriptive test names** that explain what's being tested
+- Mock external dependencies appropriately
+
+### Acceptance Tests
+
+Acceptance tests verify the provider works with **real IBM Cloud infrastructure**. They require an IBM Cloud API key and may incur costs.
+
+```bash
+# Get API key from IBM Cloud Console (Manage > Access (IAM) > API keys)
+export IBM_CLOUD_API_KEY=your_api_key
+
+# Enable acceptance test mode
+export TF_ACC=1
+
+# Run acceptance tests
+make testacc
+```
+
+**Why is IBM_CLOUD_API_KEY Required?**
+
+The provider's data sources interact with IBM Cloud APIs:
+- `hpcr_encryption_certs` - Downloads encryption certificates from IBM Cloud
+- `hpcr_encryption_cert` - Gets specific certificate versions from IBM Cloud
+- `hpcr_image` - Queries IBM Cloud VPC for available HPCR images
+
+Without the API key, these tests will fail immediately with authentication errors.
+
+**Cost & Time Considerations:**
+- **Costs**: May incur small charges for API calls
+- **Time**: Much slower than unit tests (~10-15 minutes)
+- **External Dependencies**: Requires internet and IBM Cloud availability
+
+**When Acceptance Tests Run in CI:**
+- **Pull Requests**: Skipped by default (to save time and costs)
+  - To run on a PR: Add the `run-acceptance-tests` label to the PR
+- **Main Branch**: Run automatically after merge
+- **Manual Trigger**: Can be triggered via workflow_dispatch
+
+**Triggering Acceptance Tests on PRs:**
+
+If your PR changes data source logic or requires full integration testing:
+
+1. Go to your PR on GitHub
+2. Click "Labels" on the right sidebar
+3. Add the `run-acceptance-tests` label
+4. Tests will automatically trigger on the next push
+
+**Important**: Only use this label when necessary, as each run costs money and takes ~90 minutes.
+
+**Local Development:**
+Most development can be done with unit tests only. Run acceptance tests locally before submitting PRs that change data source logic.
+
+### Test Provider Locally
+
+To test the provider locally with Terraform without publishing to the registry:
+
+```bash
+# Build and install the provider to your Go bin directory
+make build
+make install
+
+# Configure Terraform to use the local provider
+# The provider will be installed to $GOPATH/bin (typically ~/go/bin)
+cat <<EOF > ~/.terraformrc
+provider_installation {
+  dev_overrides {
+    "ibm-hyper-protect/hpcr" = "$HOME/go/bin"
+  }
+  direct {}
+}
+EOF
+
+# Enable debug logging (optional)
+export TF_LOG=DEBUG
+
+# Test with any example
+cd examples/resources/hpcr_contract_encrypted
+
+# Run the complete Terraform lifecycle
+terraform init
+terraform plan
+terraform apply --auto-approve
+terraform destroy --auto-approve
+```
+
+**Tips:**
+- Remove or comment out the `dev_overrides` section in `~/.terraformrc` when done testing
+- The provider binary must be rebuilt (`make build && make install`) after code changes
+- Use `TF_LOG=TRACE` for even more detailed logging if needed
+
+## Documentation
+
+Keep documentation up to date:
+
+- **README.md**: General overview and quick start
+- **docs/**: Detailed resource and data source documentation
+- **examples/**: Working example configurations
+- **Inline comments**: For complex logic
+
+## License
+
+By contributing, you agree that your contributions will be licensed under the Apache License 2.0.
+
+All contributions are subject to:
+- [Developer Certificate of Origin (DCO) Version 1.1](https://developercertificate.org/)
+- [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
+
+## Getting Help
+
+- **General questions**: Use [GitHub Discussions](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/discussions)
+- **Bugs**: Create an [issue](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues)
+- **Security**: See [SECURITY.md](SECURITY.md)
+- **Maintainers**: See [MAINTAINERS.md](MAINTAINERS.md)
+
+## Recognition
+
+We value all contributions and contributors will be:
+- Acknowledged in release notes
+- Listed as contributors on GitHub
+- Mentioned in relevant documentation
+
+Thank you for contributing to terraform-provider-hpcr!

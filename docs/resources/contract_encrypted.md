@@ -3,12 +3,142 @@
 page_title: "hpcr_contract_encrypted Resource - hpcr"
 subcategory: ""
 description: |-
-  Generates an encrypted and signed user data field from an HPCR contract.
+  Generates an encrypted and signed HPCR contract for deployment to Hyper Protect instances. This is the final step in the contract creation workflow, producing user data ready for VM provisioning.
 ---
 
 # hpcr_contract_encrypted (Resource)
 
-Generates an encrypted and signed user data field from an HPCR contract.
+Generates an encrypted and signed HPCR contract for deployment to Hyper Protect instances. This resource is the final step in the contract creation workflow, taking a YAML contract specification and producing an encrypted, signed user data field ready for VM provisioning.
+
+## Overview
+
+The HPCR contract defines what workload runs in your secure enclave and how it's configured. This resource:
+
+1. Takes a YAML-serialized contract as input
+2. Signs the contract with a private key (generated or provided)
+3. Encrypts the contract with an HPVS encryption certificate
+4. Outputs Base64-encoded user data for IBM Cloud VPC instance deployment
+
+## Contract Structure
+
+An HPCR contract typically contains these sections:
+
+- **workload**: Defines the containerized application (docker-compose or podman play)
+- **env**: Environment variables, logging configuration, and runtime settings
+- **attestationPublicKey** (optional): Public key for attestation encryption
+
+See the [contract-go documentation](https://ibm-hyper-protect.github.io/contract-go) for detailed contract schema information.
+
+## Signing and Encryption
+
+**Signing**: Contracts are signed to prove authenticity. You can provide your own private key via `privkey`, or let the resource generate a temporary key.
+
+**Encryption**: Contracts are encrypted using HPVS encryption certificates. By default, the latest certificate is used. Specify `cert` for version-specific encryption.
+
+## Example Usage
+
+```terraform
+terraform {
+  required_providers {
+    hpcr = {
+      source  = "ibm-hyper-protect/hpcr"
+      version = "~> 0.16.2"
+    }
+  }
+}
+
+# Create TGZ archive from pods folder
+resource "hpcr_tgz" "contract" {
+  folder = "pods"
+}
+
+# Define contract in clear text
+locals {
+  contract = yamlencode({
+    "env" : {
+      "type" : "env",
+      "logging" : {
+        "logRouter" : {
+          "hostname" : "5c2d6b69-c7f0-41bd-b69b-240695369d6e.ingress.us-south.logs.cloud.ibm.com",
+          "iamApiKey" : "ab00e3c09p1d4ff7fff9f04c12183413"
+        }
+      }
+    },
+    "workload" : {
+      "type" : "workload",
+      "play" : {
+        "archive" : hpcr_tgz.contract.rendered
+      }
+    },
+  })
+}
+
+# Basic contract with auto-generated signing key
+resource "hpcr_contract_encrypted" "contract" {
+  contract = local.contract
+}
+
+output "contract_rendered" {
+  value = hpcr_contract_encrypted.contract.rendered
+}
+
+output "contract_sha256_in" {
+  value = hpcr_contract_encrypted.contract.sha256_in
+}
+
+output "contract_sha256_out" {
+  value = hpcr_contract_encrypted.contract.sha256_out
+}
+
+# Contract with custom encryption certificate
+resource "hpcr_contract_encrypted" "contract_cert" {
+  contract = local.contract
+  cert     = file("./cert/encrypt.crt")
+}
+
+output "contract_cert_rendered" {
+  value = hpcr_contract_encrypted.contract_cert.rendered
+}
+
+# Contract with custom signing key
+resource "hpcr_contract_encrypted" "contract_privkey" {
+  contract = local.contract
+  privkey  = file("./cert/private.pem")
+}
+
+output "contract_privkey_rendered" {
+  value = hpcr_contract_encrypted.contract_privkey.rendered
+}
+
+# Platform-specific contract
+resource "hpcr_contract_encrypted" "contract_platform" {
+  contract = local.contract
+  platform = "hpvs"
+}
+
+output "contract_platform_rendered" {
+  value = hpcr_contract_encrypted.contract_platform.rendered
+}
+```
+
+## Attestation
+
+After deployment, retrieve the attestation record from your HPCR instance to verify the contract was loaded correctly:
+
+```terraform
+data "hpcr_attestation" "verify" {
+  attestation = "..." # Retrieved from instance
+  privkey     = file("./signing-key.pem")
+}
+```
+
+## Best Practices
+
+- Use separate `hpcr_text_encrypted` resources for workload and env sections when they contain sensitive data
+- Store signing keys securely (e.g., HashiCorp Vault, AWS Secrets Manager)
+- Match encryption certificate version with your HPCR image version
+- Track contract checksums (`sha256_in`, `sha256_out`) for audit trails
+- Test contracts in development environments before production deployment
 
 
 

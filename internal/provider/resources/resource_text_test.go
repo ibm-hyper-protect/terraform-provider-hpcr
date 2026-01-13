@@ -83,7 +83,7 @@ func TestNewTextResource(t *testing.T) {
 	}
 
 	// Verify it implements the Resource interface
-	var _ resource.Resource = r
+	var _ resource.Resource = &TextResource{}
 }
 
 func TestTextResource_SchemaDescriptions(t *testing.T) {

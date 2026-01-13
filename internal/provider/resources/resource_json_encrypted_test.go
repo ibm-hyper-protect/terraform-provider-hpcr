@@ -95,7 +95,7 @@ func TestNewJSONEncryptedResource(t *testing.T) {
 	}
 
 	// Verify it implements the Resource interface
-	var _ resource.Resource = r
+	var _ resource.Resource = &JSONEncryptedResource{}
 }
 
 func TestJSONEncryptedResource_SchemaDescriptions(t *testing.T) {

@@ -1,0 +1,121 @@
+name: Question / Help
+description: Ask a question or request help
+title: "[Question]: "
+labels: ["question", "help wanted"]
+assignees:
+  - Sashwat-K
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reaching out! We're here to help. Please fill out the sections below.
+
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Prerequisites
+      description: Please confirm the following before asking
+      options:
+        - label: I have searched for similar questions in existing issues
+          required: true
+        - label: I have reviewed the [documentation](https://registry.terraform.io/providers/ibm-hyper-protect/hpcr/latest/docs)
+          required: true
+        - label: I have checked the [examples](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/tree/main/examples)
+          required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Question Category
+      description: What is your question about?
+      options:
+        - Installation / Setup
+        - Provider Configuration
+        - Resource Usage (hpcr_tgz, hpcr_text, etc.)
+        - Data Source Usage (hpcr_image, hpcr_attestation, etc.)
+        - Contract Generation
+        - Encryption / Certificates
+        - Attestation
+        - Integration with IBM Cloud
+        - Best Practices
+        - Troubleshooting
+        - Documentation Clarification
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your Question
+      description: What would you like to know?
+      placeholder: How do I...? What is the best way to...? Why does...?
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: What are you trying to accomplish?
+      description: Provide context about what you're working on and what you've tried
+      placeholder: |
+        I'm trying to deploy an HPCR workload with...
+        I've tried...
+        I expected...
+    validations:
+      required: true
+
+  - type: textarea
+    id: code
+    attributes:
+      label: Relevant Configuration (if applicable)
+      description: Share relevant Terraform configuration
+      placeholder: |
+        terraform {
+          required_providers {
+            hpcr = {
+              source  = "ibm-hyper-protect/hpcr"
+              version = "~> 0.16.2"
+            }
+          }
+        }
+
+        # Your configuration here
+      render: hcl
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Target Platform
+      description: Which Hyper Protect platform are you working with?
+      options:
+        - HPVS (Hyper Protect Virtual Servers)
+        - HPCR-RHVS (Hyper Protect Container Runtime for RedHat Virtualization)
+        - HPCC-PeerPod (Hyper Protect Confidential Container Peer Pods)
+        - Not applicable / General question
+    validations:
+      required: true
+
+  - type: input
+    id: terraform-version
+    attributes:
+      label: Terraform Version (if applicable)
+      description: Output of `terraform version`
+      placeholder: "Terraform v1.9.0"
+
+  - type: input
+    id: provider-version
+    attributes:
+      label: Provider Version (if applicable)
+      description: Version of the HPCR provider you're using
+      placeholder: "v0.16.2"
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other relevant information, logs, or screenshots
+      placeholder: |
+        - Related documentation: https://...
+        - Error messages: ...
+        - Environment details: ...

@@ -3,12 +3,99 @@
 page_title: "hpcr_json_encrypted Resource - hpcr"
 subcategory: ""
 description: |-
-  Generates an encrypted token from the JSON serialization of the input.
+  Encrypts and encodes JSON data using HPVS encryption certificates for secure inclusion in HPCR contracts. Protects sensitive JSON configuration from unauthorized access.
 ---
 
 # hpcr_json_encrypted (Resource)
 
-Generates an encrypted token from the JSON serialization of the input.
+Encrypts and encodes JSON data using HPVS encryption certificates for secure inclusion in HPCR contracts. This resource ensures that sensitive JSON configuration data remains confidential during deployment to Hyper Protect instances.
+
+## Use Cases
+
+- Encrypt JSON configuration files containing secrets
+- Protect sensitive application settings and credentials
+- Secure structured data for confidential computing workloads
+- Implement zero-trust configuration management
+
+## Example Usage
+
+```terraform
+terraform {
+  required_providers {
+    hpcr = {
+      source  = "ibm-hyper-protect/hpcr"
+      version = "~> 0.16.2"
+    }
+  }
+}
+
+# Basic encrypted JSON with default certificate
+resource "hpcr_json_encrypted" "json_data" {
+  json = <<JSON
+  {
+    "workload" : "value1",
+    "env" : "value2"
+  }
+  JSON
+}
+
+output "json_data_rendered" {
+  value = hpcr_json_encrypted.json_data.rendered
+}
+
+output "json_data_sha256_in" {
+  value = hpcr_json_encrypted.json_data.sha256_in
+}
+
+output "json_data_sha256_out" {
+  value = hpcr_json_encrypted.json_data.sha256_out
+}
+
+# Platform-specific encrypted JSON
+resource "hpcr_json_encrypted" "json_data_platform" {
+  json = <<JSON
+  {
+    "workload": {
+        "compose": {
+            "archive": "testing"
+        }
+    },
+    "env": {
+        "logging": "testing"
+    }
+  }
+  JSON
+
+  platform = "hpvs"
+}
+
+output "json_data_platform_rendered" {
+  value = hpcr_json_encrypted.json_data_platform.rendered
+}
+
+# Encrypted JSON with custom certificate
+resource "hpcr_json_encrypted" "json_data_cert" {
+  json = <<JSON
+  {
+    "workload" : "value1",
+    "env" : "value2"
+  }
+  JSON
+
+  cert = file("./cert/encrypt.crt")
+}
+
+output "json_data_cert_rendered" {
+  value = hpcr_json_encrypted.json_data_cert.rendered
+}
+```
+
+## Security Considerations
+
+- Encrypted JSON can only be decrypted by the target HPCR instance
+- Sensitive JSON data is marked as sensitive in Terraform state
+- Use this resource for any JSON containing credentials, API keys, or PII
+- Ensure encryption certificate version matches your target HPCR image version
 
 
 

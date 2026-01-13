@@ -83,7 +83,7 @@ func TestNewJSONResource(t *testing.T) {
 	}
 
 	// Verify it implements the Resource interface
-	var _ resource.Resource = r
+	var _ resource.Resource = &JSONResource{}
 }
 
 func TestJSONResource_SchemaDescriptions(t *testing.T) {

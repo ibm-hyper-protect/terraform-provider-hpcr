@@ -1,0 +1,164 @@
+name: Bug Report
+description: Report a bug or unexpected behavior
+title: "[Bug]: "
+labels: ["bug", "triage"]
+assignees:
+  - Sashwat-K
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this bug! Please fill out the sections below to help us fix the issue.
+
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Prerequisites
+      description: Please confirm the following before submitting
+      options:
+        - label: I have searched for existing issues describing my bug
+          required: true
+        - label: I am using the latest version of the provider
+          required: true
+        - label: I have reviewed the [documentation](https://registry.terraform.io/providers/ibm-hyper-protect/hpcr/latest/docs)
+          required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is
+      placeholder: When I try to..., the provider fails with...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Detailed steps to reproduce the bug
+      placeholder: |
+        1. Configure the provider with...
+        2. Create a resource...
+        3. Run terraform apply...
+        4. Observe the error...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: I expected the resource to be created successfully...
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+      placeholder: Instead, I got an error...
+    validations:
+      required: true
+
+  - type: textarea
+    id: code
+    attributes:
+      label: Terraform Configuration
+      description: Minimal Terraform configuration to reproduce the issue
+      placeholder: |
+        terraform {
+          required_providers {
+            hpcr = {
+              source  = "ibm-hyper-protect/hpcr"
+              version = "~> 0.16.2"
+            }
+          }
+        }
+
+        resource "hpcr_tgz" "example" {
+          folder = "./compose"
+        }
+      render: hcl
+    validations:
+      required: true
+
+  - type: textarea
+    id: error
+    attributes:
+      label: Error Messages
+      description: Copy and paste any relevant error messages or stack traces
+      placeholder: |
+        Error: Failed to create resource
+        │
+        │   with hpcr_tgz.example
+        │
+        │ Error details...
+      render: shell
+
+  - type: input
+    id: terraform-version
+    attributes:
+      label: Terraform Version
+      description: Output of `terraform version`
+      placeholder: "Terraform v1.9.0"
+    validations:
+      required: true
+
+  - type: input
+    id: provider-version
+    attributes:
+      label: Provider Version
+      description: Version of the HPCR provider
+      placeholder: "v0.16.2"
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating System
+      description: What OS are you running Terraform on?
+      placeholder: "macOS 14.0, Ubuntu 22.04, Windows 11"
+    validations:
+      required: true
+
+  - type: input
+    id: openssl
+    attributes:
+      label: OpenSSL Version
+      description: Output of `openssl version` (if applicable)
+      placeholder: "OpenSSL 3.0.0"
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Target Platform
+      description: Which Hyper Protect platform are you deploying to?
+      options:
+        - HPVS (Hyper Protect Virtual Servers)
+        - HPCR-RHVS (Hyper Protect Container Runtime for RedHat Virtualization)
+        - HPCC-PeerPod (Hyper Protect Confidential Container Peer Pods)
+        - Not applicable / Unknown
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Add any other context, logs, screenshots, or files that might help
+      placeholder: |
+        - Terraform state shows...
+        - Debug logs indicate...
+        - This started happening after...
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      description: Would you like to help fix this bug?
+      options:
+        - label: I am willing to submit a pull request to fix this bug

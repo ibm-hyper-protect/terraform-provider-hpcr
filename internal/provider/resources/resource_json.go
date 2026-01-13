@@ -79,7 +79,7 @@ func (r *JSONResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				Computed:            true,
 			},
 			"sha256_out": schema.StringAttribute{
-				MarkdownDescription: "SHA256 of the ouput",
+				MarkdownDescription: "SHA256 of the output",
 				Description:         "SHA256 of the output",
 				Computed:            true,
 			},

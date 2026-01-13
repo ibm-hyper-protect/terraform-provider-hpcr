@@ -3,12 +3,111 @@
 page_title: "hpcr_text_encrypted Resource - hpcr"
 subcategory: ""
 description: |-
-  Generates an encrypted token from text input.
+  Encrypts and encodes arbitrary text content using HPVS encryption certificates for secure inclusion in HPCR contracts. Commonly used to encrypt workload and environment sections.
 ---
 
 # hpcr_text_encrypted (Resource)
 
-Generates an encrypted token from text input.
+Encrypts and encodes arbitrary text content using HPVS encryption certificates for secure inclusion in HPCR contracts. This resource is the primary way to encrypt contract sections such as workload and environment configurations, ensuring sensitive data remains confidential.
+
+## Use Cases
+
+- Encrypt workload sections containing application archives
+- Encrypt environment sections with sensitive configuration and secrets
+- Protect API keys, passwords, and other credentials in contracts
+- Ensure end-to-end encryption of contract data from build to deployment
+
+## Common Pattern: Separate Workload and Environment Encryption
+
+The typical HPCR workflow encrypts `workload` and `env` sections separately:
+
+```terraform
+# Encrypt workload section
+resource "hpcr_text_encrypted" "workload" {
+  text = yamlencode({
+    "type" : "workload",
+    "compose" : {
+      "archive" : resource.hpcr_tgz.app.rendered
+    }
+  })
+}
+
+# Encrypt environment section
+resource "hpcr_text_encrypted" "env" {
+  text = yamlencode({
+    "type" : "env",
+    "env" : {
+      "DB_PASSWORD" : "secret123",
+      "API_KEY" : "abc-xyz-789"
+    }
+  })
+}
+
+# Combine into contract
+locals {
+  contract = yamlencode({
+    "workload" : resource.hpcr_text_encrypted.workload.rendered,
+    "env" : resource.hpcr_text_encrypted.env.rendered
+  })
+}
+```
+
+## Example Usage
+
+```terraform
+terraform {
+  required_providers {
+    hpcr = {
+      source  = "ibm-hyper-protect/hpcr"
+      version = "~> 0.16.2"
+    }
+  }
+}
+
+# Basic text encryption with default certificate
+resource "hpcr_text_encrypted" "text" {
+  text = "hello world"
+}
+
+output "hpcr_text_rendered" {
+  value = hpcr_text_encrypted.text.rendered
+}
+
+output "hpcr_text_sha256_in" {
+  value = hpcr_text_encrypted.text.sha256_in
+}
+
+output "hpcr_text_sha256_out" {
+  value = hpcr_text_encrypted.text.sha256_out
+}
+
+# Platform-specific encryption
+resource "hpcr_text_encrypted" "text_platform" {
+  text     = "hello world"
+  platform = "hpvs"
+}
+
+output "hpcr_text_platform_rendered" {
+  value = hpcr_text_encrypted.text_platform.rendered
+}
+
+# Encryption with custom certificate
+resource "hpcr_text_encrypted" "text_cert" {
+  text = "hello world"
+  cert = file("./cert/encrypt.crt")
+}
+
+output "hpcr_text_cert_rendered" {
+  value = hpcr_text_encrypted.text_cert.rendered
+}
+```
+
+## Security Considerations
+
+- Encrypted text can only be decrypted by the target HPCR instance
+- Sensitive data never appears in plaintext in Terraform state (marked as sensitive)
+- Use separate resources for workload and env to maintain clear security boundaries
+- Ensure certificate version matches your target HPCR image version
 
 
 

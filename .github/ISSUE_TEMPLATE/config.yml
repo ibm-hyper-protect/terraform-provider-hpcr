@@ -1,0 +1,17 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Terraform Registry Documentation
+    url: https://registry.terraform.io/providers/ibm-hyper-protect/hpcr/latest/docs
+    about: Read the complete provider documentation, resources, and data sources reference
+  - name: GitHub Repository Examples
+    url: https://github.com/ibm-hyper-protect/terraform-provider-hpcr/tree/main/examples
+    about: Browse example Terraform configurations for all resources and data sources
+  - name: contract-go Documentation
+    url: https://ibm-hyper-protect.github.io/contract-go
+    about: Learn about the underlying contract-go library that powers this provider
+  - name: Security Issues
+    url: https://github.com/ibm-hyper-protect/terraform-provider-hpcr/security/advisories/new
+    about: Report security vulnerabilities privately (Do NOT create public issues)
+  - name: GitHub Discussions
+    url: https://github.com/ibm-hyper-protect/terraform-provider-hpcr/discussions
+    about: General questions, ideas, and community discussions

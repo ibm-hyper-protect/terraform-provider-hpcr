@@ -9,6 +9,9 @@ build:
 install: build
 	go install -v ./...
 
+install-deps:
+	go mod download
+
 lint:
 	golangci-lint run
 
@@ -24,4 +27,4 @@ test:
 testacc:
 	TF_ACC=1 go test -v -cover -timeout 120m ./...
 
-.PHONY: fmt lint test testacc tidy build install generate
+.PHONY: fmt lint test install-deps testacc tidy build install generate

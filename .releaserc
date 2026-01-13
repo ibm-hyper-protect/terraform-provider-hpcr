@@ -2,11 +2,18 @@
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
-    "@semantic-release/git",
     [
-      "@semantic-release/exec",
+      "@semantic-release/github",
       {
-        "publishCmd": "echo \"${nextRelease.notes}\" > /tmp/release-notes.md && goreleaser release --release-notes /tmp/release-notes.md --clean"
+        "releasedLabels": false
+      }
+    ],
+    "@semantic-release/changelog",
+    [
+      "@semantic-release/git",
+      {
+        "assets": ["CHANGELOG.md"],
+        "message": "chore: ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
       }
     ]
   ],
@@ -21,48 +28,20 @@
   "preset": "conventionalcommits",
   "presetConfig": {
     "types": [
-      {
-        "type": "feat",
-        "section": "Features"
-      },
-      {
-        "type": "fix",
-        "section": "Bug Fixes"
-      },
-      {
-        "type": "perf",
-        "section": "Performance Improvements"
-      },
-      {
-        "type": "revert",
-        "section": "Reverts"
-      },
-      {
-        "type": "docs",
-        "section": "Documentation"
-      },
-      {
-        "type": "chore",
-        "section": "Miscellaneous Chores"
-      },
-      {
-        "type": "refactor",
-        "section": "Code Refactoring"
-      },
-      {
-        "type": "test",
-        "section": "Tests"
-      },
-      {
-        "type": "build",
-        "section": "Build System"
-      }
+      { "type": "feat", "section": "Features" },
+      { "type": "fix", "section": "Bug Fixes" },
+      { "type": "docs", "section": "Documentation" },
+      { "type": "perf", "section": "Performance Improvements" },
+      { "type": "revert", "section": "Reverts" },
+      { "type": "chore", "section": "Miscellaneous Chores" },
+      { "type": "refactor", "section": "Code Refactoring" },
+      { "type": "test", "section": "Tests" },
+      { "type": "build", "section": "Build System" },
+      { "type": "ci", "section": "CI/CD updates" }
     ]
   },
   "tagFormat": "v${version}",
   "branches": [
-    {
-      "name": "main"
-    }
+    { "name": "main" }
   ]
 }

@@ -84,7 +84,7 @@ func TestNewImageDataSource(t *testing.T) {
 	}
 
 	// Verify it implements the DataSource interface
-	var _ datasource.DataSource = ds
+	var _ datasource.DataSource = &ImageDataSource{}
 }
 
 func TestImageDataSource_SchemaDescriptions(t *testing.T) {

@@ -110,7 +110,7 @@ func TestNewContractEncryptedContractExpiryResource(t *testing.T) {
 	}
 
 	// Verify it implements the Resource interface
-	var _ resource.Resource = r
+	var _ resource.Resource = &ContractEncryptedContractExpiryResource{}
 }
 
 func TestContractEncryptedContractExpiryResource_SchemaDescriptions(t *testing.T) {

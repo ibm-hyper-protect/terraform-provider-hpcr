@@ -27,13 +27,13 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// GenerateID generates a random UUID to be used as a Terraform resource or data source ID
+// GenerateID generates a random UUID to be used as a Terraform resource or data source ID.
 func GenerateID() (string, error) {
 	return uuid.GenerateUUID()
 }
 
-// GeneratePrivateKey generates a 4096-bit RSA private key using OpenSSL
-// It respects the OPENSSL_BIN environment variable for the OpenSSL binary path
+// GeneratePrivateKey generates a 4096-bit RSA private key using OpenSSL.
+// It respects the OPENSSL_BIN environment variable for the OpenSSL binary path.
 func GeneratePrivateKey() (string, error) {
 	// Get OpenSSL binary path from environment variable or use default
 	opensslBin := os.Getenv("OPENSSL_BIN")
@@ -56,8 +56,8 @@ func GeneratePrivateKey() (string, error) {
 	return stdout.String(), nil
 }
 
-// ReadFileData reads the contents of a file and returns it as a string
-// Returns an error if the file does not exist or cannot be read
+// ReadFileData reads the contents of a file and returns it as a string.
+// Returns an error if the file does not exist or cannot be read.
 func ReadFileData(filePath string) (string, error) {
 	// Check if file exists
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {

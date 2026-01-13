@@ -6,6 +6,7 @@ on:
       - main
 
   pull_request:
+    types: [opened, synchronize, reopened, labeled]
 
   workflow_dispatch:
     inputs:
@@ -15,89 +16,244 @@ on:
         required: false
 
 env:
-  # Currently no way to detect automatically
   DEFAULT_BRANCH: main
-  GO_VERSION: 1.24.7 # renovate: datasource=golang-version depName=golang
-  NODE_VERSION: 24.10.0
-  DRY_RUN: true
 
 jobs:
-  build:
+  # Ensure project builds before running testing matrix
+  commit-lint:
     runs-on: ubuntu-latest
+    # Only run on PR events (not on label additions)
+    if: github.event_name == 'pull_request' && github.event.action != 'labeled'
     steps:
-      # full checkout for semantic-release
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@v6
         with:
-          fetch-depth: 0
-      - name: Set up go ${{env.GO_VERSION}}
-        uses: actions/setup-go@v6
-        with:
-          go-version: ${{env.GO_VERSION}}
-      -
-        name: Tests
-        run: |
-          go mod tidy
-          go test -v ./...
-        env:
-          CGO_ENABLED: 0
+          fetch-depth: 2
 
+      - name: Validate commit message
+        run: |
+          # Conventional commit regex pattern
+          # Matches: type(optional-scope): description
+          # Valid types from .releaserc: feat, fix, docs, perf, revert, chore, refactor, test, build, ci
+          pattern='^(feat|fix|docs|perf|revert|chore|refactor|test|build|ci)(\([a-z0-9-]+\))?!?: .{1,}'
+
+          # Get the latest commit message (HEAD)
+          commit_sha="${{ github.event.pull_request.head.sha }}"
+          commit_message=$(git log --format=%B -n 1 $commit_sha | head -n 1)
+          short_sha=$(echo $commit_sha | cut -c1-7)
+
+          echo "Checking commit: $short_sha"
+          echo "Message: $commit_message"
+          echo ""
+
+          if ! echo "$commit_message" | grep -qE "$pattern"; then
+            echo "Invalid commit message format!"
+            echo ""
+            echo "Commit: $short_sha"
+            echo "Message: $commit_message"
+            echo ""
+            echo "────────────────────────────────────────"
+            echo "Valid format: <type>(<optional-scope>): <description>"
+            echo ""
+            echo "Allowed types: feat, fix, docs, perf, revert, chore, refactor, test, build, ci"
+            echo ""
+            echo "Examples:"
+            echo "  feat: add new feature"
+            echo "  fix(api): resolve null pointer exception"
+            echo "  docs: update README"
+            echo "  chore!: breaking change in build process"
+            exit 1
+          fi
+
+          echo "Commit message is valid!"
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # Skip on labeled events unless it's the run-acceptance-tests label
+    if: |
+      github.event_name != 'pull_request' ||
+      github.event.action != 'labeled' ||
+      contains(github.event.pull_request.labels.*.name, 'run-acceptance-tests')
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v6.1.0
+        with:
+          go-version-file: 'go.mod'
+          cache: true
+      - run: go mod download
+      - run: go build -v .
+      - name: Run linters
+        uses: golangci/golangci-lint-action@1e7e51e771db61008b38414a730f564565cf7c20 # v9.2.0
+        with:
+          version: latest
+
+  # Run unit tests
+  unit-tests:
+    name: Unit Tests
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Skip on labeled events unless it's the run-acceptance-tests label
+    if: |
+      github.event_name != 'pull_request' ||
+      github.event.action != 'labeled' ||
+      contains(github.event.pull_request.labels.*.name, 'run-acceptance-tests')
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v6.1.0
+        with:
+          go-version-file: 'go.mod'
+          cache: true
+      - name: Install OpenSSL
+        run: sudo apt-get update && sudo apt-get install -y openssl
+      - run: go mod download
+      - name: Run unit tests
+        run: go test -v -cover -timeout=120s -parallel=10 ./...
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v5
+        if: always()
+        with:
+          files: ./coverage.out
+          flags: unittests
+        continue-on-error: true
+
+  # Run acceptance tests in a matrix with Terraform CLI versions
+  # NOTE: Acceptance tests are expensive and slow (interact with real IBM Cloud infrastructure)
+  # They run automatically on main branch, or on PRs with the "run-acceptance-tests" label
+  acceptance-tests:
+    name: 'Acceptance Tests: Terraform ${{ matrix.terraform }}'
+    needs: build
+    runs-on: ubuntu-latest
+    # Run acceptance tests when:
+    # 1. Pushing to main branch (after PR merge)
+    # 2. Manually triggered via workflow_dispatch
+    # 3. PR has the "run-acceptance-tests" label (triggers on labeled event OR subsequent pushes)
+    if: |
+      github.ref == 'refs/heads/main' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'run-acceptance-tests'))
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        # Test against multiple Terraform versions to ensure compatibility
+        terraform:
+          - '1.0.*'   # Minimum supported version
+          - '1.3.*'   # Widely used stable version
+          - '1.6.*'   # Recent LTS-like version
+          - '1.9.*'   # Recent stable version
+          - '1.13.*'  # Second latest
+          - '1.14.*'  # Latest stable
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v6.1.0
+        with:
+          go-version-file: 'go.mod'
+          cache: true
+      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3.1.2
+        with:
+          terraform_version: ${{ matrix.terraform }}
+          terraform_wrapper: false
+      - name: Install OpenSSL
+        run: sudo apt-get update && sudo apt-get install -y openssl
+      - run: go mod download
+      - name: Run acceptance tests
+        env:
+          TF_ACC: "1"
+          IBM_CLOUD_API_KEY: ${{ secrets.IBM_CLOUD_API_KEY }}
+        run: go test -v -cover -timeout=120m ./...
+        timeout-minutes: 10
+
+  # Semantic release - generates changelog and creates GitHub releases
   release:
-    needs: [build]
-    if: github.repository == 'ibm-hyper-protect/terraform-provider-hpcr' && github.event_name != 'pull_request'
+    name: Semantic Release
+    needs: [build, unit-tests]
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    # Only run on main branch, not on PRs
+    if: github.event_name != 'pull_request'
     permissions:
       contents: write
       issues: write
       pull-requests: write
-      packages: write
-
     steps:
-      # full checkout for semantic-release
-      - name: Full checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           fetch-depth: 0
+          persist-credentials: false
 
-      - name: Set up Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: '24'
 
-      - name: Set up go ${{env.GO_VERSION}}
-        uses: actions/setup-go@v6
+      - name: Run semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npx -p @semantic-release/changelog \
+              -p @semantic-release/git \
+              -p @semantic-release/exec \
+              -p conventional-changelog-conventionalcommits \
+              -p semantic-release \
+              semantic-release
+
+      - name: Get latest tag
+        id: get_tag
+        if: success()
+        run: |
+          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "Latest tag: $TAG"
+
+  # GoReleaser builds and publishes provider binaries to GitHub releases
+  goreleaser:
+    name: GoReleaser
+    needs: [build, unit-tests]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Only run on version tags created by semantic-release (e.g., v1.0.0)
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
-          go-version: ${{env.GO_VERSION}}
+          # Allow goreleaser to access older tag information for changelog generation
+          fetch-depth: 0
 
-      - name: Install goreleaser
-        uses: goreleaser/goreleaser-action@v6
+      - uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v6.1.0
         with:
-          version: latest
-          install-only: true
+          go-version-file: 'go.mod'
+          cache: true
 
-      -
-        name: Import GPG key
-        uses: crazy-max/ghaction-import-gpg@v6
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@e89d40939c28e39f97cf32126055eeae86ba74ec # v6.3.0
         id: import_gpg
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
 
-      # The dry-run evaluation is only made for non PR events. Manual trigger w/dryRun true, main branch and any tagged branches will set DRY run to false
-      - name: Check dry run
-        run: |
-          if [[ "${{github.event_name}}" == "workflow_dispatch" && "${{ github.event.inputs.dryRun }}" != "true"  ]]; then
-              echo "DRY_RUN=false" >> $GITHUB_ENV
-          elif [[ "${{github.ref}}" == "refs/heads/${{env.DEFAULT_BRANCH}}" ]]; then
-            echo "DRY_RUN=false" >> $GITHUB_ENV
-          elif [[ "${{github.ref}}" =~ ^refs/heads/v[0-9]+(\.[0-9]+)?$ ]]; then
-            echo "DRY_RUN=false" >> $GITHUB_ENV
-          fi
-
-      - name: Semantic Release
-        run: |
-          npx -p @semantic-release/changelog -p @semantic-release/exec -p @semantic-release/git -p conventional-changelog-conventionalcommits semantic-release --dry-run ${{env.DRY_RUN}}
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@e435ccd777264be153ace6237001ef4d979d3a7a # v6.4.0
+        with:
+          version: latest
+          args: release --clean
         env:
-          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  
+          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
+
+      - name: Generate SBOM
+        if: success()
+        run: |
+          go install github.com/CycloneDX/cyclonedx-gomod/cmd/cyclonedx-gomod@latest
+          cyclonedx-gomod app -json -licenses -output sbom.json
+
+      - name: Upload SBOM to Release
+        if: success()
+        uses: softprops/action-gh-release@v2
+        with:
+          files: sbom.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
