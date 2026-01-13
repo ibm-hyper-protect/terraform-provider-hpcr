@@ -181,9 +181,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          npx -p @semantic-release/changelog \
-              -p @semantic-release/git \
-              -p @semantic-release/exec \
-              -p conventional-changelog-conventionalcommits \
-              -p semantic-release \
-              semantic-release
+          npx \
+            -p semantic-release@24 \
+            -p @semantic-release/commit-analyzer@11 \
+            -p @semantic-release/release-notes-generator@12 \
+            -p @semantic-release/github@10 \
+            -p @semantic-release/changelog@6 \
+            -p @semantic-release/git@10 \
+            -p conventional-changelog-conventionalcommits@7 \
+            semantic-release
