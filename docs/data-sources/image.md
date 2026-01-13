@@ -3,12 +3,88 @@
 page_title: "hpcr_image Data Source - hpcr"
 subcategory: ""
 description: |-
-  Selects an HPCR image from a JSON formatted list of images based on semantic versioning.
+  Selects the appropriate HPCR stock image from IBM Cloud VPC based on semantic versioning constraints. Filters public images to find the best match for your deployment requirements.
 ---
 
 # hpcr_image (Data Source)
 
-Selects an HPCR image from a JSON formatted list of images based on semantic versioning.
+Selects the appropriate HPCR stock image from IBM Cloud VPC based on semantic versioning constraints. This data source filters through available public IBM Hyper Protect Container Runtime images to find the best match for your deployment requirements.
+
+## Use Cases
+
+- Automatically select the latest HPCR image for new deployments
+- Pin deployments to specific HPCR versions using semantic versioning constraints
+- Ensure consistent image versions across multiple virtual server instances
+- Retrieve image metadata including version numbers and SHA256 checksums
+
+## Version Constraints
+
+The `spec` parameter supports semantic versioning constraints from the [Masterminds/semver](https://github.com/Masterminds/semver) library:
+
+- `*` or omitted - Latest available version
+- `>=1.1.0` - Version 1.1.0 or higher
+- `~>1.0` - Version 1.0.x (any patch version in the 1.0 series)
+- `^1.2.3` - Compatible with 1.2.3 (version 1.x.x where x >= 2.3)
+- `1.2.3` - Exact version match
+
+## Example Usage
+
+```terraform
+terraform {
+  required_providers {
+    hpcr = {
+      source  = "ibm-hyper-protect/hpcr"
+      version = "~> 0.16.2"
+    }
+
+    ibm = {
+      source  = "IBM-Cloud/ibm"
+      version = ">= 1.37.1"
+    }
+  }
+}
+
+provider "ibm" {
+  region = "us-south"
+  zone   = "us-south-3"
+}
+
+# Get all public HPCR images from IBM Cloud VPC
+data "ibm_is_images" "ibm_images" {
+  visibility = "public"
+  status     = "available"
+}
+
+# Select HPCR image (defaults to latest)
+data "hpcr_image" "hyper_protect_image" {
+  images = jsonencode(data.ibm_is_images.ibm_images.images)
+}
+
+# Output the selected image details
+output "hpcr_image_id" {
+  value = data.hpcr_image.hyper_protect_image.id
+}
+
+output "hpcr_image_image" {
+  value = data.hpcr_image.hyper_protect_image.image
+}
+
+output "hpcr_image_sha256" {
+  value = data.hpcr_image.hyper_protect_image.sha256
+}
+
+output "hpcr_image_version" {
+  value = data.hpcr_image.hyper_protect_image.version
+}
+
+# Use in virtual server deployment
+resource "ibm_is_instance" "hyper_protect_vsi" {
+  name    = "my-hpcr-instance"
+  image   = data.hpcr_image.hyper_protect_image.image
+  profile = "bz2e-1x4"
+  # ... other configuration
+}
+```
 
 
 

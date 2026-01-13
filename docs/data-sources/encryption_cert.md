@@ -3,12 +3,93 @@
 page_title: "hpcr_encryption_cert Data Source - hpcr"
 subcategory: ""
 description: |-
-  Selects the best matching certificate from a map based on semantic versioning.
+  Selects the best matching encryption certificate from a version map using semantic versioning constraints. Used to pick the appropriate certificate for encrypting contract sections.
 ---
 
 # hpcr_encryption_cert (Data Source)
 
-Selects the best matching certificate from a map based on semantic versioning.
+Selects the best matching encryption certificate from a version map using semantic versioning constraints. This data source filters through available HPVS encryption certificates to find the most appropriate one for your deployment based on version requirements.
+
+## Use Cases
+
+- Automatically select the latest encryption certificate
+- Pin contract encryption to specific certificate versions
+- Ensure compatibility between contracts and HPCR image versions
+- Implement version-specific encryption strategies across environments
+
+## Version Constraints
+
+The `spec` parameter supports semantic versioning constraints:
+
+- `*` or omitted - Latest available version
+- `>=1.1.0` - Version 1.1.0 or higher
+- `~>1.0` - Version 1.0.x (any patch version in the 1.0 series)
+- `^1.2.3` - Compatible with 1.2.3 (version 1.x.x where x >= 2.3)
+- `1.2.3` - Exact version match
+
+## Example Usage
+
+```terraform
+terraform {
+  required_providers {
+    hpcr = {
+      source  = "ibm-hyper-protect/hpcr"
+      version = "~> 0.16.2"
+    }
+  }
+}
+
+# Download available certificates
+data "hpcr_encryption_certs" "encryption_cert" {
+  versions = ["1.0.13", "1.0.14", "1.0.15"]
+}
+
+# Select certificate with specific version constraint
+data "hpcr_encryption_cert" "cert" {
+  certs = data.hpcr_encryption_certs.encryption_cert.certs
+  spec  = "1.0.15"
+}
+
+# Output the selected certificate
+output "cert" {
+  value = data.hpcr_encryption_cert.cert.cert
+}
+
+# Select certificate with version range
+data "hpcr_encryption_cert" "latest_stable" {
+  certs = data.hpcr_encryption_certs.encryption_cert.certs
+  spec  = ">=1.0.14"
+}
+
+# Use in contract encryption
+resource "hpcr_contract_encrypted" "contract" {
+  contract = local.contract
+  cert     = data.hpcr_encryption_cert.cert.cert
+}
+
+# Match certificate to image version
+data "ibm_is_images" "ibm_images" {
+  visibility = "public"
+  status     = "available"
+}
+
+data "hpcr_image" "selected_image" {
+  images = jsonencode(data.ibm_is_images.ibm_images.images)
+}
+
+data "hpcr_encryption_cert" "matching" {
+  certs = data.hpcr_encryption_certs.encryption_cert.certs
+  spec  = data.hpcr_image.selected_image.version
+}
+
+output "certificate_version" {
+  value = data.hpcr_encryption_cert.matching.version
+}
+```
+
+## Certificate and Image Version Alignment
+
+For best compatibility, ensure your encryption certificate version matches or is compatible with your HPCR image version. Use the same semantic versioning constraint for both `hpcr_image` and `hpcr_encryption_cert` data sources.
 
 
 

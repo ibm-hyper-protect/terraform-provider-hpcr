@@ -3,12 +3,79 @@
 page_title: "hpcr_attestation Data Source - hpcr"
 subcategory: ""
 description: |-
-  Handles the analysis of an HPCR attestation record (encrypted or unencrypted).
+  Decrypts and parses HPCR attestation records from secure enclaves to verify workload integrity and retrieve runtime checksums.
 ---
 
 # hpcr_attestation (Data Source)
 
-Handles the analysis of an HPCR attestation record (encrypted or unencrypted).
+Decrypts and parses HPCR attestation records from secure enclaves to verify workload integrity and retrieve runtime checksums. Attestation records prove that your workload is running in a genuine IBM Hyper Protect secure enclave and hasn't been tampered with.
+
+## Use Cases
+
+- Verify the integrity of workloads running in HPCR instances
+- Retrieve SHA256 checksums of deployed contract components
+- Validate that the correct contract was loaded into the secure enclave
+- Implement compliance and audit workflows for confidential computing
+- Automate verification of workload attestation as part of CI/CD pipelines
+
+## Attestation Types
+
+**Encrypted Attestation**: Requires a private key to decrypt the attestation record. The attestation is encrypted with the public key corresponding to your signing key.
+
+**Unencrypted Attestation**: Can be parsed directly without decryption. Useful for debugging and development environments.
+
+## Example Usage
+
+```terraform
+terraform {
+  required_providers {
+    hpcr = {
+      source  = "ibm-hyper-protect/hpcr"
+      version = "~> 0.16.2"
+    }
+  }
+}
+
+# Decrypt an encrypted attestation record
+data "hpcr_attestation" "attestation_encrypted" {
+  attestation = file("./cert/se-checksums.txt.enc")
+  privkey     = file("./cert/private.pem")
+}
+
+# Parse an unencrypted attestation record
+data "hpcr_attestation" "attestation_unencrypted" {
+  attestation = file("./cert/se-checksums.txt")
+}
+
+# Output checksums from encrypted attestation
+output "attestation_encrypted" {
+  value = data.hpcr_attestation.attestation_encrypted.checksums
+}
+
+# Output checksums from unencrypted attestation
+output "attestation_unencrypted" {
+  value = data.hpcr_attestation.attestation_unencrypted.checksums
+}
+
+# Example: Verify contract checksum
+locals {
+  expected_checksum = "abc123..."
+  actual_checksum   = lookup(data.hpcr_attestation.attestation_encrypted.checksums, "contract.yml", "")
+  attestation_valid = local.expected_checksum == local.actual_checksum
+}
+
+output "attestation_verification" {
+  value = local.attestation_valid ? "VALID" : "INVALID"
+}
+```
+
+## Attestation Workflow
+
+1. Deploy your HPCR workload with an encrypted contract
+2. Retrieve the attestation record from the running instance
+3. Use this data source to decrypt and parse the attestation
+4. Compare checksums against your expected values
+5. Verify that the workload is running in a trusted environment
 
 
 

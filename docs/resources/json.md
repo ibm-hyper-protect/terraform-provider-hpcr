@@ -3,12 +3,82 @@
 page_title: "hpcr_json Resource - hpcr"
 subcategory: ""
 description: |-
-  Generates a base64 encoded token from the JSON serialization of the input.
+  Serializes and encodes JSON data as Base64 for inclusion in HPCR contracts or workload configurations.
 ---
 
 # hpcr_json (Resource)
 
-Generates a base64 encoded token from the JSON serialization of the input.
+Serializes and encodes JSON data as Base64 for inclusion in HPCR contracts or workload configurations. This resource accepts JSON strings and prepares them for use in contract sections.
+
+## Use Cases
+
+- Encode JSON configuration files for contract sections
+- Prepare structured data for HPCR workload environments
+- Convert JSON-based configurations to Base64 format
+- Create reusable JSON resources across multiple contracts
+
+## Example Usage
+
+```terraform
+terraform {
+  required_providers {
+    hpcr = {
+      source  = "ibm-hyper-protect/hpcr"
+      version = "~> 0.16.2"
+    }
+  }
+}
+
+# Simple JSON encoding
+resource "hpcr_json" "json_data1" {
+  json = <<JSON
+  {
+    "workload" : "value1",
+    "env" : "value2"
+  }
+  JSON
+}
+
+output "json1_rendered" {
+  value = hpcr_json.json_data1.rendered
+}
+
+output "json1_sha256_in" {
+  value = hpcr_json.json_data1.sha256_in
+}
+
+output "json1_sha256_out" {
+  value = hpcr_json.json_data1.sha256_out
+}
+
+# Nested JSON structure
+resource "hpcr_json" "json_data2" {
+  json = <<JSON
+  {
+    "workload": {
+        "compose": {
+            "archive": "testing"
+        }
+    },
+    "env": {
+        "logging": "testing"
+    }
+  }
+  JSON
+}
+
+output "json2_rendered" {
+  value = hpcr_json.json_data2.rendered
+}
+```
+
+## Notes
+
+- Input must be valid JSON
+- The JSON is Base64-encoded for safe inclusion in YAML contracts
+- SHA256 checksums track input and output for integrity verification
+- Changes to the JSON input trigger resource recreation
+- For encrypted JSON encoding, use `hpcr_json_encrypted` instead
 
 
 

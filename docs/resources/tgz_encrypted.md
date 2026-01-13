@@ -3,12 +3,99 @@
 page_title: "hpcr_tgz_encrypted Resource - hpcr"
 subcategory: ""
 description: |-
-  Generates an encrypted token from the TGZed files in the folder.
+  Creates an encrypted Base64-encoded tar.gz archive from a folder containing docker-compose or podman play configuration. The archive is encrypted using HPVS encryption certificates for secure workload deployment.
 ---
 
 # hpcr_tgz_encrypted (Resource)
 
-Generates an encrypted token from the TGZed files in the folder.
+Creates an encrypted Base64-encoded tar.gz archive from a folder containing docker-compose or podman play configuration. The archive is encrypted using HPVS encryption certificates, ensuring that workload contents remain confidential during deployment to Hyper Protect instances.
+
+## Use Cases
+
+- Deploy sensitive applications with encrypted workload archives
+- Protect proprietary container configurations and scripts
+- Ensure workload confidentiality from build time to runtime
+- Implement zero-trust deployment pipelines for confidential computing
+
+## Encryption
+
+The archive is encrypted using HPVS encryption certificates. By default, the latest HPCR image certificate is used. You can specify a custom certificate using the `cert` parameter for version-specific deployments.
+
+## Platform Support
+
+The `platform` parameter specifies the target Hyper Protect platform:
+- `hpvs` (default) - Hyper Protect Virtual Servers
+- `hpcr` - Hyper Protect Container Runtime
+- `hpcc` - Hyper Protect Confidential Containers
+
+## Example Usage
+
+```terraform
+terraform {
+  required_providers {
+    hpcr = {
+      source  = "ibm-hyper-protect/hpcr"
+      version = "~> 0.16.2"
+    }
+  }
+}
+
+# Basic encrypted TGZ archive with default certificate
+resource "hpcr_tgz_encrypted" "compose_b64_enc" {
+  folder = "compose"
+}
+
+output "b64_enc_rendered" {
+  value = hpcr_tgz_encrypted.compose_b64_enc.rendered
+}
+
+output "b64_enc_sha256_in" {
+  value = hpcr_tgz_encrypted.compose_b64_enc.sha256_in
+}
+
+output "b64_enc_sha256_out" {
+  value = hpcr_tgz_encrypted.compose_b64_enc.sha256_out
+}
+
+# Platform-specific encrypted archive
+resource "hpcr_tgz_encrypted" "compose_b64_enc_platform" {
+  folder   = "compose"
+  platform = "hpvs"
+}
+
+output "b64_enc_platform_rendered" {
+  value = hpcr_tgz_encrypted.compose_b64_enc_platform.rendered
+}
+
+# Encrypted archive with custom certificate
+resource "hpcr_tgz_encrypted" "compose_b64_enc_cert" {
+  folder = "compose"
+  cert   = file("./cert/encrypt.crt")
+}
+
+output "b64_enc_cert_rendered" {
+  value = hpcr_tgz_encrypted.compose_b64_enc_cert.rendered
+}
+
+# Use in contract
+locals {
+  contract = yamlencode({
+    "workload" : {
+      "type" : "workload",
+      "compose" : {
+        "archive" : hpcr_tgz_encrypted.compose_b64_enc.rendered
+      }
+    }
+  })
+}
+```
+
+## Security Considerations
+
+- The encrypted archive can only be decrypted by the target HPCR instance
+- Encryption occurs during Terraform apply, keeping the plaintext archive off the wire
+- Use `sensitive = true` on outputs containing encrypted archives
+- Ensure encryption certificate version matches or is compatible with target HPCR image version
 
 
 

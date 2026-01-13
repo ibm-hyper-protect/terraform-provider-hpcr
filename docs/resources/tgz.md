@@ -3,12 +3,102 @@
 page_title: "hpcr_tgz Resource - hpcr"
 subcategory: ""
 description: |-
-  Generates a base64 encoded string from the TGZed files in the folder.
+  Creates a Base64-encoded tar.gz archive from a folder containing docker-compose.yaml or podman play configuration files for HPCR workload deployment.
 ---
 
 # hpcr_tgz (Resource)
 
-Generates a base64 encoded string from the TGZed files in the folder.
+Creates a Base64-encoded tar.gz archive from a folder containing docker-compose.yaml or podman play configuration files for HPCR workload deployment. This resource packages your container workload into the format required by HPCR contracts.
+
+## Use Cases
+
+- Package docker-compose applications for HPCR deployment
+- Create podman play archives for Kubernetes-style workloads
+- Prepare multi-container applications for secure enclaves
+- Automate workload packaging as part of Infrastructure-as-Code workflows
+
+## Supported Configurations
+
+**Docker Compose**: Folder containing `docker-compose.yaml` or `docker-compose.yml` along with any referenced files.
+
+**Podman Play**: Folder containing `pods.yaml` or Kubernetes-style YAML manifests for podman play.
+
+The archive automatically includes all files in the specified folder, allowing you to bundle configuration files, scripts, and other resources needed by your containers.
+
+## Example Usage
+
+```terraform
+terraform {
+  required_providers {
+    hpcr = {
+      source  = "ibm-hyper-protect/hpcr"
+      version = "~> 0.16.2"
+    }
+  }
+}
+
+# Create TGZ archive from compose folder
+resource "hpcr_tgz" "compose_b64" {
+  folder = "compose"
+}
+
+# Output the Base64-encoded archive
+output "b64_rendered" {
+  value = hpcr_tgz.compose_b64.rendered
+}
+
+# Track input checksum
+output "b64_sha256_in" {
+  value = hpcr_tgz.compose_b64.sha256_in
+}
+
+# Track output checksum
+output "b64_sha256_out" {
+  value = hpcr_tgz.compose_b64.sha256_out
+}
+
+# Use in contract workload section
+locals {
+  contract = yamlencode({
+    "workload" : {
+      "type" : "workload",
+      "compose" : {
+        "archive" : hpcr_tgz.compose_b64.rendered
+      }
+    }
+  })
+}
+```
+
+## Folder Structure Examples
+
+### Docker Compose Example
+
+```
+docker-compose/
+├── docker-compose.yaml
+├── .env
+├── config/
+│   └── app-config.json
+└── scripts/
+    └── entrypoint.sh
+```
+
+### Podman Play Example
+
+```
+pods/
+├── pods.yaml
+└── configmaps/
+    └── app-config.yaml
+```
+
+## Notes
+
+- The entire folder contents are archived, so ensure only necessary files are included
+- The archive is Base64-encoded for inclusion in HPCR contract YAML
+- SHA256 checksums are automatically computed for integrity verification
+- Changes to folder contents trigger resource recreation
 
 
 

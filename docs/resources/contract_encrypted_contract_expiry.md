@@ -3,12 +3,185 @@
 page_title: "hpcr_contract_encrypted_contract_expiry Resource - hpcr"
 subcategory: ""
 description: |-
-  Generates an encrypted and signed user data field with contract expiry enabled using a signing certificate.
+  Generates an encrypted and signed HPCR contract with automatic expiry. Uses Certificate Signing Requests (CSR) to create time-limited contracts for enhanced security and compliance.
 ---
 
 # hpcr_contract_encrypted_contract_expiry (Resource)
 
-Generates an encrypted and signed user data field with contract expiry enabled using a signing certificate.
+Generates an encrypted and signed HPCR contract with automatic expiry. This resource uses Certificate Signing Requests (CSR) to create time-limited contracts, ensuring that deployed workloads automatically stop after a specified period for enhanced security and compliance.
+
+## Overview
+
+Contract expiry is a security feature that automatically terminates HPCR workloads after a defined time period. This is useful for:
+
+- **Compliance**: Enforce maximum runtime limits for sensitive workloads
+- **Security**: Prevent long-running compromised instances
+- **Cost Control**: Ensure temporary workloads don't run indefinitely
+- **Development**: Auto-expire test and development environments
+
+## How It Works
+
+1. You provide a Certificate Authority (CA) certificate and key via `cacert` and `cakey`
+2. A signing certificate is generated from a CSR with the specified expiry duration
+3. The contract is signed with this time-limited certificate
+4. After expiry, the HPCR instance cannot verify the contract signature and terminates
+
+## Certificate Signing Request (CSR)
+
+You can provide either:
+- **CSR Parameters** (`csrparams`): Map of parameters to generate a CSR automatically
+- **Pre-generated CSR** (`csr`): Your own CSR in PEM format
+
+If neither is provided, default CSR parameters are used.
+
+## Example Usage
+
+```terraform
+terraform {
+  required_providers {
+    hpcr = {
+      source  = "ibm-hyper-protect/hpcr"
+      version = "~> 0.16.2"
+    }
+  }
+}
+
+# Create TGZ archive
+resource "hpcr_tgz" "contract" {
+  folder = "pods"
+}
+
+# Define contract and CSR parameters
+locals {
+  contract = yamlencode({
+    "env" : {
+      "type" : "env",
+      "logging" : {
+        "logRouter" : {
+          "hostname" : "5c2d6b69-c7f0-41bd-b69b-240695369d6e.ingress.us-south.logs.cloud.ibm.com",
+          "iamApiKey" : "ab00e3c09p1d4ff7fff9f04c12183413"
+        }
+      }
+    },
+    "workload" : {
+      "type" : "workload",
+      "play" : {
+        "archive" : hpcr_tgz.contract.rendered
+      }
+    },
+  })
+
+  csrParams = {
+    "country" : "IN",
+    "state" : "Karnataka",
+    "location" : "Bangalore",
+    "org" : "IBM",
+    "unit" : "ISDL",
+    "domain" : "Hyper Protect",
+    "mail" : "example@ibm.com"
+  }
+}
+
+# Basic contract with 30-day expiry and CSR parameters
+resource "hpcr_contract_encrypted_contract_expiry" "contract" {
+  contract  = local.contract
+  expiry    = 30
+  cakey     = file("./cert/personal_ca.pem")
+  cacert    = file("./cert/personal_ca.crt")
+  csrparams = local.csrParams
+}
+
+output "contract_rendered" {
+  value = hpcr_contract_encrypted_contract_expiry.contract.rendered
+}
+
+output "contract_sha256_in" {
+  value = hpcr_contract_encrypted_contract_expiry.contract.sha256_in
+}
+
+output "contract_sha256_out" {
+  value = hpcr_contract_encrypted_contract_expiry.contract.sha256_out
+}
+
+# Contract with pre-generated CSR
+resource "hpcr_contract_encrypted_contract_expiry" "contract_csr" {
+  contract = local.contract
+  expiry   = 30
+  cakey    = file("./cert/personal_ca.pem")
+  cacert   = file("./cert/personal_ca.crt")
+  csr      = file("./cert/csr.pem")
+}
+
+output "contract_csr_rendered" {
+  value = hpcr_contract_encrypted_contract_expiry.contract_csr.rendered
+}
+
+# Contract with custom encryption certificate
+resource "hpcr_contract_encrypted_contract_expiry" "contract_cert" {
+  contract  = local.contract
+  cert      = file("./cert/encrypt.crt")
+  expiry    = 30
+  cakey     = file("./cert/personal_ca.pem")
+  cacert    = file("./cert/personal_ca.crt")
+  csrparams = local.csrParams
+}
+
+output "contract_cert_rendered" {
+  value = hpcr_contract_encrypted_contract_expiry.contract_cert.rendered
+}
+
+# Contract with custom signing private key
+resource "hpcr_contract_encrypted_contract_expiry" "contract_privkey" {
+  contract = local.contract
+  privkey  = file("./cert/private.pem")
+  expiry   = 30
+  cakey    = file("./cert/personal_ca.pem")
+  cacert   = file("./cert/personal_ca.crt")
+  csr      = file("./cert/csr.pem")
+}
+
+output "contract_privkey_rendered" {
+  value = hpcr_contract_encrypted_contract_expiry.contract_privkey.rendered
+}
+```
+
+## Generating CA Certificates
+
+You'll need a CA certificate and private key to sign contracts. Generate them using OpenSSL:
+
+```bash
+# Generate CA private key
+openssl genrsa -out ca-key.pem 4096
+
+# Generate CA certificate (valid for 10 years)
+openssl req -new -x509 -days 3650 -key ca-key.pem -out ca-cert.pem \
+  -subj "/C=US/ST=State/L=City/O=Organization/OU=Unit/CN=CA"
+```
+
+## CSR Parameters
+
+The `csrparams` map supports these fields:
+- `C` - Country
+- `ST` - State or Province
+- `L` - Locality or City
+- `O` - Organization
+- `OU` - Organizational Unit
+- `CN` - Common Name
+
+## Use Cases
+
+**Development Environments**: Set short expiry (1-7 days) for test instances
+**Production Workloads**: Use longer expiry (30-90 days) with automated renewal
+**Compliance**: Meet regulatory requirements for maximum workload runtime
+**Cost Management**: Prevent forgotten instances from running indefinitely
+
+## Best Practices
+
+- Store CA certificates and keys securely (encrypted secrets management)
+- Use longer expiry for production, shorter for development
+- Implement automated contract renewal before expiry
+- Monitor contract expiry dates in your infrastructure
+- Test expiry behavior in non-production environments first
 
 
 

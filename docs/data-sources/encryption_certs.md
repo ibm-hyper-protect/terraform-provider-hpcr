@@ -3,12 +3,93 @@
 page_title: "hpcr_encryption_certs Data Source - hpcr"
 subcategory: ""
 description: |-
-  Downloads encryption certificates from the official IBM Cloud Object Storage location for specified HPCR versions.
+  Downloads HPVS encryption certificates from IBM Cloud Object Storage for specified HPCR versions. These certificates are used to encrypt contract sections for secure deployment.
 ---
 
 # hpcr_encryption_certs (Data Source)
 
-Downloads encryption certificates from the official IBM Cloud Object Storage location for specified HPCR versions.
+Downloads HPVS encryption certificates from IBM Cloud Object Storage for specified HPCR versions. These certificates are used to encrypt contract sections (workload, env) before deploying to Hyper Protect instances, ensuring that sensitive data is protected during transit and at rest.
+
+## Use Cases
+
+- Download encryption certificates for specific HPCR versions
+- Manage multiple certificate versions for different deployment environments
+- Use custom certificate download locations or mirrors
+- Cache certificates for offline or air-gapped deployments
+- Ensure contract compatibility with specific HPCR image versions
+
+## Certificate Download
+
+By default, certificates are downloaded from the official IBM Cloud Object Storage location:
+
+```
+https://hpvsvpcubuntu.s3.us.cloud-object-storage.appdomain.cloud/s390x-{patch}/ibm-hyper-protect-container-runtime-{major}-{minor}-s390x-{patch}-encrypt.crt
+```
+
+You can override this location using the `template` parameter with placeholders:
+- `{{.Major}}` - Major version number
+- `{{.Minor}}` - Minor version number
+- `{{.Patch}}` - Patch version number
+
+## Example Usage
+
+```terraform
+terraform {
+  required_providers {
+    hpcr = {
+      source  = "ibm-hyper-protect/hpcr"
+      version = "~> 0.16.2"
+    }
+  }
+}
+
+# Download encryption certificates for specific versions
+data "hpcr_encryption_certs" "encryption_cert" {
+  versions = ["1.0.13", "1.0.14", "1.0.15"]
+}
+
+# Output all certificates
+output "certs" {
+  value = data.hpcr_encryption_certs.encryption_cert.certs
+}
+
+# Access a specific certificate
+output "cert_15" {
+  value = data.hpcr_encryption_certs.encryption_cert.certs["1.0.15"]["cert"]
+}
+
+# Check certificate status
+output "cert_15_status" {
+  value = data.hpcr_encryption_certs.encryption_cert.certs["1.0.15"]["status"]
+}
+
+# Use with encryption cert selector
+data "hpcr_encryption_cert" "selected" {
+  certs = data.hpcr_encryption_certs.encryption_cert.certs
+  spec  = ">=1.0.14"
+}
+
+# Encrypt contract with specific version certificate
+resource "hpcr_contract_encrypted" "contract" {
+  contract = local.contract
+  cert     = data.hpcr_encryption_cert.selected.cert
+}
+
+# Download from custom location
+data "hpcr_encryption_certs" "custom_mirror" {
+  versions = ["1.0.13"]
+  template = "https://my-mirror.example.com/certs/hpcr-{{.Major}}.{{.Minor}}.{{.Patch}}.crt"
+}
+```
+
+## Version Format
+
+Versions must be specified in semantic versioning format: `MAJOR.MINOR.PATCH`
+
+Examples:
+- `1.0.10`
+- `1.1.0`
+- `2.0.5`
 
 
 

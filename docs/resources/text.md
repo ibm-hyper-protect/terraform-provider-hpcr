@@ -3,12 +3,68 @@
 page_title: "hpcr_text Resource - hpcr"
 subcategory: ""
 description: |-
-  Generates a base64 encoded token from text input.
+  Encodes arbitrary text content as Base64 for inclusion in HPCR contracts or workload configurations.
 ---
 
 # hpcr_text (Resource)
 
-Generates a base64 encoded token from text input.
+Encodes arbitrary text content as Base64 for inclusion in HPCR contracts or workload configurations. This resource is useful for embedding configuration files, scripts, or other text-based content that needs to be Base64-encoded.
+
+## Use Cases
+
+- Encode configuration files for contract sections
+- Prepare text-based workload data for HPCR deployment
+- Convert scripts or initialization data to Base64 format
+- Create reusable text resources across multiple contracts
+
+## Example Usage
+
+```terraform
+terraform {
+  required_providers {
+    hpcr = {
+      source  = "ibm-hyper-protect/hpcr"
+      version = "~> 0.16.2"
+    }
+  }
+}
+
+# Encode simple text as Base64
+resource "hpcr_text" "text" {
+  text = "hello world"
+}
+
+# Access the Base64-encoded output
+output "hpcr_text_rendered" {
+  value = hpcr_text.text.rendered
+}
+
+# Track input checksum
+output "hpcr_text_sha256_in" {
+  value = hpcr_text.text.sha256_in
+}
+
+# Track output checksum
+output "hpcr_text_sha256_out" {
+  value = hpcr_text.text.sha256_out
+}
+
+# Use with multi-line text
+resource "hpcr_text" "config" {
+  text = <<-EOT
+    APP_NAME=my-application
+    APP_ENV=production
+    LOG_LEVEL=info
+  EOT
+}
+```
+
+## Notes
+
+- The text is Base64-encoded for safe inclusion in YAML contracts
+- SHA256 checksums track input and output for integrity verification
+- Changes to the text input trigger resource recreation
+- For encrypted text encoding, use `hpcr_text_encrypted` instead
 
 
 
