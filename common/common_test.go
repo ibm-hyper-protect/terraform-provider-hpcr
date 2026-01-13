@@ -72,7 +72,7 @@ func TestGenerateID_Uniqueness(t *testing.T) {
 	}
 }
 
-func TestReadFileContents(t *testing.T) {
+func TestReadFileData(t *testing.T) {
 	// Create a temporary file with test content
 	tmpFile := t.TempDir() + "/test.txt"
 	testContent := "test content\nline 2"
@@ -85,7 +85,7 @@ func TestReadFileContents(t *testing.T) {
 	// Test reading existing file
 	content, err := ReadFileData(tmpFile)
 	if err != nil {
-		t.Fatalf("ReadFileContents() failed: %v", err)
+		t.Fatalf("ReadFileData() failed: %v", err)
 	}
 
 	if content != testContent {
@@ -93,10 +93,10 @@ func TestReadFileContents(t *testing.T) {
 	}
 }
 
-func TestReadFileContents_NonExistentFile(t *testing.T) {
+func TestReadFileData_NonExistentFile(t *testing.T) {
 	_, err := ReadFileData("/path/to/nonexistent/file.txt")
 	if err == nil {
-		t.Error("ReadFileContents() should return an error for non-existent file")
+		t.Error("ReadFileData() should return an error for non-existent file")
 	}
 
 	if !strings.Contains(err.Error(), "does not exist") {
