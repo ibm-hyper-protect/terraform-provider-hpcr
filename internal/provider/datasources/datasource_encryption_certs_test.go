@@ -88,5 +88,5 @@ func TestNewEncryptionCertsDataSource(t *testing.T) {
 	}
 
 	// Verify it implements the DataSource interface
-	var _ datasource.DataSource = ds
+	var _ datasource.DataSource = &EncryptionCertsDataSource{}
 }
