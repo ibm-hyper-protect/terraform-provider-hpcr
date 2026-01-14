@@ -3,16 +3,16 @@
 page_title: "hpcr_contract_encrypted_contract_expiry Resource - hpcr"
 subcategory: ""
 description: |-
-  Generates an encrypted and signed HPCR contract with automatic expiry. Uses Certificate Signing Requests (CSR) to create time-limited contracts for enhanced security and compliance.
+  Generates an encrypted and signed Hyper Protect contract with automatic expiry. Uses Certificate Signing Requests (CSR) to create time-limited contracts for enhanced security and compliance.
 ---
 
 # hpcr_contract_encrypted_contract_expiry (Resource)
 
-Generates an encrypted and signed HPCR contract with automatic expiry. This resource uses Certificate Signing Requests (CSR) to create time-limited contracts, ensuring that deployed workloads automatically stop after a specified period for enhanced security and compliance.
+Generates an encrypted and signed Hyper Protect contract with automatic expiry. This resource uses Certificate Signing Requests (CSR) to create time-limited contracts, ensuring that deployed workloads automatically stop after a specified period for enhanced security and compliance.
 
 ## Overview
 
-Contract expiry is a security feature that automatically terminates HPCR workloads after a defined time period. This is useful for:
+Contract expiry is a security feature that sets expiry for HPCR workloads after a defined time period. This is useful for:
 
 - **Compliance**: Enforce maximum runtime limits for sensitive workloads
 - **Security**: Prevent long-running compromised instances
@@ -24,7 +24,7 @@ Contract expiry is a security feature that automatically terminates HPCR workloa
 1. You provide a Certificate Authority (CA) certificate and key via `cacert` and `cakey`
 2. A signing certificate is generated from a CSR with the specified expiry duration
 3. The contract is signed with this time-limited certificate
-4. After expiry, the HPCR instance cannot verify the contract signature and terminates
+4. After expiry, the HPCR instance starts notifying customer regarding expiry through logs
 
 ## Certificate Signing Request (CSR)
 
@@ -33,6 +33,13 @@ You can provide either:
 - **Pre-generated CSR** (`csr`): Your own CSR in PEM format
 
 If neither is provided, default CSR parameters are used.
+
+## Platform Support
+
+The `platform` parameter specifies the target Hyper Protect platform:
+- `hpvs` (default) - Hyper Protect Virtual Servers
+- `hpcr-rhvs` - Hyper Protect Container Runtime
+- `hpcc-peerpod` - Hyper Protect Confidential Containers (Peer Pods)
 
 ## Example Usage
 
@@ -197,7 +204,7 @@ The `csrparams` map supports these fields:
 
 ### Optional
 
-- `cert` (String) Certificate used to encrypt the contract, in PEM format
+- `cert` (String) Certificate used to encrypt the contract, in PEM format.Defaults to latest HPVS encryption certificate
 - `csr` (String) CSR to generate signing certificate
 - `csrparams` (Map of String) CSR Parameters to generate signing certificate
 - `platform` (String) Hyper Protect platform where this contract will be deployed. Defaults to hpvs
