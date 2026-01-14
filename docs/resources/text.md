@@ -8,13 +8,13 @@ description: |-
 
 # hpcr_text (Resource)
 
-Encodes arbitrary text content as Base64 for inclusion in HPCR contracts or workload configurations. This resource is useful for embedding configuration files, scripts, or other text-based content that needs to be Base64-encoded.
+Encodes arbitrary text content as Base64 for inclusion in HPCR contracts or workload configurations. This resource is useful for embedding certificates, configuration files, scripts, or other text-based content that needs to be Base64-encoded.
 
 ## Use Cases
 
 - Encode configuration files for contract sections
 - Prepare text-based workload data for HPCR deployment
-- Convert scripts or initialization data to Base64 format
+- Convert certificates, scripts or initialization data to Base64 format
 - Create reusable text resources across multiple contracts
 
 ## Example Usage
