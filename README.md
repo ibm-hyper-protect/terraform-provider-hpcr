@@ -5,7 +5,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/ibm-hyper-protect/terraform-provider-hpcr)](https://goreportcard.com/report/github.com/ibm-hyper-protect/terraform-provider-hpcr)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-Terraform provider to automate generating workloads for IBM Hyper Protect confidential computing platforms.
+Terraform provider to automate generating contracts for IBM Hyper Protect confidential computing platforms.
 
 ## Table of Contents
 
@@ -25,13 +25,13 @@ Terraform provider to automate generating workloads for IBM Hyper Protect confid
 
 This Terraform provider is built on top of the **[contract-go library](https://github.com/ibm-hyper-protect/contract-go)**, which provides the core functionality for IBM Hyper Protect contract operations.
 
-The contract-go library automates IBM Hyper Protect confidential computing workloads across HPVS, HPCR, and HPCC platforms, providing capabilities for:
+The contract-go library automates IBM Hyper Protect confidential computing workloads across HPVS, HPCR4RHVS and HPCC platforms, providing capabilities for:
 
-- **Contract Generation**: Create signed and encrypted contracts for secure enclaves
+- **Contract Generation**: Create signed and encrypted contracts for the platforms
 - **Certificate Operations**: Download and manage HPVS encryption certificates from IBM Cloud
 - **Image Selection**: Retrieve and validate HPCR images with semantic versioning
-- **Archive Management**: Generate Base64 tar archives from docker-compose and pods configurations
-- **Attestation**: Decrypt attestation records from secure enclaves
+- **Archive Management**: Generate Base64 tar archives from docker-compose and podman play configurations
+- **Attestation**: Decrypt attestation records from HPCR, HPVS and HPCC
 
 ### What are Hyper Protect Services?
 
@@ -63,10 +63,9 @@ The Terraform Provider HPCR provides comprehensive support for deploying and man
 **Archive Management**
 - Create Base64-encoded tgz archives from folders containing docker-compose and podman play configurations
 - Automatic compression and encoding for contract workload sections
-- Support for complex multi-container applications
 
 **Encryption Operations**
-- Encrypt contract sections (workload, env) using HPVS encryption certificates
+- Encrypt contract sections (workload, env) using HPVS, HPCR4RHVS and HPCC encryption certificates
 - Automatic retrieval of encryption certificates from IBM Cloud
 - Support for latest or specific encryption certificate versions
 - Secure handling of sensitive configuration data
@@ -94,7 +93,7 @@ terraform {
   required_providers {
     hpcr = {
       source  = "ibm-hyper-protect/hpcr"
-      version = "~> 0.16.2"
+      version = "~> 1.2.0"
     }
   }
 }
@@ -231,7 +230,7 @@ terraform {
   required_providers {
     hpcr = {
       source  = "ibm-hyper-protect/hpcr"
-      version = "~> 0.16.2"
+      version = "~> 1.2.0"
     }
     ibm = {
       source  = "IBM-Cloud/ibm"
