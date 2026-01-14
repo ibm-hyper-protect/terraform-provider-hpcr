@@ -6,7 +6,7 @@ on:
       - main
 
   pull_request:
-    types: [opened, synchronize, reopened, labeled]
+    types: [opened, synchronize, reopened]
 
   workflow_dispatch:
     inputs:
@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' && github.event.action != 'labeled'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
@@ -68,14 +68,9 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    # Skip on labeled events unless it's the run-acceptance-tests label
-    if: |
-      github.event_name != 'pull_request' ||
-      github.event.action != 'labeled' ||
-      contains(github.event.pull_request.labels.*.name, 'run-acceptance-tests')
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-go@v6
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
           cache: true
@@ -91,14 +86,9 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    # Skip on labeled events unless it's the run-acceptance-tests label
-    if: |
-      github.event_name != 'pull_request' ||
-      github.event.action != 'labeled' ||
-      contains(github.event.pull_request.labels.*.name, 'run-acceptance-tests')
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-go@v6
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
           cache: true
@@ -116,20 +106,10 @@ jobs:
         continue-on-error: true
 
   # Run acceptance tests in a matrix with Terraform CLI versions
-  # NOTE: Acceptance tests are expensive and slow (interact with real IBM Cloud infrastructure)
-  # They run automatically on main branch, or on PRs with the "run-acceptance-tests" label
   acceptance-tests:
     name: Acceptance Tests
     needs: build
     runs-on: ubuntu-latest
-    # Run acceptance tests when:
-    # 1. Pushing to main branch (after PR merge)
-    # 2. Manually triggered via workflow_dispatch
-    # 3. PR has the "run-acceptance-tests" label (triggers on labeled event OR subsequent pushes)
-    if: |
-      github.ref == 'refs/heads/main' ||
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'run-acceptance-tests'))
     timeout-minutes: 120
     strategy:
       fail-fast: false
@@ -143,8 +123,8 @@ jobs:
           - '1.13.*'  # Second latest
           - '1.14.*'  # Latest stable
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-go@v6
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
           cache: true
@@ -154,7 +134,6 @@ jobs:
       - name: Run acceptance tests
         env:
           TF_ACC: "1"
-          IBM_CLOUD_API_KEY: ${{ secrets.IBM_CLOUD_API_KEY }}
         run: go test -v -timeout=120m ./...
 
   release:
@@ -171,33 +150,24 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           persist-credentials: false
 
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 24.12.0
-
       - name: Run semantic-release
         id: semantic
+        uses: cycjimmy/semantic-release-action@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Run semantic release in dry-run mode first to check if a release is needed
-          output=$(npx semantic-release --no-ci || true)
-          echo "$output"
-
-          # Determine if a release was published
-          if echo "$output" | grep -q "Published release"; then
-            version=$(echo "$output" | grep "Published release" | awk '{print $3}')
-            echo "new_release_published=true" >> $GITHUB_OUTPUT
-            echo "new_release_version=$version" >> $GITHUB_OUTPUT
-          else
-            echo "new_release_published=false" >> $GITHUB_OUTPUT
-            echo "new_release_version=" >> $GITHUB_OUTPUT
-          fi
+        with:
+          extra_plugins: |
+            @semantic-release/commit-analyzer@11
+            @semantic-release/release-notes-generator@12
+            @semantic-release/github@10
+            @semantic-release/changelog@6
+            @semantic-release/git@10
+            conventional-changelog-conventionalcommits@7
 
   goreleaser:
     name: Build & Publish Terraform Provider
@@ -210,13 +180,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           ref: v${{ needs.release.outputs.new_release_version }}
           fetch-depth: 0
 
       - name: Set up Go
-        uses: actions/setup-go@v6
+        uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
           cache: true
