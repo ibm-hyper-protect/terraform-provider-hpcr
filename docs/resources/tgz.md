@@ -3,17 +3,16 @@
 page_title: "hpcr_tgz Resource - hpcr"
 subcategory: ""
 description: |-
-  Creates a Base64-encoded tar.gz archive from a folder containing docker-compose.yaml or podman play configuration files for HPCR workload deployment.
+  Creates a Base64-encoded tar.gz archive from a folder containing docker-compose.yaml or podman play configuration files for Hyper Protect workload deployment.
 ---
 
 # hpcr_tgz (Resource)
 
-Creates a Base64-encoded tar.gz archive from a folder containing docker-compose.yaml or podman play configuration files for HPCR workload deployment. This resource packages your container workload into the format required by HPCR contracts.
+Creates a Base64-encoded tar.gz archive from a folder containing docker-compose.yaml or podman play configuration files for HPCR workload deployment. This resource packages your container workload into the format required by Hyper Protect contracts.
 
 ## Use Cases
 
-- Package docker-compose applications for HPCR deployment
-- Create podman play archives for Kubernetes-style workloads
+- Package docker-compose and odman play archives for Hyper Protect deployments
 - Prepare multi-container applications for secure enclaves
 - Automate workload packaging as part of Infrastructure-as-Code workflows
 
@@ -96,7 +95,7 @@ pods/
 ## Notes
 
 - The entire folder contents are archived, so ensure only necessary files are included
-- The archive is Base64-encoded for inclusion in HPCR contract YAML
+- The archive is Base64-encoded for inclusion in Hyper Protect contract YAML
 - SHA256 checksums are automatically computed for integrity verification
 - Changes to folder contents trigger resource recreation
 
