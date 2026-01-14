@@ -3,21 +3,21 @@
 page_title: "hpcr_contract_encrypted Resource - hpcr"
 subcategory: ""
 description: |-
-  Generates an encrypted and signed HPCR contract for deployment to Hyper Protect instances. This is the final step in the contract creation workflow, producing user data ready for VM provisioning.
+  Generates an encrypted and signed Hyper Protect contract for deployment to Hyper Protect instances. This is the final step in the contract creation workflow, producing user data ready for VM provisioning.
 ---
 
 # hpcr_contract_encrypted (Resource)
 
-Generates an encrypted and signed HPCR contract for deployment to Hyper Protect instances. This resource is the final step in the contract creation workflow, taking a YAML contract specification and producing an encrypted, signed user data field ready for VM provisioning.
+Generates an encrypted and signed Hyper Protect contract for deployment to Hyper Protect instances. This resource is the final step in the contract creation workflow, taking a YAML contract specification and producing an signed and encrypted user data field ready for VM provisioning.
 
 ## Overview
 
-The HPCR contract defines what workload runs in your secure enclave and how it's configured. This resource:
+The Hyper Protect contract defines what workload runs in your secure enclave and how it's configured. This resource:
 
 1. Takes a YAML-serialized contract as input
 2. Signs the contract with a private key (generated or provided)
-3. Encrypts the contract with an HPVS encryption certificate
-4. Outputs Base64-encoded user data for IBM Cloud VPC instance deployment
+3. Encrypts the contract with an Hyper Protect encryption certificate (default or provided)
+4. Outputs encrypted Hyper Protect format user data for IBM Cloud VPC / On Prem instance deployment
 
 ## Contract Structure
 
@@ -25,7 +25,6 @@ An HPCR contract typically contains these sections:
 
 - **workload**: Defines the containerized application (docker-compose or podman play)
 - **env**: Environment variables, logging configuration, and runtime settings
-- **attestationPublicKey** (optional): Public key for attestation encryption
 
 See the [contract-go documentation](https://ibm-hyper-protect.github.io/contract-go) for detailed contract schema information.
 
@@ -33,7 +32,14 @@ See the [contract-go documentation](https://ibm-hyper-protect.github.io/contract
 
 **Signing**: Contracts are signed to prove authenticity. You can provide your own private key via `privkey`, or let the resource generate a temporary key.
 
-**Encryption**: Contracts are encrypted using HPVS encryption certificates. By default, the latest certificate is used. Specify `cert` for version-specific encryption.
+**Encryption**: Contracts are encrypted using Hyper Protect encryption certificates. By default, the latest HPVS certificate is used. Specify `cert` for version-specific encryption.
+
+## Platform Support
+
+The `platform` parameter specifies the target Hyper Protect platform:
+- `hpvs` (default) - Hyper Protect Virtual Servers
+- `hpcr-rhvs` - Hyper Protect Container Runtime
+- `hpcc-peerpod` - Hyper Protect Confidential Containers (Peer Pods)
 
 ## Example Usage
 
@@ -121,22 +127,11 @@ output "contract_platform_rendered" {
 }
 ```
 
-## Attestation
-
-After deployment, retrieve the attestation record from your HPCR instance to verify the contract was loaded correctly:
-
-```terraform
-data "hpcr_attestation" "verify" {
-  attestation = "..." # Retrieved from instance
-  privkey     = file("./signing-key.pem")
-}
-```
-
 ## Best Practices
 
 - Use separate `hpcr_text_encrypted` resources for workload and env sections when they contain sensitive data
-- Store signing keys securely (e.g., HashiCorp Vault, AWS Secrets Manager)
-- Match encryption certificate version with your HPCR image version
+- Store signing keys securely (e.g., HashiCorp Vault)
+- Match encryption certificate version with your Hyper Protect image version
 - Track contract checksums (`sha256_in`, `sha256_out`) for audit trails
 - Test contracts in development environments before production deployment
 
@@ -151,7 +146,7 @@ data "hpcr_attestation" "verify" {
 
 ### Optional
 
-- `cert` (String) Certificate used to encrypt the contract, in PEM format. Defaults to the latest HPCR image certificate if not specified.
+- `cert` (String) Certificate used to encrypt the contract, in PEM format. Defaults to the latest HPVS image certificate if not specified.
 - `platform` (String) Hyper Protect platform where this contract will be deployed. Defaults to hpvs
 - `privkey` (String, Sensitive) Private key used to sign the contract. If omitted, a temporary signing key is created.
 
