@@ -1,3 +1,19 @@
+## 1.3.0 (2026-01-14)
+
+* Merge pull request #150 from Sashwat-K/doc-fixes ([c34d4eb](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/c34d4eb)), closes [#150](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/150)
+* feat: index.md doc changes ([6407e5a](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/6407e5a))
+* feat: update doc for hpcr_contract_encrypted ([bd3a667](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/bd3a667))
+* feat: update hpcr_attestation doc ([1d9316b](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/1d9316b))
+* feat: update hpcr_contract_encrypted_contract_expiry doc ([e28a5f9](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/e28a5f9))
+* feat: update hpcr_json resource doc ([46839ca](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/46839ca))
+* feat: update hpcr_json_encrypted docs ([fdf5615](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/fdf5615))
+* feat: update hpcr_text resource docs ([70ad879](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/70ad879))
+* feat: update hpcr_text_encrypted doc ([1cbdc11](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/1cbdc11))
+* feat: update hpcr_tgz_encrypted doc ([9738193](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/9738193))
+* feat: version changes ([e5ff8b6](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/e5ff8b6))
+* docs: update hpcr_tgz ([b0216a5](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/b0216a5))
+* fix: user documentation ([4bc6b32](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/4bc6b32))
+
 ## 1.2.0 (2026-01-14)
 
 * feat: new GitHub CI ([0ed302a](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/0ed302a))
