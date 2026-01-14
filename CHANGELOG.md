@@ -1,3 +1,10 @@
+## 1.2.0 (2026-01-14)
+
+* feat: new GitHub CI ([0ed302a](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/0ed302a))
+* chore(deps): update dependency node to v20.19.6 (#145) ([b4c041a](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/b4c041a)), closes [#145](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/145)
+* chore(deps): update go dependencies (#140) ([0925bbd](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/0925bbd)), closes [#140](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/140)
+* fix: GitHub actions ([289786c](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/289786c))
+
 ## <small>1.1.1 (2026-01-13)</small>
 
 * Merge pull request #147 from Sashwat-K/fix-cii ([10bb1dc](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/10bb1dc)), closes [#147](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/147)
