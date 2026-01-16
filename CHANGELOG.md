@@ -1,3 +1,12 @@
+## 1.4.0 (2026-01-16)
+
+* Merge pull request #153 from Sashwat-K/feature/encryption-certificate-expiry ([dbb5da6](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/dbb5da6)), closes [#153](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/153)
+* chore: go mod tidy ([185836c](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/185836c))
+* chore(deps): update docker.io/library/hello-world docker digest to 05813ae (#148) ([8df3009](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/8df3009)), closes [#148](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/148)
+* chore(deps): update go dependencies to v6 (#149) ([8943708](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/8943708)), closes [#149](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/149)
+* chore(deps): update module github.com/hashicorp/terraform-svchost to v0.2.0 (#151) ([5737875](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/5737875)), closes [#151](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/151)
+* feat: add support to show expiry of encryption certificates ([1ca60f9](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/1ca60f9))
+
 ## 1.3.0 (2026-01-14)
 
 * Merge pull request #150 from Sashwat-K/doc-fixes ([c34d4eb](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/c34d4eb)), closes [#150](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/150)
