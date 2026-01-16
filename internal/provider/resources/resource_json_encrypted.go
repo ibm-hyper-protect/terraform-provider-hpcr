@@ -25,6 +25,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
+	"github.com/ibm-hyper-protect/contract-go/v2/certificate"
 	"github.com/ibm-hyper-protect/contract-go/v2/contract"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
 )
@@ -129,6 +130,21 @@ func (r *JSONEncryptedResource) Create(ctx context.Context, req resource.CreateR
 	cert := ""
 	if !data.Cert.IsNull() && !data.Cert.IsUnknown() {
 		cert = data.Cert.ValueString()
+
+		// check expiry of the encryption certificate
+		expiryInfo, err := certificate.HpcrValidateEncryptionCertificate(cert)
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Fail to encrypt text",
+				fmt.Sprintf("Encryption certificate has expired: %s", err.Error()),
+			)
+			return
+		}
+
+		resp.Diagnostics.AddWarning(
+			"Encryption certificate validity",
+			expiryInfo,
+		)
 	}
 
 	// Get the platform (empty string will use default "hpvs")
@@ -205,6 +221,21 @@ func (r *JSONEncryptedResource) Update(ctx context.Context, req resource.UpdateR
 	cert := ""
 	if !data.Cert.IsNull() && !data.Cert.IsUnknown() {
 		cert = data.Cert.ValueString()
+
+		// check expiry of the encryption certificate
+		expiryInfo, err := certificate.HpcrValidateEncryptionCertificate(cert)
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Fail to encrypt text",
+				fmt.Sprintf("Encryption certificate has expired: %s", err.Error()),
+			)
+			return
+		}
+
+		resp.Diagnostics.AddWarning(
+			"Encryption certificate validity",
+			expiryInfo,
+		)
 	}
 
 	// Get the platform (empty string will use default "hpvs")

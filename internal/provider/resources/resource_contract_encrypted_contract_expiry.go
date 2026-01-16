@@ -26,6 +26,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
+	"github.com/ibm-hyper-protect/contract-go/v2/certificate"
 	"github.com/ibm-hyper-protect/contract-go/v2/contract"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
 )
@@ -148,12 +149,31 @@ func (r *ContractEncryptedContractExpiryResource) Create(ctx context.Context, re
 	// Get required and optional parameters
 	contractYAML := data.Contract.ValueString()
 	platform := data.Platform.ValueString()
-	cert := data.Cert.ValueString()
 	privKey := data.PrivKey.ValueString()
 	expiryDays := int(data.ExpiryDays.ValueInt64())
 	caCert := data.CaCert.ValueString()
 	caKey := data.CaKey.ValueString()
 	csr := data.Csr.ValueString()
+
+	cert := ""
+	if !data.Cert.IsNull() && !data.Cert.IsUnknown() {
+		cert = data.Cert.ValueString()
+
+		// check expiry of the encryption certificate
+		expiryInfo, err := certificate.HpcrValidateEncryptionCertificate(cert)
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Fail to encrypt text",
+				fmt.Sprintf("Encryption certificate has expired: %s", err.Error()),
+			)
+			return
+		}
+
+		resp.Diagnostics.AddWarning(
+			"Encryption certificate validity",
+			expiryInfo,
+		)
+	}
 
 	// Generate private key if not provided
 	if privKey == "" {
@@ -261,12 +281,31 @@ func (r *ContractEncryptedContractExpiryResource) Update(ctx context.Context, re
 	// Get required and optional parameters
 	contractYAML := data.Contract.ValueString()
 	platform := data.Platform.ValueString()
-	cert := data.Cert.ValueString()
 	privKey := data.PrivKey.ValueString()
 	expiryDays := int(data.ExpiryDays.ValueInt64())
 	caCert := data.CaCert.ValueString()
 	caKey := data.CaKey.ValueString()
 	csr := data.Csr.ValueString()
+
+	cert := ""
+	if !data.Cert.IsNull() && !data.Cert.IsUnknown() {
+		cert = data.Cert.ValueString()
+
+		// check expiry of the encryption certificate
+		expiryInfo, err := certificate.HpcrValidateEncryptionCertificate(cert)
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Fail to encrypt text",
+				fmt.Sprintf("Encryption certificate has expired: %s", err.Error()),
+			)
+			return
+		}
+
+		resp.Diagnostics.AddWarning(
+			"Encryption certificate validity",
+			expiryInfo,
+		)
+	}
 
 	// Generate private key if not provided
 	if privKey == "" {

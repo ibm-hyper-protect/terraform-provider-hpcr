@@ -25,6 +25,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
+	"github.com/ibm-hyper-protect/contract-go/v2/certificate"
 	"github.com/ibm-hyper-protect/contract-go/v2/contract"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
 )
@@ -115,9 +116,28 @@ func (r *ContractEncryptedResource) Create(ctx context.Context, req resource.Cre
 
 	// Get required and optional parameters
 	contractYAML := data.Contract.ValueString()
-	cert := data.Cert.ValueString()
 	platform := data.Platform.ValueString()
 	privKey := data.PrivKey.ValueString()
+
+	cert := ""
+	if !data.Cert.IsNull() && !data.Cert.IsUnknown() {
+		cert = data.Cert.ValueString()
+
+		// check expiry of the encryption certificate
+		expiryInfo, err := certificate.HpcrValidateEncryptionCertificate(cert)
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Fail to encrypt text",
+				fmt.Sprintf("Encryption certificate has expired: %s", err.Error()),
+			)
+			return
+		}
+
+		resp.Diagnostics.AddWarning(
+			"Encryption certificate validity",
+			expiryInfo,
+		)
+	}
 
 	// Generate private key if not provided
 	if privKey == "" {
@@ -194,9 +214,28 @@ func (r *ContractEncryptedResource) Update(ctx context.Context, req resource.Upd
 
 	// Get required and optional parameters
 	contractYAML := data.Contract.ValueString()
-	cert := data.Cert.ValueString()
 	platform := data.Platform.ValueString()
 	privKey := data.PrivKey.ValueString()
+
+	cert := ""
+	if !data.Cert.IsNull() && !data.Cert.IsUnknown() {
+		cert = data.Cert.ValueString()
+
+		// check expiry of the encryption certificate
+		expiryInfo, err := certificate.HpcrValidateEncryptionCertificate(cert)
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Fail to encrypt text",
+				fmt.Sprintf("Encryption certificate has expired: %s", err.Error()),
+			)
+			return
+		}
+
+		resp.Diagnostics.AddWarning(
+			"Encryption certificate validity",
+			expiryInfo,
+		)
+	}
 
 	// Generate private key if not provided
 	if privKey == "" {
