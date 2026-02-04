@@ -11,6 +11,10 @@ resource "hpcr_tgz" "contract" {
   folder = "pods"
 }
 
+resource "hpcr_text" "attestation_public_key" {
+  text = file("./cert/public.pem")
+}
+
 locals {
   # contract in clear text
   contract = yamlencode({
@@ -29,6 +33,7 @@ locals {
         "archive" : hpcr_tgz.contract.rendered
       }
     },
+    "attestationPublicKey" : hpcr_text.attestation_public_key.rendered
   })
 }
 

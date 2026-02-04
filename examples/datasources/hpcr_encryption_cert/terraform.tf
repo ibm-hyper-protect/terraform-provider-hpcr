@@ -19,3 +19,11 @@ data "hpcr_encryption_cert" "cert" {
 output "cert" {
   value = data.hpcr_encryption_cert.cert.cert
 }
+
+output "expiry_days" {
+  value = data.hpcr_encryption_cert.cert.expiry
+}
+
+output "expiry_status" {
+  value = data.hpcr_encryption_cert.cert.status
+}
