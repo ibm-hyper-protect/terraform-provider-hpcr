@@ -252,8 +252,20 @@ func (r *ContractEncryptedResource) Update(ctx context.Context, req resource.Upd
 		privKey = generatedKey
 	}
 
+	tflog.Debug(ctx, fmt.Sprintf("Contract YAML:-\n%s", contractYAML))
+
+	refinedContract, err := common.RefineContract(contractYAML)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Failed to refine contract",
+			fmt.Sprintf("Error refining contract: %s", err.Error()),
+		)
+	}
+
+	tflog.Debug(ctx, fmt.Sprintf("Refined Contract YAML:-\n%s", refinedContract))
+
 	// Generate signed and encrypted contract using the contract-go library
-	signedContract, inputHash, outputHash, err := contract.HpcrContractSignedEncrypted(contractYAML, platform, cert, privKey)
+	signedContract, inputHash, outputHash, err := contract.HpcrContractSignedEncrypted(refinedContract, platform, cert, privKey)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to create signed encrypted contract",

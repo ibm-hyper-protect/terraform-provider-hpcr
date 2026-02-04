@@ -188,6 +188,8 @@ func (r *ContractEncryptedContractExpiryResource) Create(ctx context.Context, re
 		privKey = generatedKey
 	}
 
+	tflog.Debug(ctx, fmt.Sprintf("Contract YAML:- \n%s", contractYAML))
+
 	refinedContract, err := common.RefineContract(contractYAML)
 	if err != nil {
 		resp.Diagnostics.AddError(
