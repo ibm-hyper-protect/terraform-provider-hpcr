@@ -38,11 +38,13 @@ func NewEncryptionCertDataSource() datasource.DataSource {
 type EncryptionCertDataSource struct{}
 
 type EncryptionCertDataSourceModel struct {
-	ID      types.String `tfsdk:"id"`
-	Certs   types.Map    `tfsdk:"certs"`
-	Spec    types.String `tfsdk:"spec"`
-	Cert    types.String `tfsdk:"cert"`
-	Version types.String `tfsdk:"version"`
+	ID           types.String `tfsdk:"id"`
+	Certs        types.Map    `tfsdk:"certs"`
+	Spec         types.String `tfsdk:"spec"`
+	Cert         types.String `tfsdk:"cert"`
+	ExpiryDays   types.String `tfsdk:"expiry"`
+	ExpiryStatus types.String `tfsdk:"status"`
+	Version      types.String `tfsdk:"version"`
 }
 
 func (d *EncryptionCertDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
@@ -75,6 +77,16 @@ func (d *EncryptionCertDataSource) Schema(ctx context.Context, req datasource.Sc
 			"cert": schema.StringAttribute{
 				MarkdownDescription: "Selected certificate content",
 				Description:         "Selected certificate",
+				Computed:            true,
+			},
+			"expiry": schema.StringAttribute{
+				MarkdownDescription: "Number of days for certificate to expire",
+				Description:         "Number of expiry days",
+				Computed:            true,
+			},
+			"status": schema.StringAttribute{
+				MarkdownDescription: "Certificate expiry status of encryption certificate",
+				Description:         "Status of encryption certificate",
 				Computed:            true,
 			},
 			"version": schema.StringAttribute{
@@ -167,7 +179,7 @@ func (d *EncryptionCertDataSource) Read(ctx context.Context, req datasource.Read
 	}
 
 	// Get the certificate using the contract-go library
-	version, cert, err := certificate.HpcrGetEncryptionCertificateFromJson(string(certsJSON), selectedVersion)
+	version, cert, _, expiry_days, status, err := certificate.HpcrGetEncryptionCertificateFromJson(string(certsJSON), selectedVersion)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to get encryption certificate",
@@ -189,6 +201,8 @@ func (d *EncryptionCertDataSource) Read(ctx context.Context, req datasource.Read
 	// Set the computed fields
 	data.Version = types.StringValue(version)
 	data.Cert = types.StringValue(cert)
+	data.ExpiryDays = types.StringValue(expiry_days)
+	data.ExpiryStatus = types.StringValue(status)
 	data.ID = types.StringValue(id)
 
 	// Save data into Terraform state

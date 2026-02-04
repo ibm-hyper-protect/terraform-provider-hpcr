@@ -50,7 +50,7 @@ func TestEncryptionCertDataSource_Schema(t *testing.T) {
 		t.Fatal("Schema attributes should not be nil")
 	}
 
-	requiredAttrs := []string{"id", "certs", "spec", "cert", "version"}
+	requiredAttrs := []string{"id", "certs", "spec", "cert", "expiry", "status", "version"}
 	for _, attr := range requiredAttrs {
 		if _, ok := resp.Schema.Attributes[attr]; !ok {
 			t.Errorf("Expected schema to have attribute '%s'", attr)
@@ -73,6 +73,18 @@ func TestEncryptionCertDataSource_Schema(t *testing.T) {
 	certAttr := resp.Schema.Attributes["cert"]
 	if certAttr.IsComputed() == false {
 		t.Error("Expected 'cert' attribute to be computed")
+	}
+
+	// Verify expiry days is computed
+	expiryAttr := resp.Schema.Attributes["expiry"]
+	if expiryAttr.IsComputed() == false {
+		t.Error("Expected 'expiry' attribute to be computed")
+	}
+
+	// Verify status is computed
+	statusAttr := resp.Schema.Attributes["status"]
+	if statusAttr.IsComputed() == false {
+		t.Error("Expected 'status' attribute to be computed")
 	}
 
 	// Verify version is computed

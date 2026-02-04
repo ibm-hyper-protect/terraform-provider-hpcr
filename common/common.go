@@ -103,22 +103,10 @@ func RefineContract(yamlStr string) (string, error) {
 		return "", fmt.Errorf("failed to unmarshal input YAML: %v", err)
 	}
 
-	output := make(map[string]*yaml.Node)
-
-	for key, val := range data {
-		// Marshal the value of this top-level key back to YAML
-		contentBytes, err := yaml.Marshal(val)
-		if err != nil {
-			return "", fmt.Errorf("failed to marshal key %s: %v", key, err)
-		}
-
-		// Wrap it in a block literal style node (|)
-		node := &yaml.Node{
-			Kind:  yaml.ScalarNode,
-			Style: yaml.LiteralStyle,
-			Value: string(contentBytes),
-		}
-		output[key] = node
+	// Keys that should be serialized as YAML strings
+	serializeKeys := map[string]bool{
+		"env":      true,
+		"workload": true,
 	}
 
 	finalNode := &yaml.Node{
@@ -126,15 +114,37 @@ func RefineContract(yamlStr string) (string, error) {
 		Content: []*yaml.Node{},
 	}
 
-	for key, val := range output {
+	for key, val := range data {
 		keyNode := &yaml.Node{
 			Kind:  yaml.ScalarNode,
 			Value: key,
 		}
-		finalNode.Content = append(finalNode.Content, keyNode, val)
+
+		var valueNode *yaml.Node
+
+		if serializeKeys[key] {
+			// Marshal value back to YAML and store as block literal
+			contentBytes, err := yaml.Marshal(val)
+			if err != nil {
+				return "", fmt.Errorf("failed to marshal key %s: %v", key, err)
+			}
+
+			valueNode = &yaml.Node{
+				Kind:  yaml.ScalarNode,
+				Style: yaml.LiteralStyle,
+				Value: string(contentBytes),
+			}
+		} else {
+			// Normal YAML encoding
+			valueNode = &yaml.Node{}
+			if err := valueNode.Encode(val); err != nil {
+				return "", fmt.Errorf("failed to encode key %s: %v", key, err)
+			}
+		}
+
+		finalNode.Content = append(finalNode.Content, keyNode, valueNode)
 	}
 
-	// Step 4: Marshal final YAML
 	resultBytes, err := yaml.Marshal(finalNode)
 	if err != nil {
 		return "", fmt.Errorf("failed to marshal final YAML: %v", err)
