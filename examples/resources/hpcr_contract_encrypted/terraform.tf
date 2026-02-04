@@ -56,50 +56,62 @@ resource "hpcr_contract_encrypted" "contract_platform" {
   platform = "hpvs"
 }
 
-output "contract_rendered" {
-  value = hpcr_contract_encrypted.contract.rendered
+resource "local_file" "contract_rendered" {
+  filename = "${path.module}/build/contract.yaml"
+  content = hpcr_contract_encrypted.contract.rendered
 }
 
-output "contract_sha256_in" {
-  value = hpcr_contract_encrypted.contract.sha256_in
+resource "local_file" "contract_sha256_in" {
+  filename = "${path.module}/build/contract.in.sha256"
+  content = hpcr_contract_encrypted.contract.sha256_in
 }
 
-output "contract_sha256_out" {
-  value = hpcr_contract_encrypted.contract.sha256_out
+resource "local_file" "contract_sha256_out" {
+  filename = "${path.module}/build/contract.out.sha256"
+  content = hpcr_contract_encrypted.contract.sha256_out
 }
 
-output "contract_cert_rendered" {
-  value = hpcr_contract_encrypted.contract_cert.rendered
+resource "local_file" "contract_cert_rendered" {
+  filename = "${path.module}/build/contract_cert.yaml"
+  content = hpcr_contract_encrypted.contract_cert.rendered
 }
 
-output "contract_cert_sha256_in" {
-  value = hpcr_contract_encrypted.contract_cert.sha256_in
+resource "local_file" "contract_cert_sha256_in" {
+  filename = "${path.module}/build/contract_cert.in.sha256"
+  content = hpcr_contract_encrypted.contract_cert.sha256_in
 }
 
-output "contract_cert_sha256_out" {
-  value = hpcr_contract_encrypted.contract_cert.sha256_out
+resource "local_file" "contract_cert_sha256_out" {
+  filename = "${path.module}/build/contract_cert.out.sha256_out"
+  content = hpcr_contract_encrypted.contract_cert.sha256_out
 }
 
-output "contract_privkey_rendered" {
-  value = hpcr_contract_encrypted.contract_privkey.rendered
+resource "local_file" "contract_privkey_rendered" {
+  filename = "${path.module}/build/contract_privkey.yaml"
+  content = hpcr_contract_encrypted.contract_privkey.rendered
 }
 
-output "contract_privkey_sha256_in" {
-  value = hpcr_contract_encrypted.contract_privkey.sha256_in
+resource "local_file" "contract_privkey_sha256_in" {
+  filename = "${path.module}/build/contract_privkey.in.sha256"
+  content = hpcr_contract_encrypted.contract_privkey.sha256_in
 }
 
-output "contract_privkey_sha256_out" {
-  value = hpcr_contract_encrypted.contract_privkey.sha256_out
+resource "local_file" "contract_privkey_sha256_out" {
+  filename = "${path.module}/build/contract_privkey.out.sha256"
+  content = hpcr_contract_encrypted.contract_privkey.sha256_out
 }
 
-output "contract_platform_rendered" {
-  value = hpcr_contract_encrypted.contract_platform.rendered
+resource "local_file" "contract_platform_rendered" {
+  filename = "${path.module}/build/contract_platform.yaml"
+  content = hpcr_contract_encrypted.contract_platform.rendered
 }
 
-output "contract_platform_sha256_in" {
-  value = hpcr_contract_encrypted.contract_platform.sha256_in
+resource "local_file" "contract_platform_sha256_in" {
+  filename = "${path.module}/build/contract_platform.in.sha256"
+  content = hpcr_contract_encrypted.contract_platform.sha256_in
 }
 
-output "contract_platform_sha256_out" {
-  value = hpcr_contract_encrypted.contract_platform.sha256_out
+resource "local_file" "contract_platform_sha256_out" {
+  filename = "${path.module}/build/contract_platform.out.sha256"
+  content = hpcr_contract_encrypted.contract_platform.sha256_out
 }
