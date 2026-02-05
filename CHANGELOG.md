@@ -1,3 +1,8 @@
+## <small>1.5.1 (2026-02-05)</small>
+
+* fix(deps): update go dependencies (#159) ([6b1ab56](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/6b1ab56)), closes [#159](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/159)
+* chore(deps): update go dependencies (#160) ([2dc6f78](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/2dc6f78)), closes [#160](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/160)
+
 ## 1.5.0 (2026-02-05)
 
 * Merge pull request #158 from Sashwat-K/bug-fix/attestationpublickey ([7984293](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/7984293)), closes [#158](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/158)
