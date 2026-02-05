@@ -11,6 +11,10 @@ resource "hpcr_tgz" "contract" {
   folder = "pods"
 }
 
+resource "hpcr_text" "attestation_public_key" {
+  text = file("./cert/public.pem")
+}
+
 locals {
   # contract in clear text
   contract = yamlencode({
@@ -29,6 +33,7 @@ locals {
         "archive" : hpcr_tgz.contract.rendered
       }
     },
+    "attestationPublicKey" : hpcr_text.attestation_public_key.rendered
   })
 
   csrParams = {
@@ -76,50 +81,62 @@ resource "hpcr_contract_encrypted_contract_expiry" "contract_privkey" {
   csr      = file("./cert/csr.pem")
 }
 
-output "contract_rendered" {
-  value = hpcr_contract_encrypted_contract_expiry.contract.rendered
+resource "local_file" "contract_rendered" {
+  filename = "${path.module}/build/contract.yaml"
+  content = hpcr_contract_encrypted_contract_expiry.contract.rendered
 }
 
-output "contract_sha256_in" {
-  value = hpcr_contract_encrypted_contract_expiry.contract.sha256_in
+resource "local_file" "contract_sha256_in" {
+  filename = "${path.module}/build/contract.in.sha256"
+  content = hpcr_contract_encrypted_contract_expiry.contract.sha256_in
 }
 
-output "contract_sha256_out" {
-  value = hpcr_contract_encrypted_contract_expiry.contract.sha256_out
+resource "local_file" "contract_sha256_out" {
+  filename = "${path.module}/build/contract.out.sha256"
+  content = hpcr_contract_encrypted_contract_expiry.contract.sha256_out
 }
 
-output "contract_csr_rendered" {
-  value = hpcr_contract_encrypted_contract_expiry.contract_csr.rendered
+resource "local_file" "contract_csr_rendered" {
+  filename = "${path.module}/build/contract_csr.yaml"
+  content = hpcr_contract_encrypted_contract_expiry.contract_csr.rendered
 }
 
-output "contract_csr_sha256_in" {
-  value = hpcr_contract_encrypted_contract_expiry.contract_csr.sha256_in
+resource "local_file" "contract_csr_sha256_in" {
+  filename = "${path.module}/build/contract_csr.in.sha256"
+  content = hpcr_contract_encrypted_contract_expiry.contract_csr.sha256_in
 }
 
-output "contract_csr_sha256_out" {
-  value = hpcr_contract_encrypted_contract_expiry.contract_csr.sha256_out
+resource "local_file" "contract_csr_sha256_out" {
+  filename = "${path.module}/build/contract_csr.out.sha256"
+  content = hpcr_contract_encrypted_contract_expiry.contract_csr.sha256_out
 }
 
-output "contract_cert_rendered" {
-  value = hpcr_contract_encrypted_contract_expiry.contract_cert.rendered
+resource "local_file" "contract_cert_rendered" {
+  filename = "${path.module}/build/contract_cert.yaml"
+  content = hpcr_contract_encrypted_contract_expiry.contract_cert.rendered
 }
 
-output "contract_cert_sha256_in" {
-  value = hpcr_contract_encrypted_contract_expiry.contract_cert.sha256_in
+resource "local_file" "contract_cert_sha256_in" {
+  filename = "${path.module}/build/contract_cert.in.sha256"
+  content = hpcr_contract_encrypted_contract_expiry.contract_cert.sha256_in
 }
 
-output "contract_cert_sha256_out" {
-  value = hpcr_contract_encrypted_contract_expiry.contract_cert.sha256_out
+resource "local_file" "contract_cert_sha256_out" {
+  filename = "${path.module}/build/contract_cert.out.sha256"
+  content = hpcr_contract_encrypted_contract_expiry.contract_cert.sha256_out
 }
 
-output "contract_privkey_rendered" {
-  value = hpcr_contract_encrypted_contract_expiry.contract_privkey.rendered
+resource "local_file" "contract_privkey_rendered" {
+  filename = "${path.module}/build/contract_privkey.yaml"
+  content = hpcr_contract_encrypted_contract_expiry.contract_privkey.rendered
 }
 
-output "contract_privkey_sha256_in" {
-  value = hpcr_contract_encrypted_contract_expiry.contract_privkey.sha256_in
+resource "local_file" "contract_privkey_sha256_in" {
+  filename = "${path.module}/build/contract_privkey.in.sha256"
+  content = hpcr_contract_encrypted_contract_expiry.contract_privkey.sha256_in
 }
 
-output "contract_privkey_sha256_out" {
-  value = hpcr_contract_encrypted_contract_expiry.contract_privkey.sha256_out
+resource "local_file" "contract_privkey_sha256_out" {
+  filename = "${path.module}/build/contract_privkey.out.sha256"
+  content = hpcr_contract_encrypted_contract_expiry.contract_privkey.sha256_out
 }

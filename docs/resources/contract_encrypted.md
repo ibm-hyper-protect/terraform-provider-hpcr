@@ -25,6 +25,7 @@ An HPCR contract typically contains these sections:
 
 - **workload**: Defines the containerized application (docker-compose or podman play)
 - **env**: Environment variables, logging configuration, and runtime settings
+- **AttestationPublicKey** (Optional): Public key to encrypt the attestation records
 
 See the [contract-go documentation](https://ibm-hyper-protect.github.io/contract-go) for detailed contract schema information.
 
@@ -58,6 +59,11 @@ resource "hpcr_tgz" "contract" {
   folder = "pods"
 }
 
+# Create base64 of attestation public key
+resource "hpcr_text" "attestation_public_key" {
+  text = file("./public.pem")
+}
+
 # Define contract in clear text
 locals {
   contract = yamlencode({
@@ -76,6 +82,7 @@ locals {
         "archive" : hpcr_tgz.contract.rendered
       }
     },
+    "attestationPublicKey": hpcr_text.attestation_public_key.rendered
   })
 }
 

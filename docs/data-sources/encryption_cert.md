@@ -85,6 +85,14 @@ data "hpcr_encryption_cert" "matching" {
 output "certificate_version" {
   value = data.hpcr_encryption_cert.matching.version
 }
+
+output "certificate_expiry" {
+  value = data.hpcr_encryption_cert.matching.expiry
+}
+
+output "certificate_status" {
+  value = data.hpcr_encryption_cert.matching.status
+}
 ```
 
 ## Certificate and Image Version Alignment
@@ -109,3 +117,5 @@ For best compatibility, ensure your encryption certificate version matches or is
 - `cert` (String) Selected certificate content
 - `id` (String) Data source identifier
 - `version` (String) Version number of the selected certificate
+- `expiry` (String) Number of days for the certificate to expire
+- `status` (String) Status of encryption certificate
