@@ -1,3 +1,15 @@
+## 1.5.0 (2026-02-05)
+
+* Merge pull request #158 from Sashwat-K/bug-fix/attestationpublickey ([7984293](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/7984293)), closes [#158](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/158)
+* docs: update documentation ([d8133c6](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/d8133c6))
+* feat: add examples ([4983c8a](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/4983c8a))
+* feat: add support for attestation public key ([96098c8](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/96098c8))
+* feat: update examples ([fa9fee9](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/fa9fee9))
+* feat: update testcases ([c8a4896](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/c8a4896))
+* fix: contract marshal error ([bec5235](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/bec5235))
+* chore(deps): update go dependencies (#155) ([6cb2ee5](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/6cb2ee5)), closes [#155](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/155)
+* chore(deps): update module github.com/clipperhouse/uax29/v2 to v2.3.1 (#154) ([cfdb5a5](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/cfdb5a5)), closes [#154](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/154)
+
 ## 1.4.0 (2026-01-16)
 
 * Merge pull request #153 from Sashwat-K/feature/encryption-certificate-expiry ([dbb5da6](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/dbb5da6)), closes [#153](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/153)
