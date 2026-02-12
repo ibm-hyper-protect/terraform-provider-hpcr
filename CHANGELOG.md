@@ -1,3 +1,14 @@
+## <small>1.5.2 (2026-02-12)</small>
+
+* fix(deps): update go dependencies (#168) ([f63e928](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/f63e928)), closes [#168](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/168)
+* chore(deps): update go dependencies (#162) ([7e2aa3f](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/7e2aa3f)), closes [#162](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/162)
+* chore(deps): update go dependencies (#164) ([0a67bbf](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/0a67bbf)), closes [#164](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/164)
+* chore(deps): update go dependencies (#165) ([7d9df29](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/7d9df29)), closes [#165](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/165)
+* chore(deps): update go dependencies (#166) ([84eb72c](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/84eb72c)), closes [#166](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/166)
+* chore(deps): update go dependencies (#167) ([090d761](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/090d761)), closes [#167](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/167)
+* chore(deps): update module go.mongodb.org/mongo-driver to v1.17.8 (#161) ([ea664a2](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/ea664a2)), closes [#161](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/161)
+* chore(deps): update module go.mongodb.org/mongo-driver to v1.17.9 (#163) ([042b8ba](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/042b8ba)), closes [#163](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/163)
+
 ## <small>1.5.1 (2026-02-05)</small>
 
 * fix(deps): update go dependencies (#159) ([6b1ab56](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/6b1ab56)), closes [#159](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/159)
