@@ -40,8 +40,8 @@ github.com/hashicorp/terraform-svchost v0.2.0 h1:wVc2vMiodOHvNZcQw/3y9af1XSomgjG
 github.com/hashicorp/terraform-svchost v0.2.0/go.mod h1:/98rrS2yZsbppi4VGVCjwYmh8dqsKzISqK7Hli+0rcQ=
 github.com/hashicorp/yamux v0.1.2 h1:XtB8kyFOyHXYVFnwT5C3+Bdo8gArse7j2AQ0DA0Uey8=
 github.com/hashicorp/yamux v0.1.2/go.mod h1:C+zze2n6e/7wshOZep2A70/aQU6QBRWJO/G6FT1wIns=
-github.com/ibm-hyper-protect/contract-go/v2 v2.9.0 h1:rH+C1cgs6AH2m8GIz8stRyCYuWPm6Uax5UfAx7j5iL0=
-github.com/ibm-hyper-protect/contract-go/v2 v2.9.0/go.mod h1:iEqmGdZ7QS21q2z9jcNDUrKYmVkBRWCAOirD3byO/UU=
+github.com/ibm-hyper-protect/contract-go/v2 v2.10.0 h1:rMeUlvgnw085mLzrNwkDSqn70rfAPPoFRgtHAgE2sC4=
+github.com/ibm-hyper-protect/contract-go/v2 v2.10.0/go.mod h1:iEqmGdZ7QS21q2z9jcNDUrKYmVkBRWCAOirD3byO/UU=
 github.com/jhump/protoreflect v1.17.0 h1:qOEr613fac2lOuTgWN4tPAtLL7fUSbuJL5X5XumQh94=
 github.com/jhump/protoreflect v1.17.0/go.mod h1:h9+vUUL38jiBzck8ck+6G/aeMX8Z4QUY/NiJPwPNi+8=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
