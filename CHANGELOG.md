@@ -1,3 +1,7 @@
+## <small>1.5.4 (2026-02-18)</small>
+
+* fix(deps): update go dependencies (#175) ([144f458](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/144f458)), closes [#175](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/175)
+
 ## <small>1.5.3 (2026-02-17)</small>
 
 * Merge pull request #173 from ibm-hyper-protect/renovate/go-dependencies ([69cd0e7](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/69cd0e7)), closes [#173](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/173)
