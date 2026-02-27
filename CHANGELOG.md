@@ -1,3 +1,13 @@
+## <small>1.5.5 (2026-02-27)</small>
+
+* fix(deps): update go dependencies (#180) ([b8f81f6](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/b8f81f6)), closes [#180](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/180)
+* chore(deps): update go dependencies (#174) ([379c2eb](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/379c2eb)), closes [#174](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/174)
+* chore(deps): update go dependencies (#176) ([112d844](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/112d844)), closes [#176](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/176)
+* chore(deps): update go dependencies (#178) ([410b9f8](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/410b9f8)), closes [#178](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/178)
+* chore(deps): update go dependencies (#181) ([5a761bf](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/5a761bf)), closes [#181](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/181)
+* chore(deps): update module github.com/zclconf/go-cty to v1.18.0 (#177) ([ce36cfb](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/ce36cfb)), closes [#177](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/177)
+* chore(deps): update module golang.org/x/net to v0.51.0 (#179) ([45466a1](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/45466a1)), closes [#179](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/179)
+
 ## <small>1.5.4 (2026-02-18)</small>
 
 * fix(deps): update go dependencies (#175) ([144f458](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/144f458)), closes [#175](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/175)
