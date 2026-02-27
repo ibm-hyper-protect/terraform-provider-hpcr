@@ -30,7 +30,7 @@ IBM Hyper Protect services provide confidential computing capabilities that prot
 
 **Archive Management**: Generate Base64-encoded tar archives from docker-compose and podman play configurations for workload sections.
 
-**Encryption Operations**: Encrypt contract sections (workload, env) using CCCR encryption certificates with automatic certificate retrieval from IBM Cloud.
+**Encryption Operations**: Encrypt contract sections (workload, env) using CCCR, CCRV and IBM Confidential Computing Containers for Red Hat OpenShift Container Platform encryption certificates encryption certificates with automatic certificate retrieval from IBM Cloud.
 
 **Image Selection**: Retrieve and validate CCCR stock images from IBM Cloud VPC with semantic versioning support.
 
@@ -84,7 +84,7 @@ resource "hpcr_text_encrypted" "workload" {
   })
 }
 
-# Select CCCR image from IBM Cloud
+# Select HPCR image from IBM Cloud
 data "ibm_is_images" "hyper_protect_images" {
   visibility = "public"
   status     = "available"

@@ -33,8 +33,8 @@ This Terraform provider is built on top of the **[contract-go library](https://g
 The contract-go library automates IBM Hyper Protect confidential computing workloads across CCCR, CCCRV, and IBM Confidential Computing Containers for Red Hat OpenShift Container Platform, providing capabilities for:
 
 - **Contract Generation**: Create signed and encrypted contracts for secure enclaves
-- **Certificate Operations**: Download and manage CCCR encryption certificates from IBM Cloud
-- **Image Selection**: Retrieve and validate CCCR images with semantic versioning
+- **Certificate Operations**: Download and manage HPVS encryption certificates from IBM Cloud
+- **Image Selection**: Retrieve and validate HPVS images with semantic versioning
 - **Archive Management**: Generate Base64 tar archives from docker-compose and pods configurations
 - **Attestation**: Decrypt attestation records from secure enclaves
 
@@ -70,13 +70,13 @@ The Terraform Provider HPCR provides comprehensive support for deploying and man
 - Automatic compression and encoding for contract workload sections
 
 **Encryption Operations**
-- Encrypt contract sections (workload, env) using CCCR encryption certificates
+- Encrypt contract sections (workload, env) using CCCR, CCRV and IBM Confidential Computing Containers for Red Hat OpenShift Container Platform encryption certificates
 - Automatic retrieval of encryption certificates from IBM Cloud
 - Support for latest or specific encryption certificate versions
 - Secure handling of sensitive configuration data
 
 **Image Selection & Validation**
-- Select appropriate CCCR stock images from IBM Cloud VPC
+- Select appropriate HPCR stock images from IBM Cloud VPC
 - Semantic versioning support with flexible version constraints (e.g., `>=1.1.0`, `~>1.0`)
 - Automatic validation of image availability
 - Support for public IBM Cloud images
@@ -161,9 +161,9 @@ resource "hpcr_text_encrypted" "workload" {
 
 The typical use case is to encrypt the `workload` and `env` sections separately and pass the YAML-encoded contract as input.
 
-### Select CCCR Image
+### Select HPCR Image
 
-Use the `hpcr_image` data source to select the appropriate CCCR stock image from IBM Cloud VPC with optional version constraints:
+Use the `hpcr_image` data source to select the appropriate HPCR stock image from IBM Cloud VPC with optional version constraints:
 
 ```terraform
 data "ibm_is_images" "hyper_protect_images" {
@@ -221,14 +221,14 @@ Complete examples for all resources and data sources are available in the [`exam
 
 ### Data Sources
 
-- **[hpcr_image](./examples/datasources/hpcr_image)** - Select CCCR images from IBM Cloud VPC with semantic versioning
+- **[hpcr_image](./examples/datasources/hpcr_image)** - Select HPCR images from IBM Cloud VPC with semantic versioning
 - **[hpcr_attestation](./examples/datasources/hpcr_attestation)** - Decrypt and parse attestation records
 - **[hpcr_encryption_certs](./examples/datasources/hpcr_encryption_certs)** - Download encryption certificates from IBM Cloud
 - **[hpcr_encryption_cert](./examples/datasources/hpcr_encryption_cert)** - Select specific certificate versions
 
 ### Quick Start Example
 
-Here's a complete workflow for creating and deploying a CCCR contract:
+Here's a complete workflow for creating and deploying a HPCR contract:
 
 ```terraform 
 terraform {
@@ -275,7 +275,7 @@ resource "hpcr_contract_encrypted" "contract" {
   contract = local.contract
 }
 
-# Select CCCR image
+# Select HPCR image
 data "ibm_is_images" "hyper_protect_images" {
   visibility = "public"
   status     = "available"
