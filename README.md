@@ -68,7 +68,6 @@ The Terraform Provider HPCR provides comprehensive support for deploying and man
 **Archive Management**
 - Create Base64-encoded tgz archives from folders containing docker-compose and podman play configurations
 - Automatic compression and encoding for contract workload sections
-- Support for complex multi-container applications
 
 **Encryption Operations**
 - Encrypt contract sections (workload, env) using CCCR encryption certificates
@@ -99,7 +98,7 @@ terraform {
   required_providers {
     hpcr = {
       source  = "ibm-hyper-protect/hpcr"
-      version = "~> 0.16.2"
+      version = "~> 1.2.0"
     }
   }
 }
@@ -236,7 +235,7 @@ terraform {
   required_providers {
     hpcr = {
       source  = "ibm-hyper-protect/hpcr"
-      version = "~> 0.16.2"
+      version = "~> 1.2.0"
     }
     ibm = {
       source  = "IBM-Cloud/ibm"

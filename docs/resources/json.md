@@ -3,12 +3,12 @@
 page_title: "hpcr_json Resource - hpcr"
 subcategory: ""
 description: |-
-  Serializes and encodes JSON data as Base64 for inclusion in HPCR contracts or workload configurations.
+  Serializes and encodes JSON data as Base64 for inclusion in Hyper Protect contracts or workload configurations.
 ---
 
 # hpcr_json (Resource)
 
-Serializes and encodes JSON data as Base64 for inclusion in HPCR contracts or workload configurations. This resource accepts JSON strings and prepares them for use in contract sections.
+Serializes and encodes JSON data as Base64 for inclusion in Hyper Protect contracts or workload configurations. This resource accepts JSON strings and prepares them for use in contract sections.
 
 ## Use Cases
 
@@ -24,7 +24,7 @@ terraform {
   required_providers {
     hpcr = {
       source  = "ibm-hyper-protect/hpcr"
-      version = "~> 0.16.2"
+      version = ">= 1.2.0"
     }
   }
 }

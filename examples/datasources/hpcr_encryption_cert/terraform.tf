@@ -2,7 +2,7 @@ terraform {
   required_providers {
     hpcr = {
       source  = "ibm-hyper-protect/hpcr"
-      version = "0.15.0"
+      version = ">= 1.2.0"
     }
   }
 }
@@ -18,4 +18,12 @@ data "hpcr_encryption_cert" "cert" {
 
 output "cert" {
   value = data.hpcr_encryption_cert.cert.cert
+}
+
+output "expiry_days" {
+  value = data.hpcr_encryption_cert.cert.expiry
+}
+
+output "expiry_status" {
+  value = data.hpcr_encryption_cert.cert.status
 }

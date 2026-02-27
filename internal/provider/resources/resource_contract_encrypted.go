@@ -25,6 +25,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
+	"github.com/ibm-hyper-protect/contract-go/v2/certificate"
 	"github.com/ibm-hyper-protect/contract-go/v2/contract"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
 )
@@ -115,9 +116,28 @@ func (r *ContractEncryptedResource) Create(ctx context.Context, req resource.Cre
 
 	// Get required and optional parameters
 	contractYAML := data.Contract.ValueString()
-	cert := data.Cert.ValueString()
 	platform := data.Platform.ValueString()
 	privKey := data.PrivKey.ValueString()
+
+	cert := ""
+	if !data.Cert.IsNull() && !data.Cert.IsUnknown() {
+		cert = data.Cert.ValueString()
+
+		// check expiry of the encryption certificate
+		expiryInfo, err := certificate.HpcrValidateEncryptionCertificate(cert)
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Fail to encrypt text",
+				fmt.Sprintf("Encryption certificate has expired: %s", err.Error()),
+			)
+			return
+		}
+
+		resp.Diagnostics.AddWarning(
+			"Encryption certificate validity",
+			expiryInfo,
+		)
+	}
 
 	// Generate private key if not provided
 	if privKey == "" {
@@ -132,6 +152,8 @@ func (r *ContractEncryptedResource) Create(ctx context.Context, req resource.Cre
 		privKey = generatedKey
 	}
 
+	tflog.Debug(ctx, fmt.Sprintf("Contract YAML:- \n%s", contractYAML))
+
 	refinedContract, err := common.RefineContract(contractYAML)
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -141,7 +163,7 @@ func (r *ContractEncryptedResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("Contract YAML:- \n%s", refinedContract))
+	tflog.Debug(ctx, fmt.Sprintf("Refined contract YAML:- \n%s", refinedContract))
 
 	// Generate signed and encrypted contract using the contract-go library
 	signedContract, inputHash, outputHash, err := contract.HpcrContractSignedEncrypted(refinedContract, platform, cert, privKey)
@@ -194,9 +216,28 @@ func (r *ContractEncryptedResource) Update(ctx context.Context, req resource.Upd
 
 	// Get required and optional parameters
 	contractYAML := data.Contract.ValueString()
-	cert := data.Cert.ValueString()
 	platform := data.Platform.ValueString()
 	privKey := data.PrivKey.ValueString()
+
+	cert := ""
+	if !data.Cert.IsNull() && !data.Cert.IsUnknown() {
+		cert = data.Cert.ValueString()
+
+		// check expiry of the encryption certificate
+		expiryInfo, err := certificate.HpcrValidateEncryptionCertificate(cert)
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Fail to encrypt text",
+				fmt.Sprintf("Encryption certificate has expired: %s", err.Error()),
+			)
+			return
+		}
+
+		resp.Diagnostics.AddWarning(
+			"Encryption certificate validity",
+			expiryInfo,
+		)
+	}
 
 	// Generate private key if not provided
 	if privKey == "" {
@@ -211,8 +252,20 @@ func (r *ContractEncryptedResource) Update(ctx context.Context, req resource.Upd
 		privKey = generatedKey
 	}
 
+	tflog.Debug(ctx, fmt.Sprintf("Contract YAML:-\n%s", contractYAML))
+
+	refinedContract, err := common.RefineContract(contractYAML)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Failed to refine contract",
+			fmt.Sprintf("Error refining contract: %s", err.Error()),
+		)
+	}
+
+	tflog.Debug(ctx, fmt.Sprintf("Refined Contract YAML:-\n%s", refinedContract))
+
 	// Generate signed and encrypted contract using the contract-go library
-	signedContract, inputHash, outputHash, err := contract.HpcrContractSignedEncrypted(contractYAML, platform, cert, privKey)
+	signedContract, inputHash, outputHash, err := contract.HpcrContractSignedEncrypted(refinedContract, platform, cert, privKey)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to create signed encrypted contract",

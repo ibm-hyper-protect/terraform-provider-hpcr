@@ -24,6 +24,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
+	"github.com/ibm-hyper-protect/contract-go/v2/certificate"
 	"github.com/ibm-hyper-protect/contract-go/v2/contract"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
 )
@@ -116,7 +117,26 @@ func (r *TgzEncryptedResource) Create(ctx context.Context, req resource.CreateRe
 
 	// Get optional parameters
 	platform := data.Platform.ValueString()
-	cert := data.Cert.ValueString()
+
+	cert := ""
+	if !data.Cert.IsNull() && !data.Cert.IsUnknown() {
+		cert = data.Cert.ValueString()
+
+		// check expiry of the encryption certificate
+		expiryInfo, err := certificate.HpcrValidateEncryptionCertificate(cert)
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Fail to encrypt text",
+				fmt.Sprintf("Encryption certificate has expired: %s", err.Error()),
+			)
+			return
+		}
+
+		resp.Diagnostics.AddWarning(
+			"Encryption certificate validity",
+			expiryInfo,
+		)
+	}
 
 	// Encrypt TGZ archive using the contract-go library
 	encrypted, inputHash, outputHash, err := contract.HpcrTgzEncrypted(folderPath, platform, cert)
@@ -180,7 +200,26 @@ func (r *TgzEncryptedResource) Update(ctx context.Context, req resource.UpdateRe
 
 	// Get optional parameters
 	platform := data.Platform.ValueString()
-	cert := data.Cert.ValueString()
+
+	cert := ""
+	if !data.Cert.IsNull() && !data.Cert.IsUnknown() {
+		cert = data.Cert.ValueString()
+
+		// check expiry of the encryption certificate
+		expiryInfo, err := certificate.HpcrValidateEncryptionCertificate(cert)
+		if err != nil {
+			resp.Diagnostics.AddError(
+				"Fail to encrypt text",
+				fmt.Sprintf("Encryption certificate has expired: %s", err.Error()),
+			)
+			return
+		}
+
+		resp.Diagnostics.AddWarning(
+			"Encryption certificate validity",
+			expiryInfo,
+		)
+	}
 
 	// Encrypt TGZ archive using the contract-go library
 	encrypted, inputHash, outputHash, err := contract.HpcrTgzEncrypted(folderPath, platform, cert)

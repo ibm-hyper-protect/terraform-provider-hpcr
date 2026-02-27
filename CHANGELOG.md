@@ -1,3 +1,69 @@
+## <small>1.5.4 (2026-02-18)</small>
+
+* fix(deps): update go dependencies (#175) ([144f458](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/144f458)), closes [#175](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/175)
+
+## <small>1.5.3 (2026-02-17)</small>
+
+* Merge pull request #173 from ibm-hyper-protect/renovate/go-dependencies ([69cd0e7](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/69cd0e7)), closes [#173](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/173)
+* fix(deps): update go dependencies ([757a0b8](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/757a0b8))
+* chore(deps): update go dependencies (#170) ([fcca327](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/fcca327)), closes [#170](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/170)
+* chore(deps): update go dependencies (#171) ([0bc55ec](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/0bc55ec)), closes [#171](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/171)
+* chore(deps): update go dependencies (#172) ([a1d9a92](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/a1d9a92)), closes [#172](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/172)
+* chore(deps): update module google.golang.org/grpc to v1.79.1 (#169) ([63a1898](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/63a1898)), closes [#169](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/169)
+
+## <small>1.5.2 (2026-02-12)</small>
+
+* fix(deps): update go dependencies (#168) ([f63e928](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/f63e928)), closes [#168](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/168)
+* chore(deps): update go dependencies (#162) ([7e2aa3f](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/7e2aa3f)), closes [#162](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/162)
+* chore(deps): update go dependencies (#164) ([0a67bbf](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/0a67bbf)), closes [#164](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/164)
+* chore(deps): update go dependencies (#165) ([7d9df29](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/7d9df29)), closes [#165](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/165)
+* chore(deps): update go dependencies (#166) ([84eb72c](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/84eb72c)), closes [#166](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/166)
+* chore(deps): update go dependencies (#167) ([090d761](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/090d761)), closes [#167](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/167)
+* chore(deps): update module go.mongodb.org/mongo-driver to v1.17.8 (#161) ([ea664a2](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/ea664a2)), closes [#161](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/161)
+* chore(deps): update module go.mongodb.org/mongo-driver to v1.17.9 (#163) ([042b8ba](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/042b8ba)), closes [#163](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/163)
+
+## <small>1.5.1 (2026-02-05)</small>
+
+* fix(deps): update go dependencies (#159) ([6b1ab56](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/6b1ab56)), closes [#159](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/159)
+* chore(deps): update go dependencies (#160) ([2dc6f78](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/2dc6f78)), closes [#160](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/160)
+
+## 1.5.0 (2026-02-05)
+
+* Merge pull request #158 from Sashwat-K/bug-fix/attestationpublickey ([7984293](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/7984293)), closes [#158](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/158)
+* docs: update documentation ([d8133c6](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/d8133c6))
+* feat: add examples ([4983c8a](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/4983c8a))
+* feat: add support for attestation public key ([96098c8](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/96098c8))
+* feat: update examples ([fa9fee9](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/fa9fee9))
+* feat: update testcases ([c8a4896](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/c8a4896))
+* fix: contract marshal error ([bec5235](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/bec5235))
+* chore(deps): update go dependencies (#155) ([6cb2ee5](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/6cb2ee5)), closes [#155](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/155)
+* chore(deps): update module github.com/clipperhouse/uax29/v2 to v2.3.1 (#154) ([cfdb5a5](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/cfdb5a5)), closes [#154](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/154)
+
+## 1.4.0 (2026-01-16)
+
+* Merge pull request #153 from Sashwat-K/feature/encryption-certificate-expiry ([dbb5da6](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/dbb5da6)), closes [#153](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/153)
+* chore: go mod tidy ([185836c](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/185836c))
+* chore(deps): update docker.io/library/hello-world docker digest to 05813ae (#148) ([8df3009](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/8df3009)), closes [#148](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/148)
+* chore(deps): update go dependencies to v6 (#149) ([8943708](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/8943708)), closes [#149](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/149)
+* chore(deps): update module github.com/hashicorp/terraform-svchost to v0.2.0 (#151) ([5737875](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/5737875)), closes [#151](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/151)
+* feat: add support to show expiry of encryption certificates ([1ca60f9](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/1ca60f9))
+
+## 1.3.0 (2026-01-14)
+
+* Merge pull request #150 from Sashwat-K/doc-fixes ([c34d4eb](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/c34d4eb)), closes [#150](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/150)
+* feat: index.md doc changes ([6407e5a](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/6407e5a))
+* feat: update doc for hpcr_contract_encrypted ([bd3a667](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/bd3a667))
+* feat: update hpcr_attestation doc ([1d9316b](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/1d9316b))
+* feat: update hpcr_contract_encrypted_contract_expiry doc ([e28a5f9](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/e28a5f9))
+* feat: update hpcr_json resource doc ([46839ca](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/46839ca))
+* feat: update hpcr_json_encrypted docs ([fdf5615](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/fdf5615))
+* feat: update hpcr_text resource docs ([70ad879](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/70ad879))
+* feat: update hpcr_text_encrypted doc ([1cbdc11](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/1cbdc11))
+* feat: update hpcr_tgz_encrypted doc ([9738193](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/9738193))
+* feat: version changes ([e5ff8b6](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/e5ff8b6))
+* docs: update hpcr_tgz ([b0216a5](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/b0216a5))
+* fix: user documentation ([4bc6b32](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/4bc6b32))
+
 ## 1.2.0 (2026-01-14)
 
 * feat: new GitHub CI ([0ed302a](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/0ed302a))

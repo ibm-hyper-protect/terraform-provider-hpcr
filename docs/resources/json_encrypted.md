@@ -3,12 +3,12 @@
 page_title: "hpcr_json_encrypted Resource - hpcr"
 subcategory: ""
 description: |-
-  Encrypts and encodes JSON data using HPVS encryption certificates for secure inclusion in HPCR contracts. Protects sensitive JSON configuration from unauthorized access.
+  Encrypts and encodes JSON data using Hyper Protect encryption certificates for secure inclusion in Hyper Protect contracts. Protects sensitive JSON configuration from unauthorized access.
 ---
 
 # hpcr_json_encrypted (Resource)
 
-Encrypts and encodes JSON data using HPVS encryption certificates for secure inclusion in HPCR contracts. This resource ensures that sensitive JSON configuration data remains confidential during deployment to Hyper Protect instances.
+Encrypts and encodes JSON data using Hyper Protect encryption certificates for secure inclusion in Hyper Protect contracts. This resource ensures that sensitive JSON configuration data remains confidential during deployment to Hyper Protect instances.
 
 ## Use Cases
 
@@ -17,6 +17,13 @@ Encrypts and encodes JSON data using HPVS encryption certificates for secure inc
 - Secure structured data for confidential computing workloads
 - Implement zero-trust configuration management
 
+## Platform Support
+
+The `platform` parameter specifies the target Hyper Protect platform:
+- `hpvs` (default) - Hyper Protect Virtual Servers
+- `hpcr-rhvs` - Hyper Protect Container Runtime
+- `hpcc-peerpod` - Hyper Protect Confidential Containers (Peer Pods)
+
 ## Example Usage
 
 ```terraform
@@ -24,7 +31,7 @@ terraform {
   required_providers {
     hpcr = {
       source  = "ibm-hyper-protect/hpcr"
-      version = "~> 0.16.2"
+      version = ">= 1.2.0"
     }
   }
 }
@@ -92,10 +99,10 @@ output "json_data_cert_rendered" {
 
 ## Security Considerations
 
-- Encrypted JSON can only be decrypted by the target HPCR instance
+- Encrypted JSON can only be decrypted by the target Hyper Protect instance
 - Sensitive JSON data is marked as sensitive in Terraform state
-- Use this resource for any JSON containing credentials, API keys, or PII
-- Ensure encryption certificate version matches your target HPCR image version
+- Use this resource for any JSON containing credentials, API keys, or PII (Personally Identifiable Information)
+- Ensure encryption certificate version matches your target Hyper Protect image version
 
 
 
@@ -108,7 +115,7 @@ output "json_data_cert_rendered" {
 
 ### Optional
 
-- `cert` (String) Certificate used to encrypt the JSON document, in PEM format. Defaults to the latest HPCR image certificate if not specified.
+- `cert` (String) Certificate used to encrypt the JSON document, in PEM format. Defaults to the latest HPVS image certificate if not specified.
 - `platform` (String) Hyper Protect platform where this contract will be deployed. Defaults to hpvs
 
 ### Read-Only

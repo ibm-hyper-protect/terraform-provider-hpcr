@@ -31,7 +31,7 @@ terraform {
   required_providers {
     hpcr = {
       source  = "ibm-hyper-protect/hpcr"
-      version = "~> 0.16.2"
+      version = ">= 1.2.0"
     }
   }
 }
@@ -88,7 +88,7 @@ output "attestation_verification" {
 
 ### Optional
 
-- `cert` (String) Certificate used to validate the attestation signature, in PEM format. Defaults to the default HPCR certificate if not specified.
+- `cert` (String) Certificate used to validate the attestation signature, in PEM format. Defaults to the default HPVS attestation certificate if not specified.
 - `privkey` (String, Sensitive) Private key used to decrypt an encrypted attestation record. If missing the attestation record is assumed to be unencrypted.
 
 ### Read-Only

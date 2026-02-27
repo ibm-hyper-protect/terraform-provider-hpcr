@@ -3,19 +3,26 @@
 page_title: "hpcr_text_encrypted Resource - hpcr"
 subcategory: ""
 description: |-
-  Encrypts and encodes arbitrary text content using HPVS encryption certificates for secure inclusion in HPCR contracts. Commonly used to encrypt workload and environment sections.
+  Encrypts and encodes arbitrary text content using Hyper Protect encryption certificates for secure inclusion in Hyper Protect contracts. Commonly used to encrypt workload and environment sections.
 ---
 
 # hpcr_text_encrypted (Resource)
 
-Encrypts and encodes arbitrary text content using HPVS encryption certificates for secure inclusion in HPCR contracts. This resource is the primary way to encrypt contract sections such as workload and environment configurations, ensuring sensitive data remains confidential.
+Encrypts and encodes arbitrary text content using Hyper Protect encryption certificates for secure inclusion in Hyper Protect contracts. This resource is the primary way to encrypt contract sections such as workload and environment configurations, ensuring sensitive data remains confidential.
 
 ## Use Cases
 
 - Encrypt workload sections containing application archives
-- Encrypt environment sections with sensitive configuration and secrets
+- Encrypt env sections with sensitive configuration and secrets
 - Protect API keys, passwords, and other credentials in contracts
 - Ensure end-to-end encryption of contract data from build to deployment
+
+## Platform Support
+
+The `platform` parameter specifies the target Hyper Protect platform:
+- `hpvs` (default) - Hyper Protect Virtual Servers
+- `hpcr-rhvs` - Hyper Protect Container Runtime
+- `hpcc-peerpod` - Hyper Protect Confidential Containers (Peer Pods)
 
 ## Common Pattern: Separate Workload and Environment Encryption
 
@@ -37,8 +44,12 @@ resource "hpcr_text_encrypted" "env" {
   text = yamlencode({
     "type" : "env",
     "env" : {
-      "DB_PASSWORD" : "secret123",
-      "API_KEY" : "abc-xyz-789"
+      "logging" : {
+        "logRouter": {
+          "hostname": "5c2d6b69-c7f0-41bd-b69b-240695369d6e.ingress.us-south.logs.cloud.ibm.com",
+          "iamApiKey": "ab00e3c09p1d4ff7fff9f04c12183413"
+        }
+      }
     }
   })
 }
@@ -59,7 +70,7 @@ terraform {
   required_providers {
     hpcr = {
       source  = "ibm-hyper-protect/hpcr"
-      version = "~> 0.16.2"
+      version = ">= 1.2.0"
     }
   }
 }
@@ -104,10 +115,10 @@ output "hpcr_text_cert_rendered" {
 
 ## Security Considerations
 
-- Encrypted text can only be decrypted by the target HPCR instance
+- Encrypted text can only be decrypted by the target Hyper Protect instance
 - Sensitive data never appears in plaintext in Terraform state (marked as sensitive)
 - Use separate resources for workload and env to maintain clear security boundaries
-- Ensure certificate version matches your target HPCR image version
+- Ensure certificate version matches your target Hyper Protect image version
 
 
 
@@ -120,7 +131,7 @@ output "hpcr_text_cert_rendered" {
 
 ### Optional
 
-- `cert` (String) Certificate used to encrypt the text, in PEM format. Defaults to the latest HPCR image certificate if not specified.
+- `cert` (String) Certificate used to encrypt the text, in PEM format. Defaults to the latest HPVS image certificate if not specified.
 - `platform` (String) Hyper Protect platform where this contract will be deployed. Defaults to hpvs
 
 ### Read-Only

@@ -3,12 +3,12 @@
 page_title: "hpcr_tgz_encrypted Resource - hpcr"
 subcategory: ""
 description: |-
-  Creates an encrypted Base64-encoded tar.gz archive from a folder containing docker-compose or podman play configuration. The archive is encrypted using HPVS encryption certificates for secure workload deployment.
+  Creates an encrypted Base64-encoded tar.gz archive from a folder containing docker-compose or podman play configuration. The archive is encrypted using Hyper Protect encryption certificates for secure workload deployment.
 ---
 
 # hpcr_tgz_encrypted (Resource)
 
-Creates an encrypted Base64-encoded tar.gz archive from a folder containing docker-compose or podman play configuration. The archive is encrypted using HPVS encryption certificates, ensuring that workload contents remain confidential during deployment to Hyper Protect instances.
+Creates an encrypted Base64-encoded tar.gz archive from a folder containing docker-compose or podman play configuration. The archive is encrypted using Hyper Protect encryption certificates, ensuring that workload contents remain confidential during deployment to Hyper Protect instances.
 
 ## Use Cases
 
@@ -19,14 +19,14 @@ Creates an encrypted Base64-encoded tar.gz archive from a folder containing dock
 
 ## Encryption
 
-The archive is encrypted using HPVS encryption certificates. By default, the latest HPCR image certificate is used. You can specify a custom certificate using the `cert` parameter for version-specific deployments.
+The archive is encrypted using Hyper Protect encryption certificates. By default, the latest HPVS image certificate is used. You can specify a custom certificate using the `cert` parameter for version-specific deployments.
 
 ## Platform Support
 
 The `platform` parameter specifies the target Hyper Protect platform:
 - `hpvs` (default) - Hyper Protect Virtual Servers
-- `hpcr` - Hyper Protect Container Runtime
-- `hpcc` - Hyper Protect Confidential Containers
+- `hpcr-rhvs` - Hyper Protect Container Runtime
+- `hpcc-peerpod` - Hyper Protect Confidential Containers (Peer Pods)
 
 ## Example Usage
 
@@ -35,7 +35,7 @@ terraform {
   required_providers {
     hpcr = {
       source  = "ibm-hyper-protect/hpcr"
-      version = "~> 0.16.2"
+      version = ">= 1.2.0"
     }
   }
 }
@@ -108,7 +108,7 @@ locals {
 
 ### Optional
 
-- `cert` (String) Certificate used to encrypt the JSON document, in PEM format. Defaults to the latest HPCR image certificate if not specified.
+- `cert` (String) Certificate to encrypt the Base64 Tgz, in PEM format. Defaults to the latest HPCR image certificate if not specified.
 - `platform` (String) Hyper Protect platform where this contract will be deployed. Defaults to hpvs
 
 ### Read-Only
