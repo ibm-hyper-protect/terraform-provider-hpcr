@@ -94,4 +94,4 @@ output "json2_rendered" {
 - `id` (String) Resource identifier
 - `rendered` (String) Rendered output of the resource
 - `sha256_in` (String) SHA256 of the input
-- `sha256_out` (String) SHA256 of the output
+- `sha256_out` (String) SHA256 of the ouput

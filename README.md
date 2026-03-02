@@ -5,12 +5,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/ibm-hyper-protect/terraform-provider-hpcr)](https://goreportcard.com/report/github.com/ibm-hyper-protect/terraform-provider-hpcr)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-> **Note:** The offering names have been changed:
-> - **Hyper Protect Virtual Servers (HPVS)** → **IBM Confidential Computing Container Runtime (CCCR)**
-> - **Hyper Protect Container Runtime for Red Hat Virtualization (HPCR-RHVS)** → **IBM Confidential Computing Container Runtime for Red Hat Virtualization Solutions (CCCRV)**
-> - **Hyper Protect Confidential Container (HPCC)** → **IBM Confidential Computing Containers for Red Hat OpenShift Container Platform**
-
-Terraform provider to automate generating workloads for IBM Hyper Protect confidential computing platforms.
+Terraform provider to automate generating contracts for IBM Hyper Protect confidential computing platforms.
 
 ## Table of Contents
 
@@ -30,13 +25,13 @@ Terraform provider to automate generating workloads for IBM Hyper Protect confid
 
 This Terraform provider is built on top of the **[contract-go library](https://github.com/ibm-hyper-protect/contract-go)**, which provides the core functionality for IBM Hyper Protect contract operations.
 
-The contract-go library automates IBM Hyper Protect confidential computing workloads across CCCR, CCCRV, and IBM Confidential Computing Containers for Red Hat OpenShift Container Platform, providing capabilities for:
+The contract-go library automates IBM Hyper Protect confidential computing workloads across HPVS, HPCR4RHVS and HPCC platforms, providing capabilities for:
 
-- **Contract Generation**: Create signed and encrypted contracts for secure enclaves
+- **Contract Generation**: Create signed and encrypted contracts for the platforms
 - **Certificate Operations**: Download and manage HPVS encryption certificates from IBM Cloud
-- **Image Selection**: Retrieve and validate HPVS images with semantic versioning
-- **Archive Management**: Generate Base64 tar archives from docker-compose and pods configurations
-- **Attestation**: Decrypt attestation records from secure enclaves
+- **Image Selection**: Retrieve and validate HPCR images with semantic versioning
+- **Archive Management**: Generate Base64 tar archives from docker-compose and podman play configurations
+- **Attestation**: Decrypt attestation records from HPCR, HPVS and HPCC
 
 ### What are Hyper Protect Services?
 
@@ -44,14 +39,14 @@ IBM Hyper Protect services provide confidential computing capabilities that prot
 
 **Learn more:**
 - [Confidential computing with LinuxONE](https://cloud.ibm.com/docs/vpc?topic=vpc-about-se)
-- [IBM Confidential Computing Container Runtime (CCCR)](https://www.ibm.com/docs/en/hpvs/2.2.x)
-- [IBM Confidential Computing Containers for Red Hat OpenShift Container Platform](https://www.ibm.com/docs/en/hpcc/1.1.x)
+- [IBM Hyper Protect Virtual Servers](https://www.ibm.com/docs/en/hpvs/2.2.x)
+- [IBM Hyper Protect Confidential Container for Red Hat OpenShift](https://www.ibm.com/docs/en/hpcc/1.1.x)
 
 ### Why Use the Terraform Provider?
 
 While the contract-go library can be used directly in Go applications, this Terraform provider offers:
 
-- **Infrastructure-as-Code**: Manage CCCR deployments using Terraform workflows
+- **Infrastructure-as-Code**: Manage HPCR deployments using Terraform workflows
 - **State Management**: Track and manage contract resources with Terraform state
 - **Integration**: Seamlessly integrate with other Terraform providers (IBM Cloud, libvirt, openstack)
 - **Declarative Syntax**: Define contracts using Terraform's HCL syntax
@@ -70,7 +65,7 @@ The Terraform Provider HPCR provides comprehensive support for deploying and man
 - Automatic compression and encoding for contract workload sections
 
 **Encryption Operations**
-- Encrypt contract sections (workload, env) using CCCR, CCRV and IBM Confidential Computing Containers for Red Hat OpenShift Container Platform encryption certificates
+- Encrypt contract sections (workload, env) using HPVS, HPCR4RHVS and HPCC encryption certificates
 - Automatic retrieval of encryption certificates from IBM Cloud
 - Support for latest or specific encryption certificate versions
 - Secure handling of sensitive configuration data
@@ -79,10 +74,10 @@ The Terraform Provider HPCR provides comprehensive support for deploying and man
 - Select appropriate HPCR stock images from IBM Cloud VPC
 - Semantic versioning support with flexible version constraints (e.g., `>=1.1.0`, `~>1.0`)
 - Automatic validation of image availability
-- Support for public IBM Cloud images
+- Support for public IBM Cloud Hyper Protect images
 
 **Contract Generation**
-- Streamlined workflow for generating encrypted CCCR contracts
+- Streamlined workflow for generating encrypted HPCR contracts
 - Integration with [contract-go library](https://github.com/ibm-hyper-protect/contract-go) for contract operations
 - Support for signed and encrypted contracts
 - YAML-based contract composition
@@ -147,7 +142,7 @@ You can access the Base64-encoded content via the `rendered` property.
 
 ### Encrypt Contract Sections
 
-Use the `hpcr_text_encrypted` resource to encrypt contract sections. By default, it uses the encryption key of the latest CCCR image:
+Use the `hpcr_text_encrypted` resource to encrypt contract sections. By default, it uses the encryption key of the latest HPCR image:
 
 ```terraform
 resource "hpcr_text_encrypted" "workload" {
@@ -192,17 +187,17 @@ data "hpcr_image" "selected_image" {
 
 ### Additional Resources
 
-- [IBM Confidential Computing Container Runtime (CCCR)](https://www.ibm.com/docs/en/hpvs/2.2.x)
-- [IBM Confidential Computing Containers for Red Hat OpenShift Container Platform](https://www.ibm.com/docs/en/hpcc/1.1.x)
+- [IBM Hyper Protect Virtual Servers](https://www.ibm.com/docs/en/hpvs/2.2.x)
+- [IBM Hyper Protect Confidential Container for Red Hat OpenShift](https://www.ibm.com/docs/en/hpcc/1.1.x)
 - [Terraform Provider Development Guide](https://www.terraform.io/docs/extend/writing-custom-providers.html)
 
 ## Supported Platforms
 
 | Platform | Description | Support Status |
 |----------|-------------|----------------|
-| **CCCR** | [IBM Confidential Computing Container Runtime](https://www.ibm.com/docs/en/hpvs/2.2.x) - Confidential computing VMs on IBM Cloud | Supported |
-| **CCCRV** | IBM Confidential Computing Container Runtime for Red Hat Virtualization Solutions - Docker containers in secure enclaves | Supported |
-| **IBM Confidential Computing Containers for Red Hat OpenShift Container Platform** | [IBM Confidential Computing Containers for Red Hat OpenShift Container Platform](https://www.ibm.com/docs/en/hpcc/1.1.x) - Kubernetes confidential computing for OpenShift | Supported |
+| **HPVS** | [Hyper Protect Virtual Servers](https://www.ibm.com/docs/en/hpvs/2.2.x) - Confidential computing VMs on IBM Cloud | Supported |
+| **HPCR-RHVS** | Hyper Protect Container Runtime for Red Hat Virtualization - Docker containers in secure enclaves | Supported |
+| **HPCC-PeerPod** | [Hyper Protect Confidential Container Peer Pods](https://www.ibm.com/docs/en/hpcc/1.1.x) - Kubernetes confidential computing for OpenShift | Supported |
 
 ## Examples
 
@@ -216,7 +211,7 @@ Complete examples for all resources and data sources are available in the [`exam
 - **[hpcr_text_encrypted](./examples/resources/hpcr_text_encrypted)** - Encrypt text content for secure contracts
 - **[hpcr_json](./examples/resources/hpcr_json)** - Encode JSON data as Base64
 - **[hpcr_json_encrypted](./examples/resources/hpcr_json_encrypted)** - Encrypt JSON configuration data
-- **[hpcr_contract_encrypted](./examples/resources/hpcr_contract_encrypted)** - Generate encrypted and signed CCCR contracts
+- **[hpcr_contract_encrypted](./examples/resources/hpcr_contract_encrypted)** - Generate encrypted and signed HPCR contracts
 - **[hpcr_contract_encrypted_contract_expiry](./examples/resources/hpcr_contract_encrypted_contract_expiry)** - Generate contracts with automatic expiry using CSR
 
 ### Data Sources
@@ -228,7 +223,7 @@ Complete examples for all resources and data sources are available in the [`exam
 
 ### Quick Start Example
 
-Here's a complete workflow for creating and deploying a HPCR contract:
+Here's a complete workflow for creating and deploying an HPCR contract:
 
 ```terraform 
 terraform {
@@ -255,9 +250,9 @@ locals {
     "env" : {
       "type" : "env",
       "logging" : {
-        "logRouter" : {
-          "hostname" : "logs.example.cloud.ibm.com",
-          "iamApiKey" : xxxxxxxxxxxxxxxx
+        "logDNA" : {
+          "hostname" : "logs.example.com",
+          "ingestionKey" : var.logging_key
         }
       }
     },
@@ -321,7 +316,7 @@ This provider is part of the IBM Hyper Protect ecosystem:
 
 - **[contract-go](https://github.com/ibm-hyper-protect/contract-go)** - Go library for contract automation (underlying library for this provider)
 - **[contract-cli](https://github.com/ibm-hyper-protect/contract-cli)** - Command-line contract generation tool
-- **[k8s-operator-hpcr](https://github.com/ibm-hyper-protect/k8s-operator-hpcr)** - Kubernetes operator for CCCR workloads
+- **[k8s-operator-hpcr](https://github.com/ibm-hyper-protect/k8s-operator-hpcr)** - Kubernetes operator for HPCR workloads
 - **[linuxone-vsi-automation-samples](https://github.com/ibm-hyper-protect/linuxone-vsi-automation-samples)** - Infrastructure-as-code examples and automation samples
 
 ## Contributing
