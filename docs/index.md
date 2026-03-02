@@ -86,7 +86,7 @@ locals {
       "logging" : {
         "logRouter" : {
           "hostname" : "logs.example.cloud.ibm.com",
-          "iamApiKey" : "xxxxxxxxxxxxxxxx"
+          "iamApiKey" : xxxxxxxxxxxxxxxx
         }
       }
     },
