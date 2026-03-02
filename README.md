@@ -250,9 +250,9 @@ locals {
     "env" : {
       "type" : "env",
       "logging" : {
-        "logDNA" : {
-          "hostname" : "logs.example.com",
-          "ingestionKey" : var.logging_key
+        "logRouter" : {
+          "hostname" : "logs.example.cloud.ibm.com",
+          "iamApiKey" : xxxxxxxxxxxxxxxx
         }
       }
     },
