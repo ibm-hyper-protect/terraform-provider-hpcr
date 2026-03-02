@@ -84,9 +84,9 @@ locals {
     "env" : {
       "type" : "env",
       "logging" : {
-        "logDNA" : {
-          "hostname" : "syslog-a.example.com",
-          "ingestionKey" : "your-key"
+        "logRouter" : {
+          "hostname" : "logs.example.cloud.ibm.com",
+          "iamApiKey" : "xxxxxxxxxxxxxxxx"
         }
       }
     },
