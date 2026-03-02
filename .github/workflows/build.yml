@@ -129,6 +129,8 @@ jobs:
           go-version-file: go.mod
           cache: true
       - uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: ${{ matrix.terraform }}
       - run: sudo apt-get update && sudo apt-get install -y openssl
       - run: go mod download
       - name: Run acceptance tests
@@ -210,12 +212,15 @@ jobs:
       - name: Generate SBOM
         run: |
           go install github.com/CycloneDX/cyclonedx-gomod/cmd/cyclonedx-gomod@latest
-          cyclonedx-gomod app -json -licenses -output sbom.json
+          VERSION=${{ needs.release.outputs.new_release_version }}
+          SBOM_FILE="terraform-provider-hpcr_${VERSION}_sbom.json"
+          cyclonedx-gomod app -json -licenses -output ${SBOM_FILE}
+          echo "SBOM_FILE=${SBOM_FILE}" >> $GITHUB_ENV
 
       - name: Upload SBOM to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ needs.release.outputs.new_release_version }}
-          files: sbom.json
+          files: ${{ env.SBOM_FILE }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
