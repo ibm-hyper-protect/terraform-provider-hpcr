@@ -26,7 +26,7 @@ If you discover a security vulnerability in this project, please report it respo
 
 ### Alternative: Direct Contact
 
-You can also email the maintainers directly. See [MAINTAINERS.md](MAINTAINERS.md) for contact information.
+Contact the Security maintainers listed in [MAINTAINERS.md](MAINTAINERS.md) directly with details about the vulnerability.
 
 ### What to Include
 
