@@ -1,3 +1,22 @@
+## <small>1.5.6 (2026-03-03)</small>
+
+* fix(deps): update go dependencies (#188) ([8d078ab](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/8d078ab)), closes [#188](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/188)
+* chore(deps): update go dependencies (#184) ([5661258](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/5661258)), closes [#184](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/184)
+* chore(deps): update module github.com/samber/lo to v1.53.0 (#183) ([afd3567](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/afd3567)), closes [#183](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/183)
+* Merge branch 'main' into offering_name ([28ecb7d](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/28ecb7d))
+* Merge pull request #182 from vikas-sharma24/offering_name ([e23ebb6](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/e23ebb6)), closes [#182](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/182)
+* Merge pull request #185 from Sashwat-K/Docs/Update-Maintainers-1 ([97230ed](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/97230ed)), closes [#185](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/185)
+* Merge pull request #186 from vikas-sharma24/revert-182-offering_name ([fb12d6f](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/fb12d6f)), closes [#186](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/186)
+* Revert "docs: change offering name to CCCR" ([02e1f63](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/02e1f63))
+* docs: add maintainers ([3200973](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/3200973))
+* docs: change offering name to CCCR ([77106ae](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/77106ae))
+* docs: Fix commit message ([dd4482f](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/dd4482f))
+* docs: Update iamApiKey format in index.md ([9894aba](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/9894aba))
+* docs: Update logging configuration in index.md ([196d3b0](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/196d3b0))
+* docs: updated logDNA to ICL reference ([d95adf7](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/d95adf7))
+* docs: updated offering name ([dd2d11e](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/dd2d11e))
+* ci: add version in sbom ([87cf33a](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/87cf33a))
+
 ## <small>1.5.5 (2026-02-27)</small>
 
 * fix(deps): update go dependencies (#180) ([b8f81f6](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/b8f81f6)), closes [#180](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/180)
