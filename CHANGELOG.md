@@ -1,3 +1,9 @@
+## <small>1.5.7 (2026-03-04)</small>
+
+* Merge pull request #189 from ibm-hyper-protect/renovate/go-dependencies ([474f40d](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/474f40d)), closes [#189](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/189)
+* fix(deps): update module github.com/ibm-hyper-protect/contract-go/v2 to v2.13.0 ([1bb013b](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/1bb013b))
+* chore(deps): update go dependencies (#187) ([1aab57b](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/1aab57b)), closes [#187](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/187)
+
 ## <small>1.5.6 (2026-03-03)</small>
 
 * fix(deps): update go dependencies (#188) ([8d078ab](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/8d078ab)), closes [#188](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/188)
