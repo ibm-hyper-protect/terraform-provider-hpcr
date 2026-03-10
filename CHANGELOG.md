@@ -1,3 +1,11 @@
+## <small>1.5.10 (2026-03-10)</small>
+
+* fix(deps): update go dependencies (#198) ([1fc1161](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/1fc1161)), closes [#198](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/198)
+* chore(deps): update go dependencies (#195) ([fbba084](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/fbba084)), closes [#195](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/195)
+* chore(deps): update go dependencies (#196) ([21bcb70](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/21bcb70)), closes [#196](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/196)
+* chore(deps): update go dependencies (#197) ([ae2d283](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/ae2d283)), closes [#197](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/197)
+* chore(deps): update module github.com/mattn/go-runewidth to v0.0.21 (#194) ([80ac052](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/80ac052)), closes [#194](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/194)
+
 ## <small>1.5.9 (2026-03-06)</small>
 
 * fix(deps): update module github.com/ibm-hyper-protect/contract-go/v2 to v2.14.1 (#193) ([f720eba](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/f720eba)), closes [#193](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/193)
