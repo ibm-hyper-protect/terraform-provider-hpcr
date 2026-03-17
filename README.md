@@ -26,17 +26,18 @@ Terraform provider to automate generating workloads for IBM Hyper Protect confid
 
 This Terraform provider is built on top of the **[contract-go library](https://github.com/ibm-hyper-protect/contract-go)**, which provides the core functionality for IBM Hyper Protect contract operations.
 
-- **IBM Confidential Computing Container Runtime** (formerly known as Hyper Protect Virtual Servers) — Deploy confidential computing workloads on IBM Z and LinuxONE using IBM Secure Execution for Linux
-- **IBM Confidential Computing Container Runtime for Red Hat Virtualization Solutions** (formerly known as Hyper Protect Container Runtime for Red Hat Virtualization Solutions) — Purpose-built for hosting critical, centralized services within tightly controlled virtualized environments on IBM Z
-- **IBM Confidential Computing Containers for Red Hat OpenShift Container Platform** (formerly known as IBM Hyper Protect Confidential Container for Red Hat OpenShift Container Platform) — Deploy isolated workloads using IBM Secure Execution for Linux, integrated with Red Hat OpenShift Container Platform
-
-The contract-go library automates IBM Hyper Protect confidential computing workloads across CCCR, CCCRV, and IBM Confidential Computing Containers for Red Hat OpenShift Container Platform, providing capabilities for:
+The contract-go library automates IBM Hyper Protect confidential computing workloads across IBM Confidential Computing Container Runtime, IBM Confidential Computing Container Runtime for Red Hat Virtualization Solutions, and IBM Confidential Computing Containers for Red Hat OpenShift Container Platform, providing capabilities for:
 
 - **Contract Generation**: Create signed and encrypted contracts for the platforms
 - **Certificate Operations**: Download and manage HPVS encryption certificates from IBM Cloud
 - **Image Selection**: Retrieve and validate HPCR images with semantic versioning
 - **Archive Management**: Generate Base64 tar archives from docker-compose and podman play configurations
 - **Attestation**: Decrypt attestation records from HPCR, HPVS and HPCC
+
+- **IBM Confidential Computing Container Runtime** (formerly known as Hyper Protect Virtual Servers (HPVS)) — Deploy confidential computing workloads on IBM Z and LinuxONE using IBM Secure Execution for Linux
+- **IBM Confidential Computing Container Runtime for Red Hat Virtualization Solutions** (formerly known as Hyper Protect Container Runtime for Red Hat Virtualization Solutions (HPCR4RHVS)) — Purpose-built for hosting critical, centralized services within tightly controlled virtualized environments on IBM Z
+- **IBM Confidential Computing Containers for Red Hat OpenShift Container Platform** (formerly known as IBM Hyper Protect Confidential Container for Red Hat OpenShift Container Platform (HPCC)) — Deploy isolated workloads using IBM Secure Execution for Linux, integrated with Red Hat OpenShift Container Platform
+
 
 ### What are Hyper Protect Services?
 

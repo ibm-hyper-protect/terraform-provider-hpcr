@@ -7,7 +7,7 @@ description: |-
 
 # HPCR Provider
 
-Terraform provider for IBM Hyper Protect confidential computing platforms. Built on the [contract-go library](https://github.com/ibm-hyper-protect/contract-go), this provider automates the generation of encrypted and signed contracts for secure enclaves across CCCR, CCCRV, and IBM Confidential Computing Containers for Red Hat OpenShift Container Platform.
+Terraform provider for IBM Hyper Protect confidential computing platforms. Built on the [contract-go library](https://github.com/ibm-hyper-protect/contract-go), this provider automates the generation of encrypted and signed contracts for secure enclaves across IBM Confidential Computing Container Runtime, IBM Confidential Computing Container Runtime for Red Hat Virtualization Solutions, and IBM Confidential Computing Containers for Red Hat OpenShift Container Platform.
 
 ## Overview
 
