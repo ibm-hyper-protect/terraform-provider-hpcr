@@ -5,16 +5,12 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/ibm-hyper-protect/terraform-provider-hpcr)](https://goreportcard.com/report/github.com/ibm-hyper-protect/terraform-provider-hpcr)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-> **Note:** The offering names have been changed:
-> - **Hyper Protect Virtual Servers (HPVS)** → **IBM Confidential Computing Container Runtime (CCCR)**
-> - **Hyper Protect Container Runtime for Red Hat Virtualization (HPCR-RHVS)** → **IBM Confidential Computing Container Runtime for Red Hat Virtualization Solutions (CCCRV)**
-> - **Hyper Protect Confidential Container (HPCC)** → **IBM Confidential Computing Containers for Red Hat OpenShift Container Platform**
-
 Terraform provider to automate generating workloads for IBM Hyper Protect confidential computing platforms.
 
 ## Table of Contents
 
 - [Overview](#overview)
+- [Who Is This For?](#who-is-this-for)
 - [Features](#features)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
@@ -30,6 +26,10 @@ Terraform provider to automate generating workloads for IBM Hyper Protect confid
 
 This Terraform provider is built on top of the **[contract-go library](https://github.com/ibm-hyper-protect/contract-go)**, which provides the core functionality for IBM Hyper Protect contract operations.
 
+- **IBM Confidential Computing Container Runtime** (formerly known as Hyper Protect Virtual Servers) — Deploy confidential computing workloads on IBM Z and LinuxONE using IBM Secure Execution for Linux
+- **IBM Confidential Computing Container Runtime for Red Hat Virtualization Solutions** (formerly known as Hyper Protect Container Runtime for Red Hat Virtualization Solutions) — Purpose-built for hosting critical, centralized services within tightly controlled virtualized environments on IBM Z
+- **IBM Confidential Computing Containers for Red Hat OpenShift Container Platform** (formerly known as IBM Hyper Protect Confidential Container for Red Hat OpenShift Container Platform) — Deploy isolated workloads using IBM Secure Execution for Linux, integrated with Red Hat OpenShift Container Platform
+
 The contract-go library automates IBM Hyper Protect confidential computing workloads across CCCR, CCCRV, and IBM Confidential Computing Containers for Red Hat OpenShift Container Platform, providing capabilities for:
 
 - **Contract Generation**: Create signed and encrypted contracts for secure enclaves
@@ -44,22 +44,31 @@ IBM Hyper Protect services provide confidential computing capabilities that prot
 
 **Learn more:**
 - [Confidential computing with LinuxONE](https://cloud.ibm.com/docs/vpc?topic=vpc-about-se)
-- [IBM Confidential Computing Container Runtime (CCCR)](https://www.ibm.com/docs/en/hpvs/2.2.x)
-- [IBM Confidential Computing Containers for Red Hat OpenShift Container Platform](https://www.ibm.com/docs/en/hpcc/1.1.x)
+- [IBM Confidential Computing Container Runtime](https://www.ibm.com/docs/en/cccr/2.2.x)
+- [IBM Confidential Computing Container Runtime for Red Hat Virtualization Solutions](https://www.ibm.com/docs/en/ccrv/1.1.x)
+- [IBM Confidential Computing Containers for Red Hat OpenShift](https://www.ibm.com/docs/en/ccro/1.1.x)
 
-### Why Use the Terraform Provider?
+## Who Is This For?
 
-While the contract-go library can be used directly in Go applications, this Terraform provider offers:
+This Terraform provider is designed for:
 
-- **Infrastructure-as-Code**: Manage CCCR deployments using Terraform workflows
-- **State Management**: Track and manage contract resources with Terraform state
-- **Integration**: Seamlessly integrate with other Terraform providers (IBM Cloud, libvirt, openstack)
-- **Declarative Syntax**: Define contracts using Terraform's HCL syntax
-- **Automated Workflows**: Combine contract generation with infrastructure provisioning
+- **DevOps Engineers** automating confidential computing deployments via Terraform or CI/CD pipelines
+- **Solution Providers** building applications that run in IBM Hyper Protect secure enclaves
+- **Platform Teams** managing contract lifecycle across multiple environments
+- **Security Architects** implementing zero-trust confidential computing architectures
 
-**For direct Go integration or command-line usage, consider:**
-- **[contract-go](https://github.com/ibm-hyper-protect/contract-go)**: Use directly in Go applications
-- **[contract-cli](https://github.com/ibm-hyper-protect/contract-cli)**: Command-line tool for manual contract generation
+### Not sure if this is right for you?
+
+**When to use this provider:**
+- You manage infrastructure with Terraform
+- You need state management for contracts
+- You want to integrate with other Terraform providers (IBM Cloud, libvirt)
+- You prefer declarative configuration over imperative scripts
+
+**When to use alternatives:**
+- **[contract-cli](https://github.com/ibm-hyper-protect/contract-cli)**: Manual contract generation, one-off deployments, testing
+- **[contract-go library](https://github.com/ibm-hyper-protect/contract-go)**: Custom Go applications, advanced contract manipulation
+- **[k8s-operator-hpcr](https://github.com/ibm-hyper-protect/k8s-operator-hpcr)**: Kubernetes-native deployments on OpenShift
 
 ## Features
 
@@ -335,6 +344,8 @@ Please follow the [Conventional Commits](https://www.conventionalcommits.org/) s
 - `docs:` - Documentation changes only
 - `chore:` - Maintenance tasks, refactoring, or dependency updates
 - `BREAKING CHANGE:` - Include in commit footer for breaking changes (triggers major version bump)
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed contribution guidelines.
 
 ## License
 

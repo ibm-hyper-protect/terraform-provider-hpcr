@@ -109,6 +109,15 @@ We follow a coordinated disclosure model. We request that security researchers:
 - Provide us with a reasonable amount of detail to reproduce the issue
 - Do not exploit the vulnerability beyond what's necessary to demonstrate it
 
+### CVE Assignment
+
+For confirmed security vulnerabilities:
+
+- We will request a CVE (Common Vulnerabilities and Exposures) identifier
+- The CVE will be assigned before public disclosure
+- The security advisory will include the CVE identifier
+- Credit will be given to the reporter (unless anonymity is requested)
+
 ## Non-Retaliation
 
 We will not take legal action against security researchers who:
@@ -124,7 +133,20 @@ We appreciate the work of security researchers and will acknowledge your contrib
 
 - The security advisory (unless you prefer to remain anonymous)
 - Release notes for the patched version
-- This document's hall of fame (coming soon)
+- This document's hall of fame (see below)
+
+## Security Researchers Hall of Fame
+
+We recognize and thank security researchers who have responsibly disclosed vulnerabilities:
+
+<!-- This section will be populated as vulnerabilities are reported and fixed -->
+<!-- Format: | Date | Researcher | Severity | Description | -->
+
+| Date | Researcher | Severity | Issue |
+|------|-----------|----------|-------|
+| - | - | - | *No vulnerabilities reported yet* |
+
+**Want to be listed here?** Follow our responsible disclosure process above.
 
 ## Questions?
 
