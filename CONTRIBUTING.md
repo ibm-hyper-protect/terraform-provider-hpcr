@@ -55,8 +55,32 @@ We appreciate code contributions! To ensure a smooth process:
 4. **Include tests**: All code changes should include appropriate tests
 5. **Update documentation**: Update relevant documentation for user-facing changes
 
-## Getting Started
+## Path to Becoming a Contributor
 
+We welcome contributors at all levels! Here's how to grow with the project:
+
+### 1. First-Time Contributor
+- Fix typos or improve documentation
+- Add examples or clarify existing ones
+- Report bugs with detailed reproduction steps
+
+**Getting Started:** Check issues labeled `good-first-issue` or `help-wanted`
+
+### 2. Regular Contributor
+- Fix bugs and implement small features
+- Review pull requests from others
+- Participate in discussions and help answer questions
+
+### 3. Core Contributor
+- Implement major features
+- Improve test coverage and CI/CD
+- Help triage issues and mentor new contributors
+
+### 4. Maintainer
+- See [MAINTAINERS.md](MAINTAINERS.md) for the maintainer nomination process
+- Typically requires 6+ months of consistent, high-quality contributions
+
+## Getting Started
 
 ### Prerequisites
 
@@ -185,20 +209,71 @@ This project uses [Conventional Commits](https://www.conventionalcommits.org/) w
 - **ci**: Changes to CI/CD configuration (no version bump)
 - **BREAKING CHANGE**: Breaking changes in footer (triggers **major** version bump: 1.0.0 → 2.0.0)
 
-### Examples
+### Good vs Bad Examples
 
+**Good:**
 ```
-feat(contract): add support for contract expiry validation
+feat(encryption): add support for RSA 8192-bit keys
 
-fix(encryption): handle malformed certificates gracefully
+Extends encryption capabilities to support larger key sizes
+for enhanced security in high-compliance environments.
 
-docs: update README with new resource examples
+Closes #123
+```
 
-test(contract): add edge case tests for empty workload
+**Bad:**
+```
+updated encryption stuff
+```
 
-feat!: redesign contract API
+---
 
-BREAKING CHANGE: Contract struct signature changed
+**Good:**
+```
+fix(contract): handle nil pointer in workload validation
+
+Prevents panic when workload section is missing from contract.
+Adds defensive nil checks and returns clear error message.
+
+Fixes #456
+```
+
+**Bad:**
+```
+fix bug
+```
+
+---
+
+**Good:**
+```
+docs: add troubleshooting guide for OpenSSL errors
+
+Addresses common OpenSSL configuration issues on Windows
+and macOS. Includes platform-specific solutions.
+```
+
+**Bad:**
+```
+docs update
+```
+
+---
+
+**Good:**
+```
+feat!: redesign contract API for better type safety
+
+BREAKING CHANGE: Contract struct signature changed.
+The `workload` field is now required and must be a valid
+WorkloadConfig type instead of interface{}.
+
+Migration guide: https://example.com/migration
+```
+
+**Bad:**
+```
+breaking change
 ```
 
 ### CHANGELOG.md

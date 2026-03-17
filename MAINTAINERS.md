@@ -45,6 +45,30 @@ We welcome new maintainers who have demonstrated:
 - Understanding of the project's goals and architecture
 - Alignment with the project's values and Code of Conduct
 
+### Criteria for Maintainer Nomination
+
+A maintainer candidate typically demonstrates:
+
+**Technical Excellence:**
+- 10+ merged pull requests with high code quality
+- Contributions across multiple areas (features, tests, docs)
+- Understanding of Terraform provider architecture
+- Knowledge of IBM Hyper Protect technologies
+
+**Community Engagement:**
+- Active participation in issue discussions (20+ meaningful comments)
+- Helpful code reviews for other contributors (5+ reviews)
+- Responsive to questions and supportive of newcomers
+- Alignment with project values and Code of Conduct
+
+**Commitment:**
+- 6+ months of consistent contribution history
+- Demonstrated reliability and follow-through
+- Willingness to take on maintainer responsibilities
+- Available for regular engagement (issues, PRs, discussions)
+
+**Note:** These are guidelines, not strict requirements. Quality and impact matter more than quantity.
+
 ### Process
 
 1. An existing maintainer nominates a candidate
@@ -63,6 +87,14 @@ For most decisions (bug fixes, minor features, documentation):
 - Changes can be merged with approval from at least one maintainer
 - If the code is written by a maintainer, it requires one additional maintainer's approval
 
+**Examples of Regular Decisions:**
+- Bug fixes that don't change public APIs
+- Documentation improvements
+- Test additions or improvements
+- Dependency updates (non-breaking)
+- Example code additions
+- Performance optimizations (no API changes)
+
 ### Major Decisions
 
 For significant changes (new features, architectural changes, breaking changes):
@@ -71,6 +103,14 @@ For significant changes (new features, architectural changes, breaking changes):
 2. Allow at least one week for discussion
 3. Maintainers work towards consensus
 4. If consensus cannot be reached, the Lead Maintainer makes the final decision
+
+**Examples of Major Decisions:**
+- New resources or data sources
+- Breaking changes to existing APIs
+- Significant architectural changes
+- Changes to release process or versioning
+- Addition of new dependencies with large footprint
+- Changes to security or cryptographic implementations
 
 ## Code Review and Merging
 

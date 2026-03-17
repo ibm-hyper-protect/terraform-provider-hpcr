@@ -7,7 +7,7 @@ description: |-
 
 # HPCR Provider
 
-Terraform provider for IBM Hyper Protect confidential computing platforms. Built on the [contract-go library](https://github.com/ibm-hyper-protect/contract-go), this provider automates the generation of encrypted and signed contracts for secure enclaves across HPVS, HPCR4RHVS, and HPCC platforms.
+Terraform provider for IBM Hyper Protect confidential computing platforms. Built on the [contract-go library](https://github.com/ibm-hyper-protect/contract-go), this provider automates the generation of encrypted and signed contracts for secure enclaves across IBM Confidential Computing Container Runtime, IBM Confidential Computing Container Runtime for Red Hat Virtualization Solutions, and IBM Confidential Computing Containers for Red Hat OpenShift Container Platform.
 
 ## Overview
 
@@ -109,6 +109,6 @@ resource "hpcr_contract_encrypted" "contract" {
 - [Terraform Registry Documentation](https://registry.terraform.io/providers/ibm-hyper-protect/hpcr/latest/docs)
 - [Contract-Go User Documentation](https://ibm-hyper-protect.github.io/contract-go)
 - [Confidential computing with LinuxONE](https://cloud.ibm.com/docs/vpc?topic=vpc-about-se)
-- [IBM Hyper Protect Virtual Servers](https://www.ibm.com/docs/en/hpvs/2.2.x)
-- [IBM Hyper Protect Confidential Container](https://www.ibm.com/docs/en/hpcc/1.1.x)
-- [IBM Hyper Protect Confidential Container for Red Hat OpenShift](https://www.ibm.com/docs/en/hpcc/1.1.x)
+- [IBM Confidential Computing Container Runtime](https://www.ibm.com/docs/en/cccr/2.2.x)
+- [IBM Confidential Computing Container Runtime for Red Hat Virtualization Solutions](https://www.ibm.com/docs/en/ccrv/1.1.x)
+- [IBM Confidential Computing Containers for Red Hat OpenShift](https://www.ibm.com/docs/en/ccro/1.1.x)
