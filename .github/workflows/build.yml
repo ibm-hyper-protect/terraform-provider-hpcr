@@ -98,7 +98,7 @@ jobs:
       - name: Run unit tests
         run: go test -v -cover -timeout=120s -parallel=10 ./...
       - name: Upload coverage reports
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         if: always()
         with:
           files: ./coverage.out
@@ -159,7 +159,7 @@ jobs:
 
       - name: Run semantic-release
         id: semantic
-        uses: cycjimmy/semantic-release-action@v4
+        uses: cycjimmy/semantic-release-action@v6.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -218,7 +218,7 @@ jobs:
           echo "SBOM_FILE=${SBOM_FILE}" >> $GITHUB_ENV
 
       - name: Upload SBOM to GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: v${{ needs.release.outputs.new_release_version }}
           files: ${{ env.SBOM_FILE }}
