@@ -42,6 +42,13 @@ data "hpcr_attestation" "attestation_encrypted" {
   privkey     = file("./cert/private.pem")
 }
 
+# Decrypt with a password-protected private key
+data "hpcr_attestation" "attestation_protected_key" {
+  attestation = file("./cert/se-checksums.txt.enc")
+  privkey     = file("./cert/private_encrypted.pem")
+  password    = var.attestation_key_password
+}
+
 # Parse an unencrypted attestation record
 data "hpcr_attestation" "attestation_unencrypted" {
   attestation = file("./cert/se-checksums.txt")
@@ -89,6 +96,7 @@ output "attestation_verification" {
 ### Optional
 
 - `cert` (String) Certificate used to validate the attestation signature, in PEM format. Defaults to the default HPVS attestation certificate if not specified.
+- `password` (String, Sensitive) Password used to decrypt the private key
 - `privkey` (String, Sensitive) Private key used to decrypt an encrypted attestation record. If missing the attestation record is assumed to be unencrypted.
 
 ### Read-Only

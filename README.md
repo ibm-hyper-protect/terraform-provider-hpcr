@@ -84,6 +84,8 @@ The Terraform Provider HPCR provides comprehensive support for deploying and man
 - Automatic retrieval of encryption certificates from IBM Cloud
 - Support for latest or specific encryption certificate versions
 - Secure handling of sensitive configuration data
+- Support for password-protected private keys
+- Platform version targeting for version-specific encryption
 
 **Image Selection & Validation**
 - Select appropriate HPCR stock images from IBM Cloud VPC
@@ -95,6 +97,8 @@ The Terraform Provider HPCR provides comprehensive support for deploying and man
 - Streamlined workflow for generating encrypted HPCR contracts
 - Integration with [contract-go library](https://github.com/ibm-hyper-protect/contract-go) for contract operations
 - Support for signed and encrypted contracts
+- Support for password-protected signing keys
+- Platform version targeting
 - YAML-based contract composition
 
 ## Installation
@@ -166,6 +170,8 @@ resource "hpcr_text_encrypted" "workload" {
       "archive" : resource.hpcr_tgz.compose.rendered
     }
   })
+  # Optionally target a specific platform version
+  # version = "1.0.16"
 }
 ```
 
@@ -202,8 +208,8 @@ data "hpcr_image" "selected_image" {
 
 ### Additional Resources
 
-- [IBM Hyper Protect Virtual Servers](https://www.ibm.com/docs/en/hpvs/2.2.x)
-- [IBM Hyper Protect Confidential Container for Red Hat OpenShift](https://www.ibm.com/docs/en/hpcc/1.1.x)
+- [IBM Confidential Computing Container Runtime](https://www.ibm.com/docs/en/cccr/2.2.x)
+- [IBM Confidential Computing Containers for Red Hat OpenShift](https://www.ibm.com/docs/en/ccro/1.1.x)
 - [Terraform Provider Development Guide](https://www.terraform.io/docs/extend/writing-custom-providers.html)
 
 ## Supported Platforms
@@ -283,6 +289,11 @@ locals {
 # Generate encrypted contract
 resource "hpcr_contract_encrypted" "contract" {
   contract = local.contract
+  # Optionally target a specific platform version
+  # version = "1.0.16"
+  # Optionally use a password-protected signing key
+  # privkey  = file("./cert/private_encrypted.pem")
+  # password = var.signing_key_password
 }
 
 # Select HPCR image

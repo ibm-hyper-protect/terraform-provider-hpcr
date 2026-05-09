@@ -132,6 +132,28 @@ resource "hpcr_contract_encrypted" "contract_platform" {
 output "contract_platform_rendered" {
   value = hpcr_contract_encrypted.contract_platform.rendered
 }
+
+# Platform and version-specific contract
+resource "hpcr_contract_encrypted" "contract_versioned" {
+  contract = local.contract
+  platform = "hpvs"
+  version  = "1.0.16"
+}
+
+output "contract_versioned_rendered" {
+  value = hpcr_contract_encrypted.contract_versioned.rendered
+}
+
+# Contract with password-protected signing key
+resource "hpcr_contract_encrypted" "contract_protected_key" {
+  contract = local.contract
+  privkey  = file("./cert/private_encrypted.pem")
+  password = var.signing_key_password
+}
+
+output "contract_protected_key_rendered" {
+  value = hpcr_contract_encrypted.contract_protected_key.rendered
+}
 ```
 
 ## Best Practices
@@ -154,8 +176,10 @@ output "contract_platform_rendered" {
 ### Optional
 
 - `cert` (String) Certificate used to encrypt the contract, in PEM format. Defaults to the latest HPVS image certificate if not specified.
+- `password` (String, Sensitive) Password used to decrypt the private key
 - `platform` (String) Hyper Protect platform where this contract will be deployed. Defaults to hpvs
 - `privkey` (String, Sensitive) Private key used to sign the contract. If omitted, a temporary signing key is created.
+- `version` (String) Version of the Hyper Protect Platform
 
 ### Read-Only
 
