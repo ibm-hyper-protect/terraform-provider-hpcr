@@ -43,8 +43,10 @@ type ContractEncryptedContractExpiryResourceModel struct {
 	ID         types.String `tfsdk:"id"`
 	Contract   types.String `tfsdk:"contract"`
 	Platform   types.String `tfsdk:"platform"`
+	Version    types.String `tfsdk:"version"`
 	Cert       types.String `tfsdk:"cert"`
 	PrivKey    types.String `tfsdk:"privkey"`
+	Password   types.String `tfsdk:"password"`
 	ExpiryDays types.Int64  `tfsdk:"expiry"`
 	CaCert     types.String `tfsdk:"cacert"`
 	CaKey      types.String `tfsdk:"cakey"`
@@ -88,9 +90,20 @@ func (r *ContractEncryptedContractExpiryResource) Schema(ctx context.Context, re
 				Description:         "Hyper Protect platform where this contract will be deployed",
 				Optional:            true,
 			},
+			"version": schema.StringAttribute{
+				MarkdownDescription: "Version of the Hyper Protect Platform",
+				Description:         "Version of the Hyper Protect Platform",
+				Optional:            true,
+			},
 			"privkey": schema.StringAttribute{
 				MarkdownDescription: "Private key used to sign the contract. If omitted, a temporary signing key is created.",
 				Description:         "Private key used to sign the contract",
+				Optional:            true,
+				Sensitive:           true,
+			},
+			"password": schema.StringAttribute{
+				MarkdownDescription: "Password used to decrypt the private key",
+				Description:         "Password used to decrypt the private key",
 				Optional:            true,
 				Sensitive:           true,
 			},
@@ -149,7 +162,9 @@ func (r *ContractEncryptedContractExpiryResource) Create(ctx context.Context, re
 	// Get required and optional parameters
 	contractYAML := data.Contract.ValueString()
 	platform := data.Platform.ValueString()
+	version := data.Version.ValueString()
 	privKey := data.PrivKey.ValueString()
+	password := data.Password.ValueString()
 	expiryDays := int(data.ExpiryDays.ValueInt64())
 	caCert := data.CaCert.ValueString()
 	caKey := data.CaKey.ValueString()
@@ -232,7 +247,7 @@ func (r *ContractEncryptedContractExpiryResource) Create(ctx context.Context, re
 	}
 
 	// Generate signed and encrypted contract with expiry using the contract-go library
-	signedContract, inputHash, outputHash, err := contract.HpcrContractSignedEncryptedContractExpiry(refinedContract, platform, cert, privKey, caCert, caKey, csrDataStr, csr, expiryDays)
+	signedContract, inputHash, outputHash, err := contract.HpcrContractSignedEncryptedContractExpiry(refinedContract, platform, version, cert, privKey, password, caCert, caKey, csrDataStr, csr, expiryDays)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to create signed encrypted contract with expiry",
@@ -283,7 +298,9 @@ func (r *ContractEncryptedContractExpiryResource) Update(ctx context.Context, re
 	// Get required and optional parameters
 	contractYAML := data.Contract.ValueString()
 	platform := data.Platform.ValueString()
+	version := data.Version.ValueString()
 	privKey := data.PrivKey.ValueString()
+	password := data.Password.ValueString()
 	expiryDays := int(data.ExpiryDays.ValueInt64())
 	caCert := data.CaCert.ValueString()
 	caKey := data.CaKey.ValueString()
@@ -364,7 +381,7 @@ func (r *ContractEncryptedContractExpiryResource) Update(ctx context.Context, re
 	}
 
 	// Generate signed and encrypted contract with expiry using the contract-go library
-	signedContract, inputHash, outputHash, err := contract.HpcrContractSignedEncryptedContractExpiry(refinedContract, platform, cert, privKey, caCert, caKey, csrDataStr, csr, expiryDays)
+	signedContract, inputHash, outputHash, err := contract.HpcrContractSignedEncryptedContractExpiry(refinedContract, platform, version, cert, privKey, password, caCert, caKey, csrDataStr, csr, expiryDays)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to create signed encrypted contract with expiry",

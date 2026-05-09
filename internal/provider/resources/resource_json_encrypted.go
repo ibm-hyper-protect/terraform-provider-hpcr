@@ -43,6 +43,7 @@ type JSONEncryptedResourceModel struct {
 	JSON      types.String `tfsdk:"json"`
 	Cert      types.String `tfsdk:"cert"`
 	Platform  types.String `tfsdk:"platform"`
+	Version   types.String `tfsdk:"version"`
 	Rendered  types.String `tfsdk:"rendered"`
 	Sha256In  types.String `tfsdk:"sha256_in"`
 	Sha256Out types.String `tfsdk:"sha256_out"`
@@ -79,6 +80,11 @@ func (r *JSONEncryptedResource) Schema(ctx context.Context, req resource.SchemaR
 			"platform": schema.StringAttribute{
 				MarkdownDescription: "Hyper Protect platform where this contract will be deployed. Defaults to hpvs",
 				Description:         "Hyper Protect platform where this contract will be deployed",
+				Optional:            true,
+			},
+			"version": schema.StringAttribute{
+				MarkdownDescription: "Version of the Hyper Protect Platform",
+				Description:         "Version of the Hyper Protect Platform",
 				Optional:            true,
 			},
 			"rendered": schema.StringAttribute{
@@ -153,8 +159,10 @@ func (r *JSONEncryptedResource) Create(ctx context.Context, req resource.CreateR
 		platform = data.Platform.ValueString()
 	}
 
+	version := data.Version.ValueString()
+
 	// Encrypt JSON using the contract-go library
-	encrypted, inputHash, outputHash, err := contract.HpcrJsonEncrypted(string(jsonBytes), platform, cert)
+	encrypted, inputHash, outputHash, err := contract.HpcrJsonEncrypted(string(jsonBytes), platform, version, cert)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to encrypt JSON",
@@ -244,8 +252,10 @@ func (r *JSONEncryptedResource) Update(ctx context.Context, req resource.UpdateR
 		platform = data.Platform.ValueString()
 	}
 
+	version := data.Version.ValueString()
+
 	// Encrypt JSON using the contract-go library
-	encrypted, inputHash, outputHash, err := contract.HpcrJsonEncrypted(string(jsonBytes), platform, cert)
+	encrypted, inputHash, outputHash, err := contract.HpcrJsonEncrypted(string(jsonBytes), platform, version, cert)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to encrypt JSON",

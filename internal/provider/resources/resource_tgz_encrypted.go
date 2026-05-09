@@ -45,6 +45,7 @@ type TgzEncryptedResourceModel struct {
 	Folder    types.String `tfsdk:"folder"`
 	Cert      types.String `tfsdk:"cert"`
 	Platform  types.String `tfsdk:"platform"`
+	Version   types.String `tfsdk:"version"`
 	Rendered  types.String `tfsdk:"rendered"`
 	Sha256In  types.String `tfsdk:"sha256_in"`
 	Sha256Out types.String `tfsdk:"sha256_out"`
@@ -83,6 +84,11 @@ func (r *TgzEncryptedResource) Schema(ctx context.Context, req resource.SchemaRe
 				Description:         "Hyper Protect platform where this contract will be deployed",
 				Optional:            true,
 			},
+			"version": schema.StringAttribute{
+				MarkdownDescription: "Version of the Hyper Protect Platform",
+				Description:         "Version of the Hyper Protect Platform",
+				Optional:            true,
+			},
 			"rendered": schema.StringAttribute{
 				MarkdownDescription: "Rendered output of the resource",
 				Description:         "Rendered output of the resource",
@@ -117,6 +123,7 @@ func (r *TgzEncryptedResource) Create(ctx context.Context, req resource.CreateRe
 
 	// Get optional parameters
 	platform := data.Platform.ValueString()
+	version := data.Version.ValueString()
 
 	cert := ""
 	if !data.Cert.IsNull() && !data.Cert.IsUnknown() {
@@ -139,7 +146,7 @@ func (r *TgzEncryptedResource) Create(ctx context.Context, req resource.CreateRe
 	}
 
 	// Encrypt TGZ archive using the contract-go library
-	encrypted, inputHash, outputHash, err := contract.HpcrTgzEncrypted(folderPath, platform, cert)
+	encrypted, inputHash, outputHash, err := contract.HpcrTgzEncrypted(folderPath, platform, version, cert)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to encrypt TGZ archive",
@@ -200,6 +207,7 @@ func (r *TgzEncryptedResource) Update(ctx context.Context, req resource.UpdateRe
 
 	// Get optional parameters
 	platform := data.Platform.ValueString()
+	version := data.Version.ValueString()
 
 	cert := ""
 	if !data.Cert.IsNull() && !data.Cert.IsUnknown() {
@@ -222,7 +230,7 @@ func (r *TgzEncryptedResource) Update(ctx context.Context, req resource.UpdateRe
 	}
 
 	// Encrypt TGZ archive using the contract-go library
-	encrypted, inputHash, outputHash, err := contract.HpcrTgzEncrypted(folderPath, platform, cert)
+	encrypted, inputHash, outputHash, err := contract.HpcrTgzEncrypted(folderPath, platform, version, cert)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to encrypt TGZ archive",

@@ -65,6 +65,8 @@ resource "hpcr_text_encrypted" "workload" {
       "archive" : resource.hpcr_tgz.compose.rendered
     }
   })
+  # Optionally specify platform version
+  # version = "1.0.16"
 }
 
 # Select HPCR image from IBM Cloud
@@ -101,6 +103,11 @@ locals {
 
 resource "hpcr_contract_encrypted" "contract" {
   contract = local.contract
+  # Optionally specify platform version
+  # version = "1.0.16"
+  # Optionally use a password-protected signing key
+  # privkey  = file("./cert/private_encrypted.pem")
+  # password = var.signing_key_password
 }
 ```
 

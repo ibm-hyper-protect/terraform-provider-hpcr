@@ -102,6 +102,17 @@ output "hpcr_text_platform_rendered" {
   value = hpcr_text_encrypted.text_platform.rendered
 }
 
+# Platform and version-specific encryption
+resource "hpcr_text_encrypted" "text_versioned" {
+  text     = "hello world"
+  platform = "hpvs"
+  version  = "1.0.16"
+}
+
+output "hpcr_text_platform_rendered" {
+  value = hpcr_text_encrypted.text_platform.rendered
+}
+
 # Encryption with custom certificate
 resource "hpcr_text_encrypted" "text_cert" {
   text = "hello world"
@@ -133,6 +144,7 @@ output "hpcr_text_cert_rendered" {
 
 - `cert` (String) Certificate used to encrypt the text, in PEM format. Defaults to the latest HPVS image certificate if not specified.
 - `platform` (String) Hyper Protect platform where this contract will be deployed. Defaults to hpvs
+- `version` (String) Version of the Hyper Protect Platform
 
 ### Read-Only
 

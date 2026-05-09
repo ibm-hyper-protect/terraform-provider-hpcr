@@ -80,6 +80,23 @@ output "json_data_platform_rendered" {
   value = hpcr_json_encrypted.json_data_platform.rendered
 }
 
+# Platform and version-specific encrypted JSON
+resource "hpcr_json_encrypted" "json_data_versioned" {
+  json = <<JSON
+  {
+    "workload" : "value1",
+    "env" : "value2"
+  }
+  JSON
+
+  platform = "hpvs"
+  version  = "1.0.16"
+}
+
+output "json_data_platform_rendered" {
+  value = hpcr_json_encrypted.json_data_platform.rendered
+}
+
 # Encrypted JSON with custom certificate
 resource "hpcr_json_encrypted" "json_data_cert" {
   json = <<JSON
@@ -117,6 +134,7 @@ output "json_data_cert_rendered" {
 
 - `cert` (String) Certificate used to encrypt the JSON document, in PEM format. Defaults to the latest HPVS image certificate if not specified.
 - `platform` (String) Hyper Protect platform where this contract will be deployed. Defaults to hpvs
+- `version` (String) Version of the Hyper Protect Platform
 
 ### Read-Only
 

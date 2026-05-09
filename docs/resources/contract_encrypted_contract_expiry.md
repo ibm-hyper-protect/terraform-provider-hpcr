@@ -150,6 +150,36 @@ resource "hpcr_contract_encrypted_contract_expiry" "contract_privkey" {
 output "contract_privkey_rendered" {
   value = hpcr_contract_encrypted_contract_expiry.contract_privkey.rendered
 }
+
+# Contract with password-protected signing key
+resource "hpcr_contract_encrypted_contract_expiry" "contract_protected_key" {
+  contract  = local.contract
+  privkey   = file("./cert/private_encrypted.pem")
+  password  = var.signing_key_password
+  expiry    = 30
+  cakey     = file("./cert/personal_ca.pem")
+  cacert    = file("./cert/personal_ca.crt")
+  csrparams = local.csrParams
+}
+
+output "contract_protected_key_rendered" {
+  value = hpcr_contract_encrypted_contract_expiry.contract_protected_key.rendered
+}
+
+# Platform and version-specific contract with expiry
+resource "hpcr_contract_encrypted_contract_expiry" "contract_versioned" {
+  contract  = local.contract
+  platform  = "hpvs"
+  version   = "1.0.16"
+  expiry    = 90
+  cakey     = file("./cert/personal_ca.pem")
+  cacert    = file("./cert/personal_ca.crt")
+  csrparams = local.csrParams
+}
+
+output "contract_versioned_rendered" {
+  value = hpcr_contract_encrypted_contract_expiry.contract_versioned.rendered
+}
 ```
 
 ## Generating CA Certificates
@@ -204,11 +234,13 @@ The `csrparams` map supports these fields:
 
 ### Optional
 
-- `cert` (String) Certificate used to encrypt the contract, in PEM format.Defaults to latest HPVS encryption certificate
+- `cert` (String) Certificate used to encrypt the contract, in PEM format. Defaults to latest HPVS encryption certificate
 - `csr` (String) CSR to generate signing certificate
 - `csrparams` (Map of String) CSR Parameters to generate signing certificate
+- `password` (String, Sensitive) Password used to decrypt the private key
 - `platform` (String) Hyper Protect platform where this contract will be deployed. Defaults to hpvs
 - `privkey` (String, Sensitive) Private key used to sign the contract. If omitted, a temporary signing key is created.
+- `version` (String) Version of the Hyper Protect Platform
 
 ### Read-Only
 

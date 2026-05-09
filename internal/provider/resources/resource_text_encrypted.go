@@ -42,6 +42,7 @@ type TextEncryptedResourceModel struct {
 	Text      types.String `tfsdk:"text"`
 	Cert      types.String `tfsdk:"cert"`
 	Platform  types.String `tfsdk:"platform"`
+	Version   types.String `tfsdk:"version"`
 	Rendered  types.String `tfsdk:"rendered"`
 	Sha256In  types.String `tfsdk:"sha256_in"`
 	Sha256Out types.String `tfsdk:"sha256_out"`
@@ -78,6 +79,11 @@ func (r *TextEncryptedResource) Schema(ctx context.Context, req resource.SchemaR
 			"platform": schema.StringAttribute{
 				MarkdownDescription: "Hyper Protect platform where this contract will be deployed. Defaults to hpvs",
 				Description:         "Hyper Protect platform where this contract will be deployed",
+				Optional:            true,
+			},
+			"version": schema.StringAttribute{
+				MarkdownDescription: "Version of the Hyper Protect Platform",
+				Description:         "Version of the Hyper Protect Platform",
 				Optional:            true,
 			},
 			"rendered": schema.StringAttribute{
@@ -135,9 +141,11 @@ func (r *TextEncryptedResource) Create(ctx context.Context, req resource.CreateR
 		platform = data.Platform.ValueString()
 	}
 
+	version := data.Version.ValueString()
+
 	// Encrypt text using the contract-go library
 	// Use empty string for hyperProtectOs to use default ("hpvs")
-	encrypted, inputHash, outputHash, err := contract.HpcrTextEncrypted(plainText, platform, cert)
+	encrypted, inputHash, outputHash, err := contract.HpcrTextEncrypted(plainText, platform, version, cert)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to encrypt text",
@@ -210,9 +218,11 @@ func (r *TextEncryptedResource) Update(ctx context.Context, req resource.UpdateR
 		platform = data.Platform.ValueString()
 	}
 
+	version := data.Version.ValueString()
+
 	// Encrypt text using the contract-go library
 	// Use empty string for hyperProtectOs to use default ("hpvs")
-	encrypted, inputHash, outputHash, err := contract.HpcrTextEncrypted(plainText, platform, cert)
+	encrypted, inputHash, outputHash, err := contract.HpcrTextEncrypted(plainText, platform, version, cert)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to encrypt text",

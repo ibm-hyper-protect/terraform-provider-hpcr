@@ -67,6 +67,17 @@ output "b64_enc_platform_rendered" {
   value = hpcr_tgz_encrypted.compose_b64_enc_platform.rendered
 }
 
+# Platform and version-specific encrypted archive
+resource "hpcr_tgz_encrypted" "compose_b64_enc_versioned" {
+  folder   = "compose"
+  platform = "hpvs"
+  version  = "1.0.16"
+}
+
+output "b64_enc_versioned_rendered" {
+  value = hpcr_tgz_encrypted.compose_b64_enc_versioned.rendered
+}
+
 # Encrypted archive with custom certificate
 resource "hpcr_tgz_encrypted" "compose_b64_enc_cert" {
   folder = "compose"
@@ -110,6 +121,7 @@ locals {
 
 - `cert` (String) Certificate to encrypt the Base64 Tgz, in PEM format. Defaults to the latest HPCR image certificate if not specified.
 - `platform` (String) Hyper Protect platform where this contract will be deployed. Defaults to hpvs
+- `version` (String) Version of the Hyper Protect Platform
 
 ### Read-Only
 
