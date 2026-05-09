@@ -1,3 +1,18 @@
+## 1.6.0 (2026-05-09)
+
+* Merge pull request #216 from ibm-hyper-protect/renovate/major-go-dependencies ([37e90bc](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/37e90bc)), closes [#216](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/216)
+* Merge pull request #219 from Sashwat-K/Fix/Renovate-1 ([024d26e](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/024d26e)), closes [#219](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/219)
+* Merge pull request #221 from Sashwat-K/Chore/BumpUp ([0afd663](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/0afd663)), closes [#221](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/221)
+* docs: add maintainers ([cb89b36](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/cb89b36))
+* docs: update user docs ([aad77da](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/aad77da))
+* feat: go mod tidy ([93a7ae9](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/93a7ae9))
+* chore: run go mod tidy ([708fe5b](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/708fe5b))
+* chore(deps): update go dependencies ([e9de959](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/e9de959))
+* chore(deps): update go dependencies (#214) ([f61fcd9](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/f61fcd9)), closes [#214](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/214)
+* chore(deps): update go dependencies (#220) ([663ec87](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/663ec87)), closes [#220](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/220)
+* chore(deps): update module github.com/hashicorp/go-version to v1.9.0 (#217) ([51b53dd](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/51b53dd)), closes [#217](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/217)
+* chore(deps): update module github.com/yuin/goldmark to v1.8.2 (#215) ([2fbc56c](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/2fbc56c)), closes [#215](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/215)
+
 ## <small>1.5.12 (2026-03-24)</small>
 
 * fix(deps): update go dependencies (#213) ([8bcf4ff](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/8bcf4ff)), closes [#213](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/213)
