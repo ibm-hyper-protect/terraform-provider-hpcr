@@ -42,8 +42,10 @@ type ContractEncryptedResourceModel struct {
 	ID        types.String `tfsdk:"id"`
 	Contract  types.String `tfsdk:"contract"`
 	Platform  types.String `tfsdk:"platform"`
+	Version   types.String `tfsdk:"version"`
 	Cert      types.String `tfsdk:"cert"`
 	PrivKey   types.String `tfsdk:"privkey"`
+	Password  types.String `tfsdk:"password"`
 	Rendered  types.String `tfsdk:"rendered"`
 	Sha256In  types.String `tfsdk:"sha256_in"`
 	Sha256Out types.String `tfsdk:"sha256_out"`
@@ -77,6 +79,11 @@ func (r *ContractEncryptedResource) Schema(ctx context.Context, req resource.Sch
 				Description:         "Hyper Protect platform where this contract will be deployed",
 				Optional:            true,
 			},
+			"version": schema.StringAttribute{
+				MarkdownDescription: "Version of the Hyper Protect Platform",
+				Description:         "Version of the Hyper Protect Platform",
+				Optional:            true,
+			},
 			"cert": schema.StringAttribute{
 				MarkdownDescription: "Certificate used to encrypt the contract, in PEM format. Defaults to the latest HPCR image certificate if not specified.",
 				Description:         "Certificate used to encrypt the contract, in PEM format",
@@ -85,6 +92,12 @@ func (r *ContractEncryptedResource) Schema(ctx context.Context, req resource.Sch
 			"privkey": schema.StringAttribute{
 				MarkdownDescription: "Private key used to sign the contract. If omitted, a temporary signing key is created.",
 				Description:         "Private key used to sign the contract",
+				Optional:            true,
+				Sensitive:           true,
+			},
+			"password": schema.StringAttribute{
+				MarkdownDescription: "Password used to decrypt the private key",
+				Description:         "Password used to decrypt the private key",
 				Optional:            true,
 				Sensitive:           true,
 			},
@@ -117,7 +130,9 @@ func (r *ContractEncryptedResource) Create(ctx context.Context, req resource.Cre
 	// Get required and optional parameters
 	contractYAML := data.Contract.ValueString()
 	platform := data.Platform.ValueString()
+	version := data.Version.ValueString()
 	privKey := data.PrivKey.ValueString()
+	password := data.Password.ValueString()
 
 	cert := ""
 	if !data.Cert.IsNull() && !data.Cert.IsUnknown() {
@@ -166,7 +181,7 @@ func (r *ContractEncryptedResource) Create(ctx context.Context, req resource.Cre
 	tflog.Debug(ctx, fmt.Sprintf("Refined contract YAML:- \n%s", refinedContract))
 
 	// Generate signed and encrypted contract using the contract-go library
-	signedContract, inputHash, outputHash, err := contract.HpcrContractSignedEncrypted(refinedContract, platform, cert, privKey)
+	signedContract, inputHash, outputHash, err := contract.HpcrContractSignedEncrypted(refinedContract, platform, version, cert, privKey, password)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to create signed encrypted contract",
@@ -217,7 +232,9 @@ func (r *ContractEncryptedResource) Update(ctx context.Context, req resource.Upd
 	// Get required and optional parameters
 	contractYAML := data.Contract.ValueString()
 	platform := data.Platform.ValueString()
+	version := data.Version.ValueString()
 	privKey := data.PrivKey.ValueString()
+	password := data.Password.ValueString()
 
 	cert := ""
 	if !data.Cert.IsNull() && !data.Cert.IsUnknown() {
@@ -265,7 +282,7 @@ func (r *ContractEncryptedResource) Update(ctx context.Context, req resource.Upd
 	tflog.Debug(ctx, fmt.Sprintf("Refined Contract YAML:-\n%s", refinedContract))
 
 	// Generate signed and encrypted contract using the contract-go library
-	signedContract, inputHash, outputHash, err := contract.HpcrContractSignedEncrypted(refinedContract, platform, cert, privKey)
+	signedContract, inputHash, outputHash, err := contract.HpcrContractSignedEncrypted(refinedContract, platform, version, cert, privKey, password)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to create signed encrypted contract",

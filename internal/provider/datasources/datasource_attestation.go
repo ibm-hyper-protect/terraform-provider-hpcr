@@ -40,6 +40,7 @@ type AttestationDataSourceModel struct {
 	ID          types.String `tfsdk:"id"`
 	Attestation types.String `tfsdk:"attestation"`
 	PrivKey     types.String `tfsdk:"privkey"`
+	Password    types.String `tfsdk:"password"`
 	Cert        types.String `tfsdk:"cert"`
 	Checksums   types.Map    `tfsdk:"checksums"`
 }
@@ -66,6 +67,12 @@ func (d *AttestationDataSource) Schema(ctx context.Context, req datasource.Schem
 			"privkey": schema.StringAttribute{
 				MarkdownDescription: "Private key used to decrypt an encrypted attestation record. If missing the attestation record is assumed to be unencrypted.",
 				Description:         "Private key used to decrypt an encrypted attestation record",
+				Optional:            true,
+				Sensitive:           true,
+			},
+			"password": schema.StringAttribute{
+				MarkdownDescription: "Password used to decrypt the private key",
+				Description:         "Password used to decrypt the private key",
 				Optional:            true,
 				Sensitive:           true,
 			},
@@ -96,13 +103,14 @@ func (d *AttestationDataSource) Read(ctx context.Context, req datasource.ReadReq
 
 	attestationData := data.Attestation.ValueString()
 	privateKey := data.PrivKey.ValueString()
+	password := data.Password.ValueString()
 
 	var attestationRecords string
 	var err error
 
 	// Decrypt attestation if private key is provided
 	if privateKey != "" {
-		attestationRecords, err = attestation.HpcrGetAttestationRecords(attestationData, privateKey)
+		attestationRecords, err = attestation.HpcrGetAttestationRecords(attestationData, privateKey, password)
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"Failed to decrypt attestation record",
