@@ -156,6 +156,6 @@ We appreciate all contributions from past maintainers and thank them for their s
 We recognize and thank former maintainers for their contributions:
 
 <!-- This section will list maintainers who have stepped down -->
-<!-- Currently empty -->
+1. Carsten Leue - [@CarstenLeue](https://github.com/CarstenLeue)
 
 ---
