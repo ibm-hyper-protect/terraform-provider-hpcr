@@ -1,3 +1,14 @@
+## 1.7.0 (2026-05-22)
+
+* Merge pull request #233 from vikas-sharma24/rev27-cert ([428694d](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/428694d)), closes [#233](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/233)
+* feat: updated contract-go version to latest ([f9785ed](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/f9785ed))
+* chore(deps): update docker.io/library/hello-world docker digest to 0e760fd (#227) ([498f30b](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/498f30b)), closes [#227](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/227)
+* chore(deps): update go dependencies (#224) ([a971d04](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/a971d04)), closes [#224](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/224)
+* chore(deps): update go dependencies (#225) ([ee68219](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/ee68219)), closes [#225](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/225)
+* chore(deps): update go dependencies (#229) ([6700352](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/6700352)), closes [#229](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/229)
+* chore(deps): update go dependencies (#231) ([50ebc02](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/50ebc02)), closes [#231](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/231)
+* chore(deps): update module google.golang.org/grpc to v1.81.1 (#228) ([0e96ea2](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/0e96ea2)), closes [#228](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/228)
+
 ## <small>1.6.1 (2026-05-09)</small>
 
 * fix(deps): update go dependencies (#218) ([21a12a5](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/21a12a5)), closes [#218](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/218)
