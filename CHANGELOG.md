@@ -1,3 +1,8 @@
+## <small>1.7.1 (2026-05-22)</small>
+
+* fix(deps): update module github.com/ibm-hyper-protect/contract-go/v2 to v2.25.0 (#232) ([4475e89](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/4475e89)), closes [#232](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/232)
+* chore(deps): update go dependencies (#230) ([196c397](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/196c397)), closes [#230](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/230)
+
 ## 1.7.0 (2026-05-22)
 
 * Merge pull request #233 from vikas-sharma24/rev27-cert ([428694d](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/428694d)), closes [#233](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/233)
