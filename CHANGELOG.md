@@ -1,3 +1,7 @@
+## <small>1.7.2 (2026-05-25)</small>
+
+* fix(deps): update module github.com/ibm-hyper-protect/contract-go/v2 to v2.26.0 (#234) ([e92d65b](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/e92d65b)), closes [#234](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/234)
+
 ## <small>1.7.1 (2026-05-22)</small>
 
 * fix(deps): update module github.com/ibm-hyper-protect/contract-go/v2 to v2.25.0 (#232) ([4475e89](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/4475e89)), closes [#232](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/232)
