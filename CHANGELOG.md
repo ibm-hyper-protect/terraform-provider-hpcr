@@ -1,3 +1,11 @@
+## <small>1.7.3 (2026-06-02)</small>
+
+* fix(deps): update go dependencies (#239) ([377afce](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/377afce)), closes [#239](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/239)
+* chore(deps): update go dependencies (#235) ([c4a1980](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/c4a1980)), closes [#235](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/235)
+* chore(deps): update go dependencies (#237) ([c68f80f](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/c68f80f)), closes [#237](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/237)
+* chore(deps): update module github.com/knadh/koanf/v2 to v2.3.5 (#238) ([ae751f4](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/ae751f4)), closes [#238](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/238)
+* chore(deps): update module gopkg.in/yaml.v2 to v2.4.0 (#236) ([982569b](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/982569b)), closes [#236](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/236)
+
 ## <small>1.7.2 (2026-05-25)</small>
 
 * fix(deps): update module github.com/ibm-hyper-protect/contract-go/v2 to v2.26.0 (#234) ([e92d65b](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/e92d65b)), closes [#234](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/234)
