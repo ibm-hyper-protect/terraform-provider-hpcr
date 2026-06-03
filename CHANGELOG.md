@@ -1,3 +1,9 @@
+## 1.8.0 (2026-06-03)
+
+* Merge pull request #243 from sowmya-parvati/schema_byok ([c795bcc](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/c795bcc)), closes [#243](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/243)
+* feat: Update schema changes to support BYOK feature ([a5ad026](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/a5ad026))
+* chore(deps): update go dependencies (#240) ([b6d009f](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/b6d009f)), closes [#240](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/240)
+
 ## <small>1.7.3 (2026-06-02)</small>
 
 * fix(deps): update go dependencies (#239) ([377afce](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/377afce)), closes [#239](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/239)
