@@ -98,7 +98,7 @@ jobs:
       - name: Run unit tests
         run: go test -v -cover -timeout=120s -parallel=10 ./...
       - name: Upload coverage reports
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v7
         if: always()
         with:
           files: ./coverage.out
