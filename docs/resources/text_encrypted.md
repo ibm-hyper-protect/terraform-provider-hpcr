@@ -21,8 +21,8 @@ Encrypts and encodes arbitrary text content using Hyper Protect encryption certi
 
 The `platform` parameter specifies the target Hyper Protect platform:
 - `hpvs` (default) - Hyper Protect Virtual Servers
-- `hpcr-rhvs` - Hyper Protect Container Runtime
-- `hpcc-peerpod` - Hyper Protect Confidential Containers (Peer Pods)
+- `ccrt` - IBM Confidential Computing Container Runtime
+- `ccrv` - IBM Confidential Computing Container Runtime for Red Hat Virtualization Solutions
 
 ## Common Pattern: Separate Workload and Environment Encryption
 

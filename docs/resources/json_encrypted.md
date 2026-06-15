@@ -21,8 +21,8 @@ Encrypts and encodes JSON data using Hyper Protect encryption certificates for s
 
 The `platform` parameter specifies the target Hyper Protect platform:
 - `hpvs` (default) - Hyper Protect Virtual Servers
-- `hpcr-rhvs` - Hyper Protect Container Runtime
-- `hpcc-peerpod` - Hyper Protect Confidential Containers (Peer Pods)
+- `ccrt` - IBM Confidential Computing Container Runtime
+- `ccrv` - IBM Confidential Computing Container Runtime for Red Hat Virtualization Solutions
 
 ## Example Usage
 
