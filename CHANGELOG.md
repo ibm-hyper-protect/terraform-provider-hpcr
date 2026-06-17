@@ -1,3 +1,16 @@
+## 1.9.0 (2026-06-17)
+
+* Merge pull request #251 from vikas-sharma24/doc_change ([29544a8](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/29544a8)), closes [#251](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/251)
+* feat: update latest contract-go version ([de7ab54](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/de7ab54))
+* docs: updated platform information of all resources ([4d68b18](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/4d68b18))
+* chore(deps): update go dependencies (#241) ([d0e730c](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/d0e730c)), closes [#241](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/241)
+* chore(deps): update go dependencies (#245) ([b11eb2b](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/b11eb2b)), closes [#245](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/245)
+* chore(deps): update go dependencies (#246) ([ef27d83](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/ef27d83)), closes [#246](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/246)
+* chore(deps): update go dependencies (#247) ([317cea0](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/317cea0)), closes [#247](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/247)
+* chore(deps): update go dependencies (#248) ([7814dde](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/7814dde)), closes [#248](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/248)
+* chore(deps): update go dependencies to v2.4.0 (#244) ([d911761](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/d911761)), closes [#244](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/244)
+* chore(deps): update go dependencies to v6.8.0 (#242) ([452c611](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/452c611)), closes [#242](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/242)
+
 ## 1.8.0 (2026-06-03)
 
 * Merge pull request #243 from sowmya-parvati/schema_byok ([c795bcc](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/c795bcc)), closes [#243](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/243)
