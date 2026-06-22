@@ -1,3 +1,8 @@
+## <small>1.9.1 (2026-06-22)</small>
+
+* fix(deps): update go dependencies (#253) ([be66bb6](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/be66bb6)), closes [#253](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/253)
+* chore(deps): update go dependencies to v6 (#250) ([6fc63c0](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/6fc63c0)), closes [#250](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/250)
+
 ## 1.9.0 (2026-06-17)
 
 * Merge pull request #251 from vikas-sharma24/doc_change ([29544a8](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/29544a8)), closes [#251](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/251)
