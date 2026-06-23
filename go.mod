@@ -7,7 +7,7 @@ require (
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/hashicorp/terraform-plugin-framework v1.19.0
 	github.com/hashicorp/terraform-plugin-log v0.10.0
-	github.com/ibm-hyper-protect/contract-go/v2 v2.30.2
+	github.com/ibm-hyper-protect/contract-go/v2 v2.30.3
 	gopkg.in/yaml.v3 v3.0.1
 )
 
