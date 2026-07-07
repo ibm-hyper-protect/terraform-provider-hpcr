@@ -1,3 +1,11 @@
+## <small>1.9.3 (2026-07-07)</small>
+
+* fix(deps): update go dependencies (#259) ([75a0f99](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/75a0f99)), closes [#259](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/259)
+* chore(deps): update go dependencies (#252) ([7dc8a04](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/7dc8a04)), closes [#252](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/252)
+* chore(deps): update go dependencies (#256) ([cd2cb56](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/cd2cb56)), closes [#256](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/256)
+* chore(deps): update go dependencies (#257) ([ea6c76c](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/ea6c76c)), closes [#257](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/257)
+* chore(deps): update module github.com/apparentlymart/go-textseg/v16 to v16.0.1 (#258) ([9f36c67](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/9f36c67)), closes [#258](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/258)
+
 ## <small>1.9.2 (2026-06-23)</small>
 
 * fix(deps): update go dependencies (#255) ([6201db5](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/6201db5)), closes [#255](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/255)
