@@ -1,13 +1,13 @@
 module github.com/ibm-hyper-protect/terraform-provider-hpcr
 
-go 1.26.1
+go 1.26.4
 
 require (
 	github.com/Masterminds/semver/v3 v3.5.0
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/hashicorp/terraform-plugin-framework v1.19.0
 	github.com/hashicorp/terraform-plugin-log v0.10.0
-	github.com/ibm-hyper-protect/contract-go/v2 v2.29.0
+	github.com/ibm-hyper-protect/contract-go/v2 v2.34.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -25,7 +25,6 @@ require (
 	github.com/mattn/go-isatty v0.0.22 // indirect
 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
 	github.com/oklog/run v1.2.0 // indirect
-	github.com/santhosh-tekuri/jsonschema/v5 v5.3.1 // indirect
 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.4.1 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
