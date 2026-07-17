@@ -1,3 +1,9 @@
+## <small>1.9.7 (2026-07-17)</small>
+
+* fix(deps): update go dependencies (#269) ([e59fabd](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/e59fabd)), closes [#269](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/269)
+* chore(deps): update actions/setup-go action to v7 (#268) ([1a2a9ce](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/1a2a9ce)), closes [#268](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/268)
+* chore(deps): update module google.golang.org/grpc to v1.82.1 (#267) ([329ee44](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/329ee44)), closes [#267](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/267)
+
 ## <small>1.9.6 (2026-07-15)</small>
 
 * fix(deps): update module github.com/ibm-hyper-protect/contract-go/v2 to v2.33.0 (#266) ([81343a6](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/81343a6)), closes [#266](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/266)
