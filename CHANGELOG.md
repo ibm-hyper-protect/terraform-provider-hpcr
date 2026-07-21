@@ -1,3 +1,12 @@
+## <small>1.9.8 (2026-07-21)</small>
+
+* fix(deps): update module github.com/ibm-hyper-protect/contract-go/v2 to v2.35.0 (#275) ([d3af61f](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/d3af61f)), closes [#275](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/275)
+* chore(deps): update docker.io/library/hello-world docker digest to c3cbe1c (#270) ([1e684b7](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/1e684b7)), closes [#270](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/270)
+* chore(deps): update go dependencies (#271) ([9fd6aba](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/9fd6aba)), closes [#271](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/271)
+* chore(deps): update go dependencies (#276) ([cf7ed82](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/cf7ed82)), closes [#276](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/276)
+* chore(deps): update module github.com/jedib0t/go-pretty/v6 to v6.8.3 (#274) ([ab701fd](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/ab701fd)), closes [#274](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/274)
+* Merge pull request #273 from vikas-sharma24/Feature/Rev29 ([a77470f](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/a77470f)), closes [#273](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/273)
+
 ## <small>1.9.7 (2026-07-17)</small>
 
 * fix(deps): update go dependencies (#269) ([e59fabd](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/e59fabd)), closes [#269](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/269)
