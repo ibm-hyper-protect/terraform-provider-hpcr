@@ -65,6 +65,8 @@ body:
         - Documentation
         - Testing
         - Developer Experience
+        - Feature development
+        - Maintenance
         - Other
     validations:
       required: true
