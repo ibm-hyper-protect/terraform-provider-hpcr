@@ -1,3 +1,12 @@
+## 1.10.0 (2026-07-24)
+
+* Merge pull request #284 from vikas-sharma24/Feature/new-issue-template-update ([ec0cbcc](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/ec0cbcc)), closes [#284](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/284)
+* feat: add new options in issue template ([13548ba](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/13548ba))
+* chore(deps): update go dependencies (#279) ([fa5eafa](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/fa5eafa)), closes [#279](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/279)
+* chore(deps): update go dependencies (#281) ([bf0902c](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/bf0902c)), closes [#281](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/281)
+* chore(deps): update go dependencies (#283) ([ef292ac](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/ef292ac)), closes [#283](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/283)
+* chore(deps): update module github.com/mattn/go-runewidth to v0.0.27 (#280) ([c5a78ea](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/c5a78ea)), closes [#280](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/280)
+
 ## <small>1.9.9 (2026-07-21)</small>
 
 * fix(deps): update module github.com/ibm-hyper-protect/contract-go/v2 to v2.37.0 (#278) ([5567a83](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/5567a83)), closes [#278](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/278)
