@@ -1,3 +1,9 @@
+## <small>1.10.1 (2026-07-27)</small>
+
+* fix(deps): update module github.com/ibm-hyper-protect/contract-go/v2 to v2.39.1 (#285) ([b6db3c6](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/b6db3c6)), closes [#285](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/285)
+* chore(deps): update go dependencies (#286) ([69f5a96](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/69f5a96)), closes [#286](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/286)
+* chore(deps): update module go.yaml.in/yaml/v3 to v3.0.5 (#282) ([48670b3](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/48670b3)), closes [#282](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/282)
+
 ## 1.10.0 (2026-07-24)
 
 * Merge pull request #284 from vikas-sharma24/Feature/new-issue-template-update ([ec0cbcc](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/ec0cbcc)), closes [#284](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/284)
