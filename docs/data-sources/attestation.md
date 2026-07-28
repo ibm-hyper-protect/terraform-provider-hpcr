@@ -3,12 +3,12 @@
 page_title: "hpcr_attestation Data Source - hpcr"
 subcategory: ""
 description: |-
-  Decrypts and parses HPCR attestation records from secure enclaves to verify workload integrity and retrieve runtime checksums.
+  Decrypts, verifies, and parses HPCR attestation records from secure enclaves to verify workload integrity and retrieve runtime checksums.
 ---
 
 # hpcr_attestation (Data Source)
 
-Decrypts and parses HPCR attestation records from secure enclaves to verify workload integrity and retrieve runtime checksums. Attestation records prove that your workload is running in a genuine IBM Hyper Protect secure enclave and hasn't been tampered with.
+Decrypts, verifies, and parses HPCR attestation records from secure enclaves to verify workload integrity and retrieve runtime checksums. Attestation records prove that your workload is running in a genuine IBM Hyper Protect secure enclave and hasn't been tampered with.
 
 ## Use Cases
 
@@ -54,6 +54,19 @@ data "hpcr_attestation" "attestation_unencrypted" {
   attestation = file("./cert/se-checksums.txt")
 }
 
+# Decrypt and cryptographically verify the attestation signature.
+# cert and signature must always be provided together or both omitted.
+# - cert:      IBM attestation certificate in PEM format (from the runtime image)
+# - signature: filebase64() is required because se-signature.bin is binary
+# If the signature does not match the records an error is raised, preventing
+# forged attestation data from being accepted silently.
+data "hpcr_attestation" "attestation_verified" {
+  attestation = file("./cert/se-checksums.txt.enc")
+  privkey     = file("./cert/private.pem")
+  cert        = file("./cert/attestation.crt")
+  signature   = filebase64("./cert/se-signature.bin")
+}
+
 # Output checksums from encrypted attestation
 output "attestation_encrypted" {
   value = data.hpcr_attestation.attestation_encrypted.checksums
@@ -64,10 +77,15 @@ output "attestation_unencrypted" {
   value = data.hpcr_attestation.attestation_unencrypted.checksums
 }
 
-# Example: Verify contract checksum
+# Output verified checksums — these are guaranteed to be IBM-signed
+output "attestation_verified" {
+  value = data.hpcr_attestation.attestation_verified.checksums
+}
+
+# Example: Verify a specific component checksum after signature verification
 locals {
   expected_checksum = "abc123..."
-  actual_checksum   = lookup(data.hpcr_attestation.attestation_encrypted.checksums, "contract.yml", "")
+  actual_checksum   = lookup(data.hpcr_attestation.attestation_verified.checksums, "contract:workload", "")
   attestation_valid = local.expected_checksum == local.actual_checksum
 }
 
@@ -95,11 +113,19 @@ output "attestation_verification" {
 
 ### Optional
 
-- `cert` (String) Certificate used to validate the attestation signature, in PEM format. Defaults to the default HPVS attestation certificate if not specified.
+- `cert` (String) Certificate used to validate the attestation signature, in PEM format. Must be provided together with `signature`.
 - `password` (String, Sensitive) Password used to decrypt the private key
 - `privkey` (String, Sensitive) Private key used to decrypt an encrypted attestation record. If missing the attestation record is assumed to be unencrypted.
+- `signature` (String) Base64-encoded signature of the attestation records (use `filebase64("se-signature.bin")` in Terraform). Must be provided together with `cert`.
 
 ### Read-Only
 
 - `checksums` (Map of String) Map from filename to checksum of the attestation record
 - `id` (String) Data source identifier
+
+## Notes
+
+- `cert` and `signature` must be supplied together. Providing only one of them is an error.
+- `signature` must be base64-encoded. Use `filebase64("se-signature.bin")` in HCL — **not** `file()`, because `se-signature.bin` is a binary file.
+- When both are supplied, `HpcrVerifySignatureAttestationRecords` is called after decryption. If the signature does not match, the data source raises an error and no checksums are returned. This prevents forged attestation records from being silently accepted.
+- When neither is supplied, signature verification is skipped (decrypt-only behaviour, same as before).
