@@ -121,6 +121,7 @@ func (r *ContractEncryptedContractExpiryResource) Schema(ctx context.Context, re
 				MarkdownDescription: "CA Key used to generate signing certificate",
 				Description:         "CA Key used to generate signing certificate",
 				Required:            true,
+				Sensitive:           true,
 			},
 			"csrparams": schema.MapAttribute{
 				MarkdownDescription: "CSR Parameters to generate signing certificate",
