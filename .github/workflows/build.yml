@@ -18,6 +18,9 @@ on:
 env:
   DEFAULT_BRANCH: main
 
+permissions:
+  contents: read
+
 jobs:
   commit-lint:
     runs-on: ubuntu-latest
