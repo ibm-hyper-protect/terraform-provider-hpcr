@@ -16,6 +16,8 @@ package resources
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -167,7 +169,8 @@ func (r *ContractEncryptedResource) Create(ctx context.Context, req resource.Cre
 		privKey = generatedKey
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("Contract YAML:- \n%s", contractYAML))
+	h := sha256.Sum256([]byte(contractYAML))
+	tflog.Debug(ctx, fmt.Sprintf("Contract YAML sha256: %s", hex.EncodeToString(h[:])))
 
 	refinedContract, err := common.RefineContract(contractYAML)
 	if err != nil {
@@ -178,7 +181,8 @@ func (r *ContractEncryptedResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("Refined contract YAML:- \n%s", refinedContract))
+	rh := sha256.Sum256([]byte(refinedContract))
+	tflog.Debug(ctx, fmt.Sprintf("Refined contract YAML sha256: %s", hex.EncodeToString(rh[:])))
 
 	// Generate signed and encrypted contract using the contract-go library
 	signedContract, inputHash, outputHash, err := contract.HpcrContractSignedEncrypted(refinedContract, platform, version, cert, privKey, password)
@@ -269,7 +273,8 @@ func (r *ContractEncryptedResource) Update(ctx context.Context, req resource.Upd
 		privKey = generatedKey
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("Contract YAML:-\n%s", contractYAML))
+	uh := sha256.Sum256([]byte(contractYAML))
+	tflog.Debug(ctx, fmt.Sprintf("Contract YAML sha256: %s", hex.EncodeToString(uh[:])))
 
 	refinedContract, err := common.RefineContract(contractYAML)
 	if err != nil {
@@ -279,7 +284,8 @@ func (r *ContractEncryptedResource) Update(ctx context.Context, req resource.Upd
 		)
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("Refined Contract YAML:-\n%s", refinedContract))
+	urh := sha256.Sum256([]byte(refinedContract))
+	tflog.Debug(ctx, fmt.Sprintf("Refined contract YAML sha256: %s", hex.EncodeToString(urh[:])))
 
 	// Generate signed and encrypted contract using the contract-go library
 	signedContract, inputHash, outputHash, err := contract.HpcrContractSignedEncrypted(refinedContract, platform, version, cert, privKey, password)

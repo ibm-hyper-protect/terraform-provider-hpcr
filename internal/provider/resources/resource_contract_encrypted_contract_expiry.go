@@ -16,6 +16,8 @@ package resources
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 
@@ -204,7 +206,8 @@ func (r *ContractEncryptedContractExpiryResource) Create(ctx context.Context, re
 		privKey = generatedKey
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("Contract YAML:- \n%s", contractYAML))
+	ch := sha256.Sum256([]byte(contractYAML))
+	tflog.Debug(ctx, fmt.Sprintf("Contract YAML sha256: %s", hex.EncodeToString(ch[:])))
 
 	refinedContract, err := common.RefineContract(contractYAML)
 	if err != nil {
@@ -215,7 +218,8 @@ func (r *ContractEncryptedContractExpiryResource) Create(ctx context.Context, re
 		return
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("Contract YAML:- \n%s", refinedContract))
+	rh := sha256.Sum256([]byte(refinedContract))
+	tflog.Debug(ctx, fmt.Sprintf("Refined contract YAML sha256: %s", hex.EncodeToString(rh[:])))
 
 	// Convert CSR params map to JSON string if provided
 	var csrDataStr string
@@ -349,7 +353,8 @@ func (r *ContractEncryptedContractExpiryResource) Update(ctx context.Context, re
 		return
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("Contract YAML:- \n%s", refinedContract))
+	urh := sha256.Sum256([]byte(refinedContract))
+	tflog.Debug(ctx, fmt.Sprintf("Refined contract YAML sha256: %s", hex.EncodeToString(urh[:])))
 
 	// Convert CSR params map to JSON string if provided
 	var csrDataStr string
