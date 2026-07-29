@@ -1,3 +1,12 @@
+## <small>1.10.2 (2026-07-29)</small>
+
+* Merge pull request #292 from ibm-hyper-protect/Fix/release ([588b39c](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/588b39c)), closes [#292](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/292)
+* fix: removing persist-credentials flag ([795f0aa](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/795f0aa))
+* chore(config): migrate config renovate.json (#277) ([15629ae](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/15629ae)), closes [#277](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/277)
+* chore(deps): update go dependencies (#289) ([3322f27](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/3322f27)), closes [#289](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/289)
+* chore(deps): update module github.com/yuin/goldmark to v1.8.5 (#287) ([0bbdd6c](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/0bbdd6c)), closes [#287](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/287)
+* refactor: Code refactoring (#290) ([9997513](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/9997513)), closes [#290](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/290)
+
 ## <small>1.10.1 (2026-07-27)</small>
 
 * fix(deps): update module github.com/ibm-hyper-protect/contract-go/v2 to v2.39.1 (#285) ([b6db3c6](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/b6db3c6)), closes [#285](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/285)
