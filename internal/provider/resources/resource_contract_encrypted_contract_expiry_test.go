@@ -85,6 +85,9 @@ func TestContractEncryptedContractExpiryResource_Schema(t *testing.T) {
 	if cakeyAttr.IsRequired() == false {
 		t.Error("Expected 'cakey' attribute to be required")
 	}
+	if cakeyAttr.IsSensitive() == false {
+		t.Error("Expected 'cakey' attribute to be sensitive")
+	}
 
 	// Verify optional attributes
 	optionalAttrs := []string{"platform", "privkey", "csrparams", "csr"}

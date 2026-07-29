@@ -24,7 +24,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	"github.com/ibm-hyper-protect/contract-go/v2/certificate"
 	"github.com/ibm-hyper-protect/contract-go/v2/contract"
@@ -121,6 +120,7 @@ func (r *ContractEncryptedContractExpiryResource) Schema(ctx context.Context, re
 				MarkdownDescription: "CA Key used to generate signing certificate",
 				Description:         "CA Key used to generate signing certificate",
 				Required:            true,
+				Sensitive:           true,
 			},
 			"csrparams": schema.MapAttribute{
 				MarkdownDescription: "CSR Parameters to generate signing certificate",
@@ -203,8 +203,6 @@ func (r *ContractEncryptedContractExpiryResource) Create(ctx context.Context, re
 		privKey = generatedKey
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("Contract YAML:- \n%s", contractYAML))
-
 	refinedContract, err := common.RefineContract(contractYAML)
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -213,8 +211,6 @@ func (r *ContractEncryptedContractExpiryResource) Create(ctx context.Context, re
 		)
 		return
 	}
-
-	tflog.Debug(ctx, fmt.Sprintf("Contract YAML:- \n%s", refinedContract))
 
 	// Convert CSR params map to JSON string if provided
 	var csrDataStr string
@@ -347,8 +343,6 @@ func (r *ContractEncryptedContractExpiryResource) Update(ctx context.Context, re
 		)
 		return
 	}
-
-	tflog.Debug(ctx, fmt.Sprintf("Contract YAML:- \n%s", refinedContract))
 
 	// Convert CSR params map to JSON string if provided
 	var csrDataStr string

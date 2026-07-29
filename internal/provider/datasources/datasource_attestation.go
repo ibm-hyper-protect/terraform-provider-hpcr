@@ -16,6 +16,7 @@ package datasources
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -42,6 +43,7 @@ type AttestationDataSourceModel struct {
 	PrivKey     types.String `tfsdk:"privkey"`
 	Password    types.String `tfsdk:"password"`
 	Cert        types.String `tfsdk:"cert"`
+	Signature   types.String `tfsdk:"signature"`
 	Checksums   types.Map    `tfsdk:"checksums"`
 }
 
@@ -77,8 +79,13 @@ func (d *AttestationDataSource) Schema(ctx context.Context, req datasource.Schem
 				Sensitive:           true,
 			},
 			"cert": schema.StringAttribute{
-				MarkdownDescription: "Certificate used to validate the attestation signature, in PEM format. Defaults to the default HPCR certificate if not specified.",
+				MarkdownDescription: "Certificate used to validate the attestation signature, in PEM format. Must be provided together with `signature`.",
 				Description:         "Certificate used to validate the attestation signature, in PEM format",
+				Optional:            true,
+			},
+			"signature": schema.StringAttribute{
+				MarkdownDescription: "Base64-encoded signature of the attestation records (use `filebase64(\"se-signature.bin\")` in Terraform). Must be provided together with `cert`.",
+				Description:         "Base64-encoded signature of the attestation records (content of se-signature.bin, base64-encoded)",
 				Optional:            true,
 			},
 			"checksums": schema.MapAttribute{
@@ -104,6 +111,17 @@ func (d *AttestationDataSource) Read(ctx context.Context, req datasource.ReadReq
 	attestationData := data.Attestation.ValueString()
 	privateKey := data.PrivKey.ValueString()
 	password := data.Password.ValueString()
+	cert := data.Cert.ValueString()
+	signature := data.Signature.ValueString()
+
+	// cert and signature must be supplied together or not at all
+	if (cert == "") != (signature == "") {
+		resp.Diagnostics.AddError(
+			"Invalid attestation configuration",
+			"'cert' and 'signature' must be provided together; supply both or omit both.",
+		)
+		return
+	}
 
 	var attestationRecords string
 	var err error
@@ -123,6 +141,28 @@ func (d *AttestationDataSource) Read(ctx context.Context, req datasource.ReadReq
 	} else {
 		// If no private key, assume attestation is already decrypted
 		attestationRecords = attestationData
+	}
+
+	// Verify attestation signature when cert and signature are both provided.
+	// The signature attribute carries base64-encoded binary (supplied via
+	// filebase64() in HCL) and must be decoded to raw bytes before verification.
+	if cert != "" {
+		sigBytes, decErr := base64.StdEncoding.DecodeString(signature)
+		if decErr != nil {
+			resp.Diagnostics.AddError(
+				"Invalid attestation signature",
+				fmt.Sprintf("'signature' must be base64-encoded (use filebase64() in Terraform): %s", decErr.Error()),
+			)
+			return
+		}
+		if err = attestation.HpcrVerifySignatureAttestationRecords(attestationRecords, string(sigBytes), cert); err != nil {
+			resp.Diagnostics.AddError(
+				"Attestation signature verification failed",
+				fmt.Sprintf("Signature verification failed: %s", err.Error()),
+			)
+			return
+		}
+		tflog.Debug(ctx, "Attestation signature verification successful")
 	}
 
 	filteredAttestation := common.FilterChecksum(attestationRecords)

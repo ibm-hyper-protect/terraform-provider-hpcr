@@ -32,7 +32,7 @@ The contract-go library automates IBM Hyper Protect confidential computing workl
 - **Certificate Operations**: Download and manage HPVS encryption certificates from IBM Cloud
 - **Image Selection**: Retrieve and validate HPCR images with semantic versioning
 - **Archive Management**: Generate Base64 tar archives from docker-compose and podman play configurations
-- **Attestation**: Decrypt attestation records from HPCR, HPVS and HPCC
+- **Attestation**: Decrypt and cryptographically verify attestation records from CCRT, CCRV, HPVS and CCCO
 
 - **IBM Confidential Computing Container Runtime** (formerly known as Hyper Protect Virtual Servers (HPVS)) — Deploy confidential computing workloads on IBM Z and LinuxONE using IBM Secure Execution for Linux
 - **IBM Confidential Computing Container Runtime for Red Hat Virtualization Solutions** (formerly known as Hyper Protect Container Runtime for Red Hat Virtualization Solutions (HPCR4RHVS)) — Purpose-built for hosting critical, centralized services within tightly controlled virtualized environments on IBM Z
@@ -238,7 +238,7 @@ Complete examples for all resources and data sources are available in the [`exam
 ### Data Sources
 
 - **[hpcr_image](./examples/datasources/hpcr_image)** - Select HPCR images from IBM Cloud VPC with semantic versioning
-- **[hpcr_attestation](./examples/datasources/hpcr_attestation)** - Decrypt and parse attestation records
+- **[hpcr_attestation](./examples/datasources/hpcr_attestation)** - Decrypt, verify signature, and parse attestation records (`cert` + `signature` attributes enforce IBM-signed provenance)
 - **[hpcr_encryption_certs](./examples/datasources/hpcr_encryption_certs)** - Download encryption certificates from IBM Cloud
 - **[hpcr_encryption_cert](./examples/datasources/hpcr_encryption_cert)** - Select specific certificate versions
 

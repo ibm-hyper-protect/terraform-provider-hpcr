@@ -23,7 +23,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	"github.com/ibm-hyper-protect/contract-go/v2/certificate"
 	"github.com/ibm-hyper-protect/contract-go/v2/contract"
@@ -167,8 +166,6 @@ func (r *ContractEncryptedResource) Create(ctx context.Context, req resource.Cre
 		privKey = generatedKey
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("Contract YAML:- \n%s", contractYAML))
-
 	refinedContract, err := common.RefineContract(contractYAML)
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -177,8 +174,6 @@ func (r *ContractEncryptedResource) Create(ctx context.Context, req resource.Cre
 		)
 		return
 	}
-
-	tflog.Debug(ctx, fmt.Sprintf("Refined contract YAML:- \n%s", refinedContract))
 
 	// Generate signed and encrypted contract using the contract-go library
 	signedContract, inputHash, outputHash, err := contract.HpcrContractSignedEncrypted(refinedContract, platform, version, cert, privKey, password)
@@ -269,8 +264,6 @@ func (r *ContractEncryptedResource) Update(ctx context.Context, req resource.Upd
 		privKey = generatedKey
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("Contract YAML:-\n%s", contractYAML))
-
 	refinedContract, err := common.RefineContract(contractYAML)
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -278,8 +271,6 @@ func (r *ContractEncryptedResource) Update(ctx context.Context, req resource.Upd
 			fmt.Sprintf("Error refining contract: %s", err.Error()),
 		)
 	}
-
-	tflog.Debug(ctx, fmt.Sprintf("Refined Contract YAML:-\n%s", refinedContract))
 
 	// Generate signed and encrypted contract using the contract-go library
 	signedContract, inputHash, outputHash, err := contract.HpcrContractSignedEncrypted(refinedContract, platform, version, cert, privKey, password)
