@@ -1,3 +1,9 @@
+## <small>1.10.3 (2026-07-29)</small>
+
+* Merge pull request #293 from vikas-sharma24/Fix/release-stage ([cecbf03](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/cecbf03)), closes [#293](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/293)
+* chore: delete .github/dependabot.yml file ([5737720](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/5737720))
+* fix: fix release stage ([534f83f](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/534f83f))
+
 ## <small>1.10.2 (2026-07-29)</small>
 
 * Merge pull request #292 from ibm-hyper-protect/Fix/release ([588b39c](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/588b39c)), closes [#292](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/292)
