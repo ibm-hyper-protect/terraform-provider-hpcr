@@ -16,8 +16,6 @@ package resources
 
 import (
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 
@@ -26,7 +24,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	"github.com/ibm-hyper-protect/contract-go/v2/certificate"
 	"github.com/ibm-hyper-protect/contract-go/v2/contract"
@@ -206,9 +203,6 @@ func (r *ContractEncryptedContractExpiryResource) Create(ctx context.Context, re
 		privKey = generatedKey
 	}
 
-	ch := sha256.Sum256([]byte(contractYAML))
-	tflog.Debug(ctx, fmt.Sprintf("Contract YAML sha256: %s", hex.EncodeToString(ch[:])))
-
 	refinedContract, err := common.RefineContract(contractYAML)
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -217,9 +211,6 @@ func (r *ContractEncryptedContractExpiryResource) Create(ctx context.Context, re
 		)
 		return
 	}
-
-	rh := sha256.Sum256([]byte(refinedContract))
-	tflog.Debug(ctx, fmt.Sprintf("Refined contract YAML sha256: %s", hex.EncodeToString(rh[:])))
 
 	// Convert CSR params map to JSON string if provided
 	var csrDataStr string
@@ -352,9 +343,6 @@ func (r *ContractEncryptedContractExpiryResource) Update(ctx context.Context, re
 		)
 		return
 	}
-
-	urh := sha256.Sum256([]byte(refinedContract))
-	tflog.Debug(ctx, fmt.Sprintf("Refined contract YAML sha256: %s", hex.EncodeToString(urh[:])))
 
 	// Convert CSR params map to JSON string if provided
 	var csrDataStr string

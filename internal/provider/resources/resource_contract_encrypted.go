@@ -16,8 +16,6 @@ package resources
 
 import (
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -25,7 +23,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	"github.com/ibm-hyper-protect/contract-go/v2/certificate"
 	"github.com/ibm-hyper-protect/contract-go/v2/contract"
@@ -169,9 +166,6 @@ func (r *ContractEncryptedResource) Create(ctx context.Context, req resource.Cre
 		privKey = generatedKey
 	}
 
-	h := sha256.Sum256([]byte(contractYAML))
-	tflog.Debug(ctx, fmt.Sprintf("Contract YAML sha256: %s", hex.EncodeToString(h[:])))
-
 	refinedContract, err := common.RefineContract(contractYAML)
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -180,9 +174,6 @@ func (r *ContractEncryptedResource) Create(ctx context.Context, req resource.Cre
 		)
 		return
 	}
-
-	rh := sha256.Sum256([]byte(refinedContract))
-	tflog.Debug(ctx, fmt.Sprintf("Refined contract YAML sha256: %s", hex.EncodeToString(rh[:])))
 
 	// Generate signed and encrypted contract using the contract-go library
 	signedContract, inputHash, outputHash, err := contract.HpcrContractSignedEncrypted(refinedContract, platform, version, cert, privKey, password)
@@ -273,9 +264,6 @@ func (r *ContractEncryptedResource) Update(ctx context.Context, req resource.Upd
 		privKey = generatedKey
 	}
 
-	uh := sha256.Sum256([]byte(contractYAML))
-	tflog.Debug(ctx, fmt.Sprintf("Contract YAML sha256: %s", hex.EncodeToString(uh[:])))
-
 	refinedContract, err := common.RefineContract(contractYAML)
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -283,9 +271,6 @@ func (r *ContractEncryptedResource) Update(ctx context.Context, req resource.Upd
 			fmt.Sprintf("Error refining contract: %s", err.Error()),
 		)
 	}
-
-	urh := sha256.Sum256([]byte(refinedContract))
-	tflog.Debug(ctx, fmt.Sprintf("Refined contract YAML sha256: %s", hex.EncodeToString(urh[:])))
 
 	// Generate signed and encrypted contract using the contract-go library
 	signedContract, inputHash, outputHash, err := contract.HpcrContractSignedEncrypted(refinedContract, platform, version, cert, privKey, password)
