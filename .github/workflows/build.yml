@@ -221,7 +221,7 @@ jobs:
           echo "SBOM_FILE=${SBOM_FILE}" >> $GITHUB_ENV
 
       - name: Upload SBOM to GitHub Release
-        uses: softprops/action-gh-release@da05d552573ad5aba27b5f45b00eb67c2fd1a2e6 # v3
+        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3
         with:
           tag_name: v${{ needs.release.outputs.new_release_version }}
           files: ${{ env.SBOM_FILE }}
