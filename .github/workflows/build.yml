@@ -197,24 +197,20 @@ jobs:
           cache: true
 
       - name: Import GPG key
-        env:
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-          PASSPHRASE: ${{ secrets.PASSPHRASE }}
-        run: |
-          echo "$GPG_PRIVATE_KEY" | \
-            gpg --batch --pinentry-mode loopback --passphrase "$PASSPHRASE" --import
-          GPG_FINGERPRINT=$(gpg --list-secret-keys --with-colons \
-            | awk -F: '/^fpr/{print $10; exit}')
-          echo "GPG_FINGERPRINT=${GPG_FINGERPRINT}" >> $GITHUB_ENV
+        uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd # v7
+        id: import_gpg
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
 
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v7
+        uses: goreleaser/goreleaser-action@f06c13b6b1a9625abc9e6e439d9c05a8f2190e94 # v7
         with:
           version: latest
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GPG_FINGERPRINT: ${{ env.GPG_FINGERPRINT }}
+          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
 
       - name: Generate SBOM
         run: |
@@ -225,6 +221,9 @@ jobs:
           echo "SBOM_FILE=${SBOM_FILE}" >> $GITHUB_ENV
 
       - name: Upload SBOM to GitHub Release
-        run: gh release upload "v${{ needs.release.outputs.new_release_version }}" "${{ env.SBOM_FILE }}"
+        uses: softprops/action-gh-release@da05d552573ad5aba27b5f45b00eb67c2fd1a2e6 # v3
+        with:
+          tag_name: v${{ needs.release.outputs.new_release_version }}
+          files: ${{ env.SBOM_FILE }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
