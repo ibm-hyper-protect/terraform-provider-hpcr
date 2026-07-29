@@ -1,3 +1,8 @@
+## <small>1.10.4 (2026-07-29)</small>
+
+* Merge pull request #294 from ibm-hyper-protect/Fix/action-gh-release ([ff081d3](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/ff081d3)), closes [#294](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/294) [ibm-hyper-protect/Fix/action-#release](https://github.com/ibm-hyper-protect/Fix/action-/issues/release) [action-#release](https://github.com/action-/issues/release)
+* fix: update commit id of action-gh-release ([6a624ab](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/6a624ab)), closes [action-#release](https://github.com/action-/issues/release)
+
 ## <small>1.10.3 (2026-07-29)</small>
 
 * Merge pull request #293 from vikas-sharma24/Fix/release-stage ([cecbf03](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/cecbf03)), closes [#293](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/293)
