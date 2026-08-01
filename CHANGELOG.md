@@ -1,3 +1,8 @@
+## <small>1.10.5 (2026-08-01)</small>
+
+* fix(deps): update go dependencies (#295) ([4063244](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/4063244)), closes [#295](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/295)
+* chore(deps): update module google.golang.org/grpc to v1.83.0 (#288) ([6f7ef07](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/6f7ef07)), closes [#288](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/288)
+
 ## <small>1.10.4 (2026-07-29)</small>
 
 * Merge pull request #294 from ibm-hyper-protect/Fix/action-gh-release ([ff081d3](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/ff081d3)), closes [#294](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/294) [ibm-hyper-protect/Fix/action-#release](https://github.com/ibm-hyper-protect/Fix/action-/issues/release) [action-#release](https://github.com/action-/issues/release)
