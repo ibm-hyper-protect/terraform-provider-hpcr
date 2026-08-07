@@ -1,3 +1,12 @@
+## <small>1.10.6 (2026-08-07)</small>
+
+* fix(deps): update module github.com/ibm-hyper-protect/contract-go/v2 to v2.40.2 (#301) ([a36a2fb](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/a36a2fb)), closes [#301](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/301)
+* chore(deps): update go dependencies (#296) ([02e6403](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/02e6403)), closes [#296](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/296)
+* chore(deps): update go dependencies (#298) ([6c93595](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/6c93595)), closes [#298](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/298)
+* chore(deps): update go dependencies (#299) ([16e73b8](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/16e73b8)), closes [#299](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/299)
+* chore(deps): update go dependencies (#300) ([39d5220](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/39d5220)), closes [#300](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/300)
+* chore(deps): update module github.com/cloudflare/circl to v1.6.5 (#297) ([b8519cd](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/b8519cd)), closes [#297](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/297)
+
 ## <small>1.10.5 (2026-08-01)</small>
 
 * fix(deps): update go dependencies (#295) ([4063244](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/4063244)), closes [#295](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/295)
