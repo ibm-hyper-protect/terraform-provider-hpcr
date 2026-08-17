@@ -1,3 +1,17 @@
+## <small>1.10.7 (2026-08-17)</small>
+
+* fix(deps): update go dependencies (#312) ([aed6d97](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/aed6d97)), closes [#312](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/312)
+* chore(deps): update docker.io/library/hello-world docker digest to 5dd0d3e (#310) ([cb4452a](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/cb4452a)), closes [#310](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/310)
+* chore(deps): update go dependencies (#303) ([978a5b5](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/978a5b5)), closes [#303](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/303)
+* chore(deps): update go dependencies (#304) ([048aede](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/048aede)), closes [#304](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/304)
+* chore(deps): update go dependencies (#305) ([aad1d93](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/aad1d93)), closes [#305](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/305)
+* chore(deps): update go dependencies (#306) ([55c3579](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/55c3579)), closes [#306](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/306)
+* chore(deps): update go dependencies (#308) ([114af55](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/114af55)), closes [#308](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/308)
+* chore(deps): update go dependencies (#311) ([80edb0a](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/80edb0a)), closes [#311](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/311)
+* chore(deps): update module github.com/knadh/koanf/maps to v0.1.3 (#302) ([ba34a96](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/ba34a96)), closes [#302](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/302)
+* chore(deps): update module golang.org/x/mod to v0.40.0 (#309) ([f5e4a01](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/f5e4a01)), closes [#309](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/309)
+* chore(deps): update module golang.org/x/net to v0.58.0 (#307) ([79f170f](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/79f170f)), closes [#307](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/307)
+
 ## <small>1.10.6 (2026-08-07)</small>
 
 * fix(deps): update module github.com/ibm-hyper-protect/contract-go/v2 to v2.40.2 (#301) ([a36a2fb](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/a36a2fb)), closes [#301](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/301)
