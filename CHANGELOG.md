@@ -1,3 +1,9 @@
+## <small>1.10.11 (2026-08-31)</small>
+
+* fix(deps): update module github.com/ibm-hyper-protect/contract-go/v2 to v2.42.0 (#323) ([f380be7](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/f380be7)), closes [#323](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/323)
+* chore(deps): update go dependencies (#321) ([69ac86a](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/69ac86a)), closes [#321](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/321)
+* chore(deps): update softprops/action-gh-release digest to efb3536 (#322) ([a2903b6](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/a2903b6)), closes [softprops/action-#release](https://github.com/softprops/action-/issues/release) [#322](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/322)
+
 ## <small>1.10.10 (2026-08-27)</small>
 
 * fix(deps): update go dependencies (#320) ([31c8a7c](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/31c8a7c)), closes [#320](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/320)
