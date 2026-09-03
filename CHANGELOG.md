@@ -1,3 +1,11 @@
+## 1.11.0 (2026-09-03)
+
+* Merge pull request #328 from vikas-sharma24/Feature/CCRV_1.1.3.1_cert ([e6056d3](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/e6056d3)), closes [#328](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/328)
+* feat: Add CCRV 26.9.0 encryption certificate ([844cfb4](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/844cfb4))
+* chore(deps): update go dependencies (#326) ([b2c9a09](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/b2c9a09)), closes [#326](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/326)
+* chore(deps): update go dependencies (#327) ([019b89e](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/019b89e)), closes [#327](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/327)
+* chore(deps): update module github.com/mattn/go-runewidth to v0.0.29 (#325) ([1517ddf](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/1517ddf)), closes [#325](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/325)
+
 ## <small>1.10.12 (2026-09-01)</small>
 
 * fix(deps): update module github.com/ibm-hyper-protect/contract-go/v2 to v2.42.1 (#324) ([44e789c](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/44e789c)), closes [#324](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/324)
