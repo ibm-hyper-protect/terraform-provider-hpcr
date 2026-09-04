@@ -1,3 +1,9 @@
+## <small>1.11.1 (2026-09-04)</small>
+
+* fix(deps): update module github.com/ibm-hyper-protect/contract-go/v2 to v2.43.1 (#330) ([c9dee54](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/c9dee54)), closes [#330](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/330)
+* chore(deps): update go dependencies (#329) ([3593124](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/3593124)), closes [#329](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/329)
+* chore(deps): update go dependencies (#331) ([1793a40](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/1793a40)), closes [#331](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/331)
+
 ## 1.11.0 (2026-09-03)
 
 * Merge pull request #328 from vikas-sharma24/Feature/CCRV_1.1.3.1_cert ([e6056d3](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/e6056d3)), closes [#328](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/328)
