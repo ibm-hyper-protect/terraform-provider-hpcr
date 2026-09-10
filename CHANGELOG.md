@@ -1,3 +1,10 @@
+## 1.12.0 (2026-09-10)
+
+* feat: add AGENT.md & support for s390x (#335) ([a4d1641](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/a4d1641)), closes [#335](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/335)
+* chore(deps): update go dependencies (#332) ([338dc97](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/338dc97)), closes [#332](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/332)
+* chore(deps): update go dependencies (#333) ([cf319ab](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/cf319ab)), closes [#333](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/333)
+* chore(deps): update go dependencies (#334) ([4fafa97](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/4fafa97)), closes [#334](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/334)
+
 ## <small>1.11.1 (2026-09-04)</small>
 
 * fix(deps): update module github.com/ibm-hyper-protect/contract-go/v2 to v2.43.1 (#330) ([c9dee54](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/c9dee54)), closes [#330](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/330)
