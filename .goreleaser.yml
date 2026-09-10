@@ -27,11 +27,18 @@ builds:
     - '386'
     - arm
     - arm64
+    - s390x
   ignore:
     - goos: darwin
       goarch: '386'
     - goos: windows
       goarch: arm
+    - goos: darwin
+      goarch: s390x
+    - goos: windows
+      goarch: s390x
+    - goos: freebsd
+      goarch: s390x
   binary: '{{ .ProjectName }}_v{{ .Version }}'
 archives:
 - formats:
