@@ -30,8 +30,8 @@ require (
 	github.com/fsnotify/fsnotify v1.10.1 // indirect
 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
 	github.com/golang-jwt/jwt/v5 v5.3.1 // indirect
-	github.com/google/go-github/v91 v91.0.0 // indirect
-	github.com/google/go-github/v91 v91.0.0 // indirect
+	github.com/google/go-github/v92 v92.0.0 // indirect
+	github.com/google/go-github/v92 v92.0.0 // indirect
 	github.com/google/go-querystring v1.2.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/hashicorp/cli v1.1.7 // indirect
