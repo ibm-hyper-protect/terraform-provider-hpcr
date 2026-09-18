@@ -1,3 +1,21 @@
+## <small>1.12.1 (2026-09-18)</small>
+
+* fix(deps): update go dependencies (#351) ([8289f02](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/8289f02)), closes [#351](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/351)
+* chore(deps): update docker.io/library/hello-world docker digest to 5e23090 (#340) ([a65e4e7](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/a65e4e7)), closes [#340](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/340)
+* chore(deps): update go dependencies (#337) ([88f435e](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/88f435e)), closes [#337](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/337)
+* chore(deps): update go dependencies (#338) ([56da60c](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/56da60c)), closes [#338](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/338)
+* chore(deps): update go dependencies (#339) ([d779ddf](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/d779ddf)), closes [#339](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/339)
+* chore(deps): update go dependencies (#342) ([05a6149](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/05a6149)), closes [#342](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/342)
+* chore(deps): update go dependencies (#343) ([7832b1e](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/7832b1e)), closes [#343](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/343)
+* chore(deps): update go dependencies (#345) ([929620f](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/929620f)), closes [#345](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/345)
+* chore(deps): update go dependencies (#346) ([c347f55](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/c347f55)), closes [#346](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/346)
+* chore(deps): update go dependencies (#348) ([d93965d](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/d93965d)), closes [#348](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/348)
+* chore(deps): update go dependencies (#349) ([8f0b1c3](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/8f0b1c3)), closes [#349](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/349)
+* chore(deps): update go dependencies (#350) ([9dcc9d9](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/9dcc9d9)), closes [#350](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/350)
+* chore(deps): update module github.com/google/go-github/v91 to v92 (#347) ([83858f4](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/83858f4)), closes [#347](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/347)
+* chore(deps): update module github.com/huandu/xstrings to v1.6.0 (#344) ([2f5d134](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/2f5d134)), closes [#344](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/344)
+* chore(deps): update module github.com/yuin/goldmark/v2 to v2.1.0 (#341) ([4c60078](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/4c60078)), closes [#341](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/341)
+
 ## 1.12.0 (2026-09-10)
 
 * feat: add AGENT.md & support for s390x (#335) ([a4d1641](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/a4d1641)), closes [#335](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/335)
