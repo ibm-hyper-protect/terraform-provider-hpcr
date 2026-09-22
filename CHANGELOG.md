@@ -1,3 +1,15 @@
+## <small>1.12.2 (2026-09-22)</small>
+
+* fix(deps): update module github.com/hashicorp/go-uuid to v1.0.4 (#360) ([4e7abf7](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/4e7abf7)), closes [#360](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/360)
+* chore(deps): update go dependencies (#352) ([dc1cb8a](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/dc1cb8a)), closes [#352](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/352)
+* chore(deps): update go dependencies (#353) ([167e589](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/167e589)), closes [#353](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/353)
+* chore(deps): update go dependencies (#354) ([a759b36](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/a759b36)), closes [#354](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/354)
+* chore(deps): update go dependencies (#355) ([6fcb1e5](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/6fcb1e5)), closes [#355](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/355)
+* chore(deps): update go dependencies (#356) ([cfcd1de](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/cfcd1de)), closes [#356](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/356)
+* chore(deps): update go dependencies (#357) ([f297b90](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/f297b90)), closes [#357](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/357)
+* chore(deps): update go dependencies (#358) ([76f4aca](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/76f4aca)), closes [#358](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/358)
+* chore(deps): update go dependencies (#359) ([5fed759](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/5fed759)), closes [#359](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/359)
+
 ## <small>1.12.1 (2026-09-18)</small>
 
 * fix(deps): update go dependencies (#351) ([8289f02](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/8289f02)), closes [#351](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/351)
