@@ -1,3 +1,7 @@
+## 1.13.0 (2026-09-23)
+
+* feat: Add latest CCRT 2.2.4.2 encryption cert (#364) ([8d41d32](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/8d41d32)), closes [#364](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/364)
+
 ## <small>1.12.3 (2026-09-23)</small>
 
 * fix(deps): update module github.com/ibm-hyper-protect/contract-go/v2 to v2.45.0 (#361) ([b4a1812](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/b4a1812)), closes [#361](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/361)
