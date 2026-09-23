@@ -1,3 +1,8 @@
+## <small>1.12.3 (2026-09-23)</small>
+
+* fix(deps): update module github.com/ibm-hyper-protect/contract-go/v2 to v2.45.0 (#361) ([b4a1812](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/b4a1812)), closes [#361](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/361)
+* chore(deps): update go dependencies (#362) ([fdeb1e8](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/fdeb1e8)), closes [#362](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/362)
+
 ## <small>1.12.2 (2026-09-22)</small>
 
 * fix(deps): update module github.com/hashicorp/go-uuid to v1.0.4 (#360) ([4e7abf7](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/4e7abf7)), closes [#360](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/360)
