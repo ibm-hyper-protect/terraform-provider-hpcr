@@ -1,3 +1,9 @@
+## 1.14.0 (2026-09-25)
+
+* feat: Added Rev30 encryption cert (#367) ([d3a77c2](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/d3a77c2)), closes [#367](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/367)
+* chore(deps): update go dependencies (#366) ([9d84920](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/9d84920)), closes [#366](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/366)
+* chore(deps): update module github.com/protonmail/go-crypto to v1.5.0 (#363) ([5e892c4](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/5e892c4)), closes [#363](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/363)
+
 ## 1.13.0 (2026-09-23)
 
 * feat: Add latest CCRT 2.2.4.2 encryption cert (#364) ([8d41d32](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/8d41d32)), closes [#364](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/364)
