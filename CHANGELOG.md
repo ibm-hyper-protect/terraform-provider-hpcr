@@ -1,3 +1,16 @@
+## <small>1.14.1 (2026-09-29)</small>
+
+* fix(deps): update module github.com/ibm-hyper-protect/contract-go/v2 to v2.48.0 (#376) ([41ff204](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/41ff204)), closes [#376](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/376)
+* chore(deps): update go dependencies (#365) ([c932bec](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/c932bec)), closes [#365](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/365)
+* chore(deps): update go dependencies (#368) ([38791c3](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/38791c3)), closes [#368](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/368)
+* chore(deps): update go dependencies (#369) ([ddd322e](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/ddd322e)), closes [#369](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/369)
+* chore(deps): update go dependencies (#371) ([da599df](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/da599df)), closes [#371](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/371)
+* chore(deps): update go dependencies (#372) ([a1ab923](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/a1ab923)), closes [#372](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/372)
+* chore(deps): update go dependencies (#374) ([8aec71a](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/8aec71a)), closes [#374](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/374)
+* chore(deps): update go dependencies (#375) ([03ce787](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/03ce787)), closes [#375](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/375)
+* chore(deps): update module github.com/protonmail/go-crypto to v1.5.2 (#373) ([e1b2451](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/e1b2451)), closes [#373](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/373)
+* chore(deps): update module github.com/yuin/goldmark/v2 to v2.1.6 (#370) ([3a067f9](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/3a067f9)), closes [#370](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/370)
+
 ## 1.14.0 (2026-09-25)
 
 * feat: Added Rev30 encryption cert (#367) ([d3a77c2](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/d3a77c2)), closes [#367](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/367)
