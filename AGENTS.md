@@ -7,6 +7,7 @@ This file provides guidance to agents when working with code in this repository.
 Go-based Terraform provider for IBM Hyper Protect Container Runtime (HPCR). Uses **Terraform Plugin Framework** (not the older SDK v2 — depguard bans all `terraform-plugin-sdk/v2` imports).
 
 Module: `github.com/ibm-hyper-protect/terraform-provider-hpcr`
+Go version: `1.27.1` (see `go.mod`)
 
 ## Commands
 
@@ -72,7 +73,7 @@ if !data.Cert.IsNull() && !data.Cert.IsUnknown() {
 
 **`RefineContract`** in `common/` is a non-obvious YAML transform: it re-serializes `env` and `workload` keys as YAML block literals (literal style) inside the outer YAML. Call this before passing to `contract.HpcrContractSignedEncrypted`.
 
-**`FilterChecksum`** parses SHA-256 checksum files (64 hex chars + filename) into a `map[string]string`.
+**`FilterChecksum`** parses SHA-256 checksum files into a `map[string]string` keyed by checksum hex (64 chars) → filename. The map key is the hash, not the filename.
 
 **Schema requires both `Description` and `MarkdownDescription`** on every schema and attribute — tests assert both fields are non-empty.
 
