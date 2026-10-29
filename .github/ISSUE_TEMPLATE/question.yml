@@ -3,7 +3,12 @@ description: Ask a question or request help
 title: "[Question]: "
 labels: ["question", "help wanted"]
 assignees:
+  - dherrend
   - Sashwat-K
+  - Lokesh-Puthalapattu
+  - vikas-sharma24
+  - Aman-Dhasmana01
+
 body:
   - type: markdown
     attributes:

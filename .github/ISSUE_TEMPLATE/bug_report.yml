@@ -3,7 +3,12 @@ description: Report a bug or unexpected behavior
 title: "[Bug]: "
 labels: ["bug", "triage"]
 assignees:
+  - dherrend
   - Sashwat-K
+  - Lokesh-Puthalapattu
+  - vikas-sharma24
+  - Aman-Dhasmana01
+
 body:
   - type: markdown
     attributes:
