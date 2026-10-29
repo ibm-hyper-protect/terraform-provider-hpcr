@@ -1,3 +1,9 @@
+## <small>1.15.2 (2026-10-29)</small>
+
+* fix(deps): update module github.com/ibm-hyper-protect/contract-go/v2 to v2.51.1 (#432) ([2847046](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/2847046)), closes [#432](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/432)
+* chore(deps): update cycjimmy/semantic-release-action action to v8.1.4 (#431) ([b4908b0](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/b4908b0)), closes [#431](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/431)
+* chore(deps): update go dependencies (#430) ([e20fb8a](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/e20fb8a)), closes [#430](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/430)
+
 ## <small>1.15.1 (2026-10-27)</small>
 
 * fix(deps): update module github.com/ibm-hyper-protect/contract-go/v2 to v2.51.0 (#429) ([931a31d](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/931a31d)), closes [#429](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/429)
