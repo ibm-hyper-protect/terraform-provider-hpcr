@@ -1,3 +1,7 @@
+## <small>1.16.1 (2026-10-29)</small>
+
+* fix(deps): update go dependencies (#434) ([4866b76](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/4866b76)), closes [#434](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/434)
+
 ## 1.16.0 (2026-10-29)
 
 * feat: add Aman Dhasmana as Security Maintainer (#433) ([e6f138e](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/e6f138e)), closes [#433](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/433)
