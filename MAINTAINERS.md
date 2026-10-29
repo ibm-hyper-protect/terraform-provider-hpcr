@@ -6,9 +6,11 @@ This document lists the maintainers of the terraform-provider-hpcr project.
 
 | Name | GitHub Handle | Role | Email | Focus Areas |
 |------|---------------|------|-------|-------------|
-| Sashwat K | [@Sashwat-K](https://github.com/Sashwat-K) | Lead Maintainer | Sashwat.K@ibm.com | Overall project direction, releases, core features |
-| Vikas Sharma | [@vikas-sharma24](https://github.com/vikas-sharma24) | Maintainer | Vikas.Sharma24@ibm.com | Releases and core features |
+| Dirk Herrendörfer | [@dherrend](https://github.com/dherrend) | Maintainer Lead | d.herrendoerfer@de.ibm.com | Overall project direction, releases, core features |
+| Sashwat K | [@Sashwat-K](https://github.com/Sashwat-K) | Maintainer Lead | Sashwat.K@ibm.com | Overall project direction, releases, core features |
 | Lokesh Puthalapattu | [@Lokesh-Puthalapattu](https://github.com/Lokesh-Puthalapattu) | Security Lead | lokesh.puthalapattu@ibm.com | Overall Security |
+| Aman Dhasmana | [@Aman-Dhasmana01](https://github.com/Aman-Dhasmana01) | Security Maintainer | Aman.Dhasmana@ibm.com | Security and Releases |
+| Vikas Sharma | [@vikas-sharma24](https://github.com/vikas-sharma24) | Maintainer | Vikas.Sharma24@ibm.com | Releases and core features |
 
 ## Responsibilities
 
