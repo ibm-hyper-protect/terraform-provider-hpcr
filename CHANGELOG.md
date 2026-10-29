@@ -1,3 +1,7 @@
+## 1.16.0 (2026-10-29)
+
+* feat: add Aman Dhasmana as Security Maintainer (#433) ([e6f138e](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/e6f138e)), closes [#433](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/433)
+
 ## <small>1.15.2 (2026-10-29)</small>
 
 * fix(deps): update module github.com/ibm-hyper-protect/contract-go/v2 to v2.51.1 (#432) ([2847046](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/2847046)), closes [#432](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/432)
