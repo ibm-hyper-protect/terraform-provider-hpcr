@@ -44,7 +44,7 @@ internal/provider/datasources/    ← 4 datasources (image, attestation, encrypt
 tools/                            ← go:generate wiring for tfplugindocs + copywrite headers
 ```
 
-All cryptographic/HPCR operations delegate to `github.com/ibm-hyper-protect/contract-go/v2` — never implement them directly.
+All cryptographic/HPCR operations delegate to `github.com/ibm-hyper-protect/contract-go/v3` — never implement them directly.
 
 ## Code Patterns
 
@@ -88,7 +88,7 @@ var _ datasource.DataSource = &ImageDataSource{}
 - Apache-2.0 license header on every `.go` file (copyright year 2026) — enforced by `copywrite` in `make generate`
 - `gofmt -s` formatting enforced by `golangci-lint` with the `gofmt` formatter
 - `godot` linter: exported comments must end with a period
-- Import grouping: stdlib → third-party framework imports → internal `contract-go/v2` imports → local `common` package
+- Import grouping: stdlib → third-party framework imports → internal `contract-go/v3` imports → local `common` package
 - **Do not use `terraform-plugin-sdk/v2`** — use only `terraform-plugin-framework`
 
 ## Releases & Commits

@@ -203,7 +203,7 @@ data "hpcr_image" "selected_image" {
 ### Contract-Go Documentation
 
 - [User Documentation](https://ibm-hyper-protect.github.io/contract-go)
-- [Go Package Docs](https://pkg.go.dev/github.com/ibm-hyper-protect/contract-go/v2)
+- [Go Package Docs](https://pkg.go.dev/github.com/ibm-hyper-protect/contract-go/v3)
 - [Sample Configurations](https://github.com/ibm-hyper-protect/contract-go/tree/main/samples)
 
 ### Additional Resources

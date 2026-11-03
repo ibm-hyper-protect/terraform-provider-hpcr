@@ -25,7 +25,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	"github.com/ibm-hyper-protect/contract-go/v2/contract"
+	"github.com/ibm-hyper-protect/contract-go/v3/contract"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
 )
 

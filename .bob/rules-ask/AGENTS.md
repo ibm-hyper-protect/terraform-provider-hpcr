@@ -6,7 +6,7 @@ This file provides guidance for answering questions about this repository.
 
 - **`tools/` is a separate Go module** (`tools/go.mod`) with its own dependencies. It's only used via `go generate` with the `generate` build tag. Running `go build ./...` from the root does NOT include it.
 - **`common/` is the only local utility package** — there's no `pkg/`, `lib/`, or `util/` directory. All shared logic lives in `common/common.go`.
-- **The provider has no API key or cloud credentials** — it requires no Terraform provider configuration block. All resources work locally by calling `contract-go/v2` library functions.
+- **The provider has no API key or cloud credentials** — it requires no Terraform provider configuration block. All resources work locally by calling `contract-go/v3` library functions.
 - **`CHANGELOG.md` is auto-generated** — never manually edited; `semantic-release` writes it on merge to `main` based on Conventional Commits.
 - **`examples/` is excluded from copyright headers and linting** — see `.copywrite.hcl` and `.golangci.yml`.
 - **Acceptance tests (`make testacc`) call real IBM Cloud APIs** and require `IBM_CLOUD_API_KEY`. They take ~90 minutes and may incur costs. Unit tests (`make test`) do NOT require any credentials.

@@ -5,7 +5,7 @@ This file provides guidance to agents when writing or modifying code in this rep
 ## Critical Coding Rules
 
 - **Never use `terraform-plugin-sdk/v2`** — depguard will fail the build. All Terraform types and interfaces must come from `terraform-plugin-framework`.
-- **All crypto/HPCR operations go through `contract-go/v2`** — never re-implement encryption, signing, TGZ, or image selection logic. The `contract-go/v2` library exports: `contract.HpcrTgz`, `contract.HpcrTextEncrypted`, `contract.HpcrContractSignedEncrypted`, `certificate.HpcrValidateEncryptionCertificate`, `certificate.HpcrGetEncryptionCertificateFromJson`, `image.HpcrSelectImage`.
+- **All crypto/HPCR operations go through `contract-go/v3`** — never re-implement encryption, signing, TGZ, or image selection logic. The `contract-go/v3` library exports: `contract.HpcrTgz`, `contract.HpcrTextEncrypted`, `contract.HpcrContractSignedEncrypted`, `certificate.HpcrValidateEncryptionCertificate`, `certificate.HpcrGetEncryptionCertificateFromJson`, `image.HpcrSelectImage`.
 - **`common.RefineContract()` is mandatory before passing YAML to `HpcrContractSignedEncrypted`** — it re-serializes `env` and `workload` keys as YAML block literals. Skipping this produces malformed contracts.
 - **Private key generation requires a shell call to `openssl`** via `common.GeneratePrivateKey()`. This means `openssl` must be in PATH at test time. Tests that involve key generation will fail without it.
 - **`Delete` on all resources must be a no-op** — these resources generate local computed values, not remote infrastructure.
@@ -28,8 +28,8 @@ import (
     "github.com/hashicorp/terraform-plugin-framework/resource/schema"
     "github.com/hashicorp/terraform-plugin-framework/types"
 
-    // 3. contract-go/v2
-    "github.com/ibm-hyper-protect/contract-go/v2/contract"
+    // 3. contract-go/v3
+    "github.com/ibm-hyper-protect/contract-go/v3/contract"
 
     // 4. local common
     "github.com/ibm-hyper-protect/terraform-provider-hpcr/common"

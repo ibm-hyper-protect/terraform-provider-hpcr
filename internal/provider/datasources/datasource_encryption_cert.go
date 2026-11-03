@@ -25,7 +25,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	"github.com/ibm-hyper-protect/contract-go/v2/certificate"
+	"github.com/ibm-hyper-protect/contract-go/v3/certificate"
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
 )
 
