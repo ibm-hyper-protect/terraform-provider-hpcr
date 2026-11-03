@@ -24,7 +24,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
-	"github.com/ibm-hyper-protect/contract-go/v2/attestation"
+	"github.com/ibm-hyper-protect/contract-go/v3/attestation"
 
 	"github.com/ibm-hyper-protect/terraform-provider-hpcr/common"
 )
