@@ -1,3 +1,16 @@
+## <small>1.17.1 (2026-11-10)</small>
+
+* fix(deps): update go dependencies (#458) ([8078d5a](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/8078d5a)), closes [#458](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/458)
+* chore(deps): update go dependencies (#447) ([3780b8d](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/3780b8d)), closes [#447](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/447)
+* chore(deps): update go dependencies (#453) ([3e5717f](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/3e5717f)), closes [#453](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/453)
+* chore(deps): update go dependencies (#454) ([0fa098a](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/0fa098a)), closes [#454](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/454)
+* chore(deps): update go dependencies (#456) ([21e5f87](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/21e5f87)), closes [#456](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/456)
+* chore(deps): update go dependencies (#457) ([688e8db](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/688e8db)), closes [#457](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/457)
+* chore(deps): update module github.com/spf13/pflag to v1.1.0 (#452) ([f91a710](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/f91a710)), closes [#452](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/452)
+* chore(deps): update module github.com/zclconf/go-cty to v1.20.0 (#455) ([b770df3](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/b770df3)), closes [#455](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/455)
+* chore(deps): update module go.yaml.in/yaml/v3 to v4 (#450) ([b9489ff](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/b9489ff)), closes [#450](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/450)
+* chore(deps): update softprops/action-gh-release digest to 8a0cd65 (#451) ([dc7ead6](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/dc7ead6)), closes [softprops/action-#release](https://github.com/softprops/action-/issues/release) [#451](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/451)
+
 ## 1.17.0 (2026-11-03)
 
 * feat: update contract-go version to v3 (#449) ([9133953](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/commit/9133953)), closes [#449](https://github.com/ibm-hyper-protect/terraform-provider-hpcr/issues/449)
